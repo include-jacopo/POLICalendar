@@ -1,18 +1,11 @@
 #include <QApplication>
-#include <QMainWindow>
 #include <QBoxLayout>
 #include "Calendar.h"
+#include "MainWindow.h"
 
 int main(int argc, char *argv[]) {
     QApplication a(argc, argv);
-    // Componente main window, diviso in 5 sezioni
-    QMainWindow mainW = QMainWindow();
-
-    // Calendar raggruppa le CalendarColumn
-    auto calendar = new Calendar();
-    mainW.setBaseSize(640, 480);
-
-    mainW.setCentralWidget(calendar);
+    MainWindow mainW = MainWindow();
     mainW.show();
     return QApplication::exec();
 }
