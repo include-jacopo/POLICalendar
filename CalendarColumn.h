@@ -11,25 +11,23 @@
 #include <QPainter>
 #include <QFont>
 #include <QVBoxLayout>
-#include <QLine>
+#include <QLineF>
 #include <QPainter>
 #include <QList>
 
 class CalendarColumn : public QWidget {
     Q_OBJECT
 private:
+    bool isLast;
+    std::string date;
+
     QLabel *test;
     QPushButton *btn;
-    QLine *lBorder, *rBorder;
-    QList<QLine*> middleLines;
-
-    void swap(CalendarColumn& a, CalendarColumn& b);
+    QLineF *lBorder, *rBorder;
+    QList<QLineF*> middleLines;
 
 public:
-    explicit CalendarColumn(QWidget *parent = nullptr);
-    CalendarColumn(const CalendarColumn& source);
-    CalendarColumn(CalendarColumn&& source);
-    CalendarColumn& operator=(CalendarColumn source);
+    explicit CalendarColumn(std::string date, bool isLastCol = false, QWidget *parent = nullptr);
     ~CalendarColumn() override;
 
     void paintEvent(QPaintEvent *event) override;

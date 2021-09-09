@@ -4,7 +4,10 @@
 
 #include "CalendarColumn.h"
 
-CalendarColumn::CalendarColumn(QWidget *parent) : QWidget(parent) {
+CalendarColumn::CalendarColumn(std::string date, bool isLastCol, QWidget *parent) : QWidget(parent) {
+    isLast = isLastCol;
+    this->date = std::move(date);
+
     test = new QLabel("Ciao");
     btn = new QPushButton("Hello world!");
     btn->resize(200, 100);
@@ -16,37 +19,20 @@ CalendarColumn::CalendarColumn(QWidget *parent) : QWidget(parent) {
     setLayout(layout);
 
     // Inizializza bordi sinistra e destra
-    lBorder = new QLine();
-    rBorder = new QLine();
+    lBorder = new QLineF();
+    rBorder = new QLineF();
     for (int i = 0; i < 24+1; ++i) {
-        middleLines.push_back(new QLine());
+        middleLines.push_back(new QLineF());
     }
-}
-
-CalendarColumn::CalendarColumn(const CalendarColumn& source) {
-    test = new QLabel(source.test);
-    btn = new QPushButton(source.btn);
-}
-
-CalendarColumn::CalendarColumn(CalendarColumn&& source) {
-    test = nullptr;
-    btn = nullptr;
-    swap(*this, source);
-}
-
-CalendarColumn& CalendarColumn::operator=(CalendarColumn source) {
-    swap(*this, source);
-    return *this;
-}
-
-void CalendarColumn::swap(CalendarColumn& a, CalendarColumn& b) {
-    std::swap(a.test, b.test);
-    std::swap(a.btn, b.btn);
 }
 
 CalendarColumn::~CalendarColumn() {
     delete test;
     delete btn;
+    delete lBorder;
+    delete rBorder;
+    for (auto line : middleLines)
+        delete line;
 }
 
 void CalendarColumn::paintEvent(QPaintEvent *event) {
@@ -54,7 +40,9 @@ void CalendarColumn::paintEvent(QPaintEvent *event) {
     QPainter painter(this);
     painter.setPen(Qt::blue);
     painter.drawLine(*lBorder);
-    painter.drawLine(*rBorder);
+    if (isLast) {
+        painter.drawLine(*rBorder);
+    }
     painter.setPen(QColor::fromRgb(205, 205, 205));
     for (auto line : middleLines){
         painter.drawLine(*line);
@@ -63,8 +51,10 @@ void CalendarColumn::paintEvent(QPaintEvent *event) {
 
 void CalendarColumn::resizeEvent(QResizeEvent *event) {
     lBorder->setLine(0, 0, 0, this->height());
-    rBorder->setLine(this->width(), 0, this->width(), this->height());
+    if (isLast) {
+        rBorder->setLine(this->width()-1, 0, this->width()-1, this->height());
+    }
     for (int i = 0; i < 24+1; ++i) {
-        middleLines[i]->setLine(2, this->height()/24*i, this->width()-2, this->height()/24*i);
+        middleLines[i]->setLine(4, this->height()/24.0*i, this->width()-4, this->height()/24.0*i);
     }
 }

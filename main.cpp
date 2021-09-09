@@ -10,7 +10,7 @@ int main(int argc, char *argv[]) {
 
     // Calendar raggruppa le CalendarColumn
     auto calendar = new Calendar();
-    //calendar->setLayout(new QHBoxLayout());
+    mainW.setBaseSize(640, 480);
 
     mainW.setCentralWidget(calendar);
     mainW.show();

@@ -4,12 +4,16 @@
 
 #include "Calendar.h"
 
+#define NCOLS 7
+
 Calendar::Calendar(QWidget *parent) : QWidget(parent) {
     // 7 colonne orizzontali
     auto *layout = new QHBoxLayout(this);
+    layout->setSpacing(0);
+    setMinimumSize(640,480);
 
-    for (int i = 0; i < 7; ++i) {
-        cols.push_back(new CalendarColumn(this));
+    for (int i = 0; i < NCOLS; ++i) {
+        cols.push_back(new CalendarColumn("TODO", i==NCOLS-1, this));
         layout->addWidget(cols[i]);
     }
 
