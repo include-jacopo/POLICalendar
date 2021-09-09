@@ -13,7 +13,7 @@ find_package(Qt6 COMPONENTS
         Widgets
         REQUIRED)
 
-add_executable(POLICalendar main.cpp)
+add_executable(POLICalendar main.cpp CalendarColumn.cpp CalendarColumn.h Calendar.cpp Calendar.h)
 target_link_libraries(POLICalendar
         Qt::Core
         Qt::Gui
