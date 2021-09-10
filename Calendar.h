@@ -9,11 +9,13 @@
 #include <QList>
 #include <QHBoxLayout>
 #include "CalendarColumn.h"
+#include "HourVBar.h"
 
 class Calendar : public QWidget {
     Q_OBJECT
 private:
     QList<CalendarColumn*> cols;
+    HourVBar *hourVBar;
 
 public:
     explicit Calendar(QWidget *parent = nullptr);

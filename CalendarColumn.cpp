@@ -55,6 +55,11 @@ void CalendarColumn::resizeEvent(QResizeEvent *event) {
         rBorder->setLine(this->width()-1, 0, this->width()-1, this->height());
     }
     for (int i = 0; i < 24+1; ++i) {
-        middleLines[i]->setLine(4, this->height()/24.0*i, this->width()-4, this->height()/24.0*i);
+        if (i != 24) {
+            middleLines[i]->setLine(5, this->height()/24.0*i, this->width()-5, this->height()/24.0*i);
+        } else {
+            middleLines[i]->setLine(5, this->height()/24.0*i-1, this->width()-5, this->height()/24.0*i-1);
+        }
+
     }
 }

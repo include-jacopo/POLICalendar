@@ -12,6 +12,13 @@ Calendar::Calendar(QWidget *parent) : QWidget(parent) {
     layout->setSpacing(0);
     setMinimumSize(640,480);
 
+
+    // Time bar
+    hourVBar = new HourVBar(this);
+    hourVBar->setMaximumWidth(60);
+    layout->addWidget(hourVBar);
+
+    // Calendar columns
     for (int i = 0; i < NCOLS; ++i) {
         cols.push_back(new CalendarColumn("TODO", i==NCOLS-1, this));
         layout->addWidget(cols[i]);

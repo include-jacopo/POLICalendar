@@ -12,6 +12,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
 
     setMinimumSize(640, 480);
     setCentralWidget(login);
+
+    //TODO TEMPORARY
+    loginSuccessful();
 }
 
 MainWindow::~MainWindow() {
