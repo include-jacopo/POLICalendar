@@ -16,7 +16,4 @@ Calendar::Calendar(QWidget *parent) : QWidget(parent) {
         cols.push_back(new CalendarColumn("TODO", i==NCOLS-1, this));
         layout->addWidget(cols[i]);
     }
-
-    // Applica il layout
-    setLayout(layout);
 }

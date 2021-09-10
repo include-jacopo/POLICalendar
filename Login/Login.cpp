@@ -18,7 +18,7 @@ void Login::on_pushButton_login_clicked() {
     QString password = ui->lineEdit_password->text();
 
     if (username == "jacopo" && password == "admin") {
-        //TODO
+        emit loginSuccessful();
     } else {
         QMessageBox::warning(this, "Login", "Wrong username and/or password");
     }

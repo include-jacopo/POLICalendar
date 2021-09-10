@@ -5,10 +5,22 @@
 #include "MainWindow.h"
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
-    calendar = new Calendar(this);
     login = new Login(this);
 
+    // Connetti loginSuccessful di login ad azione locale
+    connect(login, SIGNAL(loginSuccessful()), this, SLOT(loginSuccessful()));
 
     setMinimumSize(640, 480);
+    setCentralWidget(login);
+}
+
+MainWindow::~MainWindow() {
+    delete calendar;
+    delete login;
+}
+
+void MainWindow::loginSuccessful() {
+    login->close();
+    calendar = new Calendar(this);
     setCentralWidget(calendar);
 }

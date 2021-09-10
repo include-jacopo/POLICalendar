@@ -19,5 +19,9 @@ private:
 
 private slots:
     void on_pushButton_login_clicked();
+
+signals:
+    void loginSuccessful();
+
 };
 #endif // LOGIN_H
