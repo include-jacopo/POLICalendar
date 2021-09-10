@@ -17,11 +17,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     loginSuccessful();
 }
 
-MainWindow::~MainWindow() {
-    delete calendar;
-    delete login;
-}
-
 void MainWindow::loginSuccessful() {
     login->close();
     calendar = new Calendar(this);

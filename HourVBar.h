@@ -15,11 +15,8 @@ private:
     QList<QLabel*> *hours;
     QVBoxLayout *layout;
 
-
 public:
     explicit HourVBar(QWidget *parent = nullptr);
-    ~HourVBar() override;
-
 };
 
 
