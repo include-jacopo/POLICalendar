@@ -19,7 +19,6 @@ private:
 
 public:
     explicit MainWindow(QWidget *parent = nullptr);
-    ~MainWindow() override;
 
 public slots:
     void loginSuccessful();

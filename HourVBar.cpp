@@ -24,8 +24,3 @@ HourVBar::HourVBar(QWidget *parent) : QWidget(parent) {
         layout->addWidget(l);
     }
 }
-
-HourVBar::~HourVBar() {
-    delete hours;
-    delete layout;
-}

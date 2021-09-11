@@ -28,7 +28,6 @@ private:
 
 public:
     explicit CalendarColumn(std::string date, bool isLastCol = false, QWidget *parent = nullptr);
-    ~CalendarColumn() override;
 
     void paintEvent(QPaintEvent *event) override;
     void resizeEvent(QResizeEvent *event) override;

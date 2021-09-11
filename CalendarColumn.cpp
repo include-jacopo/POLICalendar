@@ -26,15 +26,6 @@ CalendarColumn::CalendarColumn(std::string date, bool isLastCol, QWidget *parent
     }
 }
 
-CalendarColumn::~CalendarColumn() {
-    delete test;
-    delete btn;
-    delete lBorder;
-    delete rBorder;
-    for (auto line : middleLines)
-        delete line;
-}
-
 void CalendarColumn::paintEvent(QPaintEvent *event) {
     QWidget::paintEvent(event);
     QPainter painter(this);
