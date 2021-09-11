@@ -6,8 +6,6 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC ON)
 
-include_directories(include /usr/local/include)
-
 find_package(Qt6 COMPONENTS
         Core
         Gui
@@ -25,6 +23,10 @@ target_link_libraries(POLICalendar
         Qt::Gui
         Qt::Widgets
         )
+
+if(UNIX)
+    include_directories(include /usr/local/include)
+endif()
 
 if (WIN32)
     set(DEBUG_SUFFIX)
