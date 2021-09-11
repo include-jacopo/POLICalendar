@@ -1,0 +1,618 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>ICalValue: libical-glib Reference Manual</title>
+<meta name="generator" content="DocBook XSL Stylesheets Vsnapshot">
+<link rel="home" href="index.html" title="libical-glib Reference Manual">
+<link rel="up" href="ch01.html" title="API Reference">
+<link rel="prev" href="libical-glib-i-cal-unknowntokenhandling.html" title="i-cal-unknowntokenhandling">
+<link rel="next" href="api-index-full.html" title="API Index">
+<meta name="generator" content="GTK-Doc V1.32.1 (XML mode)">
+<link rel="stylesheet" href="style.css" type="text/css">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table class="navigation" id="top" width="100%" summary="Navigation header" cellpadding="2" cellspacing="5"><tr valign="middle">
+<td width="100%" align="left" class="shortcuts">
+<a href="#" class="shortcut">Top</a><span id="nav_description">  <span class="dim">|</span> 
+                  <a href="#ICalValue.description" class="shortcut">Description</a></span><span id="nav_hierarchy">  <span class="dim">|</span> 
+                  <a href="#ICalValue.object-hierarchy" class="shortcut">Object Hierarchy</a></span>
+</td>
+<td><a accesskey="h" href="index.html"><img src="home.png" width="16" height="16" border="0" alt="Home"></a></td>
+<td><a accesskey="u" href="ch01.html"><img src="up.png" width="16" height="16" border="0" alt="Up"></a></td>
+<td><a accesskey="p" href="libical-glib-i-cal-unknowntokenhandling.html"><img src="left.png" width="16" height="16" border="0" alt="Prev"></a></td>
+<td><a accesskey="n" href="api-index-full.html"><img src="right.png" width="16" height="16" border="0" alt="Next"></a></td>
+</tr></table>
+<div class="refentry">
+<a name="ICalValue"></a><div class="titlepage"></div>
+<div class="refnamediv"><table width="100%"><tr>
+<td valign="top">
+<h2><span class="refentrytitle"><a name="ICalValue.top_of_page"></a>ICalValue</span></h2>
+<p>ICalValue</p>
+</td>
+<td class="gallery_image" valign="top" align="right"></td>
+</tr></table></div>
+<div class="refsect1">
+<a name="ICalValue.functions"></a><h2>Functions</h2>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
+<colgroup>
+<col width="150px" class="functions_proto_type">
+<col class="functions_proto_name">
+</colgroup>
+<tbody>
+<tr>
+<td class="function_type">
+<a class="link" href="ICalValue.html" title="ICalValue"><span class="returnvalue">ICalValue</span></a> *
+</td>
+<td class="function_name">
+<a class="link" href="ICalValue.html#i-cal-value-new" title="i_cal_value_new ()">i_cal_value_new</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a class="link" href="ICalValue.html" title="ICalValue"><span class="returnvalue">ICalValue</span></a> *
+</td>
+<td class="function_name">
+<a class="link" href="ICalValue.html#i-cal-value-clone" title="i_cal_value_clone ()">i_cal_value_clone</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a class="link" href="ICalValue.html" title="ICalValue"><span class="returnvalue">ICalValue</span></a> *
+</td>
+<td class="function_name">
+<a class="link" href="ICalValue.html#i-cal-value-new-from-string" title="i_cal_value_new_from_string ()">i_cal_value_new_from_string</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="ICalValue.html#i-cal-value-free" title="i_cal_value_free ()">i_cal_value_free</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">gboolean</span>
+</td>
+<td class="function_name">
+<a class="link" href="ICalValue.html#i-cal-value-is-valid" title="i_cal_value_is_valid ()">i_cal_value_is_valid</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">gchar</span> *
+</td>
+<td class="function_name">
+<a class="link" href="ICalValue.html#i-cal-value-as-ical-string" title="i_cal_value_as_ical_string ()">i_cal_value_as_ical_string</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a class="link" href="libical-glib-i-cal-derived-value.html#ICalValueKind" title="enum ICalValueKind"><span class="returnvalue">ICalValueKind</span></a>
+</td>
+<td class="function_name">
+<a class="link" href="ICalValue.html#i-cal-value-isa" title="i_cal_value_isa ()">i_cal_value_isa</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">gint</span>
+</td>
+<td class="function_name">
+<a class="link" href="ICalValue.html#i-cal-value-isa-value" title="i_cal_value_isa_value ()">i_cal_value_isa_value</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a class="link" href="libical-glib-i-cal-derived-parameter.html#ICalParameterXliccomparetype" title="enum ICalParameterXliccomparetype"><span class="returnvalue">ICalParameterXliccomparetype</span></a>
+</td>
+<td class="function_name">
+<a class="link" href="ICalValue.html#i-cal-value-compare" title="i_cal_value_compare ()">i_cal_value_compare</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a class="link" href="libical-glib-i-cal-derived-value.html#ICalValueKind" title="enum ICalValueKind"><span class="returnvalue">ICalValueKind</span></a>
+</td>
+<td class="function_name">
+<a class="link" href="ICalValue.html#i-cal-value-kind-from-string" title="i_cal_value_kind_from_string ()">i_cal_value_kind_from_string</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">const <span class="returnvalue">gchar</span> *
+</td>
+<td class="function_name">
+<a class="link" href="ICalValue.html#i-cal-value-kind-to-string" title="i_cal_value_kind_to_string ()">i_cal_value_kind_to_string</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">gboolean</span>
+</td>
+<td class="function_name">
+<a class="link" href="ICalValue.html#i-cal-value-kind-is-valid" title="i_cal_value_kind_is_valid ()">i_cal_value_kind_is_valid</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">gchar</span> *
+</td>
+<td class="function_name">
+<a class="link" href="ICalValue.html#i-cal-value-encode-ical-string" title="i_cal_value_encode_ical_string ()">i_cal_value_encode_ical_string</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">gchar</span> *
+</td>
+<td class="function_name">
+<a class="link" href="ICalValue.html#i-cal-value-decode-ical-string" title="i_cal_value_decode_ical_string ()">i_cal_value_decode_ical_string</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<div class="refsect1">
+<a name="ICalValue.other"></a><h2>Types and Values</h2>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
+<colgroup>
+<col width="150px" class="other_proto_type">
+<col class="other_proto_name">
+</colgroup>
+<tbody>
+<tr>
+<td class="define_keyword">#define</td>
+<td class="function_name"><a class="link" href="ICalValue.html#I-CAL-TYPE-VALUE:CAPS" title="I_CAL_TYPE_VALUE">I_CAL_TYPE_VALUE</a></td>
+</tr>
+<tr>
+<td class="datatype_keyword">struct</td>
+<td class="function_name"><a class="link" href="ICalValue.html#ICalValueClass" title="struct ICalValueClass">ICalValueClass</a></td>
+</tr>
+<tr>
+<td class="datatype_keyword"> </td>
+<td class="function_name"><a class="link" href="ICalValue.html#ICalValue-struct" title="ICalValue">ICalValue</a></td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<div class="refsect1">
+<a name="ICalValue.object-hierarchy"></a><h2>Object Hierarchy</h2>
+<pre class="screen">    GObject
+    <span class="lineart">╰──</span> <a class="link" href="ICalObject.html" title="ICalObject">ICalObject</a>
+        <span class="lineart">╰──</span> ICalValue
+</pre>
+</div>
+<div class="refsect1">
+<a name="ICalValue.description"></a><h2>Description</h2>
+</div>
+<div class="refsect1">
+<a name="ICalValue.functions_details"></a><h2>Functions</h2>
+<div class="refsect2">
+<a name="i-cal-value-new"></a><h3>i_cal_value_new ()</h3>
+<pre class="programlisting"><a class="link" href="ICalValue.html" title="ICalValue"><span class="returnvalue">ICalValue</span></a> *
+i_cal_value_new (<em class="parameter"><code><a class="link" href="libical-glib-i-cal-derived-value.html#ICalValueKind" title="enum ICalValueKind"><span class="type">ICalValueKind</span></a> kind</code></em>);</pre>
+<p>Creates a new <a class="link" href="ICalValue.html" title="ICalValue"><span class="type">ICalValue</span></a> with specific kind.</p>
+<div class="refsect3">
+<a name="i-cal-value-new.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody><tr>
+<td class="parameter_name"><p>kind</p></td>
+<td class="parameter_description"><p>A <a class="link" href="libical-glib-i-cal-derived-value.html#ICalValueKind" title="enum ICalValueKind"><span class="type">ICalValueKind</span></a></p></td>
+<td class="parameter_annotations"> </td>
+</tr></tbody>
+</table></div>
+</div>
+<div class="refsect3">
+<a name="i-cal-value-new.returns"></a><h4>Returns</h4>
+<p>The newly created <a class="link" href="ICalValue.html" title="ICalValue"><span class="type">ICalValue</span></a>. </p>
+<p><span class="annotation">[<acronym title="Free data after the code is done."><span class="acronym">transfer full</span></acronym>]</span></p>
+</div>
+<p class="since">Since: <a class="link" href="api-index-1-0.html#api-index-1.0">1.0</a></p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="i-cal-value-clone"></a><h3>i_cal_value_clone ()</h3>
+<pre class="programlisting"><a class="link" href="ICalValue.html" title="ICalValue"><span class="returnvalue">ICalValue</span></a> *
+i_cal_value_clone (<em class="parameter"><code>const <a class="link" href="ICalValue.html" title="ICalValue"><span class="type">ICalValue</span></a> *value</code></em>);</pre>
+<p>Deeply clone a <a class="link" href="ICalValue.html" title="ICalValue"><span class="type">ICalValue</span></a>.</p>
+<div class="refsect3">
+<a name="i-cal-value-clone.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody><tr>
+<td class="parameter_name"><p>value</p></td>
+<td class="parameter_description"><p>The <a class="link" href="ICalValue.html" title="ICalValue"><span class="type">ICalValue</span></a> to be cloned.</p></td>
+<td class="parameter_annotations"> </td>
+</tr></tbody>
+</table></div>
+</div>
+<div class="refsect3">
+<a name="i-cal-value-clone.returns"></a><h4>Returns</h4>
+<p>The newly created <a class="link" href="ICalValue.html" title="ICalValue"><span class="type">ICalValue</span></a> with the same property as <em class="parameter"><code>value</code></em>
+. </p>
+<p><span class="annotation">[<acronym title="Free data after the code is done."><span class="acronym">transfer full</span></acronym>]</span></p>
+</div>
+<p class="since">Since: 3.1</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="i-cal-value-new-from-string"></a><h3>i_cal_value_new_from_string ()</h3>
+<pre class="programlisting"><a class="link" href="ICalValue.html" title="ICalValue"><span class="returnvalue">ICalValue</span></a> *
+i_cal_value_new_from_string (<em class="parameter"><code><a class="link" href="libical-glib-i-cal-derived-value.html#ICalValueKind" title="enum ICalValueKind"><span class="type">ICalValueKind</span></a> kind</code></em>,
+                             <em class="parameter"><code>const <span class="type">gchar</span> *str</code></em>);</pre>
+<p>Creates a new <a class="link" href="ICalValue.html" title="ICalValue"><span class="type">ICalValue</span></a> based on the <a class="link" href="libical-glib-i-cal-derived-value.html#ICalValueKind" title="enum ICalValueKind"><span class="type">ICalValueKind</span></a> and a string.</p>
+<div class="refsect3">
+<a name="i-cal-value-new-from-string.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="parameter_name"><p>kind</p></td>
+<td class="parameter_description"><p>A <a class="link" href="libical-glib-i-cal-derived-value.html#ICalValueKind" title="enum ICalValueKind"><span class="type">ICalValueKind</span></a></p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>str</p></td>
+<td class="parameter_description"><p>A string</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<div class="refsect3">
+<a name="i-cal-value-new-from-string.returns"></a><h4>Returns</h4>
+<p>The newly created <a class="link" href="ICalValue.html" title="ICalValue"><span class="type">ICalValue</span></a> based on the <em class="parameter"><code>kind</code></em>
+and <em class="parameter"><code>str</code></em>
+. </p>
+<p><span class="annotation">[<acronym title="Free data after the code is done."><span class="acronym">transfer full</span></acronym>]</span></p>
+</div>
+<p class="since">Since: <a class="link" href="api-index-1-0.html#api-index-1.0">1.0</a></p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="i-cal-value-free"></a><h3>i_cal_value_free ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+i_cal_value_free (<em class="parameter"><code><a class="link" href="ICalValue.html" title="ICalValue"><span class="type">ICalValue</span></a> *value</code></em>);</pre>
+<p>Frees a <a class="link" href="ICalValue.html" title="ICalValue"><span class="type">ICalValue</span></a>.</p>
+<p><span class="annotation">[<acronym title="Exposed in C code, not necessarily available in other languages."><span class="acronym">skip</span></acronym>]</span></p>
+<div class="refsect3">
+<a name="i-cal-value-free.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody><tr>
+<td class="parameter_name"><p>value</p></td>
+<td class="parameter_description"><p>The <a class="link" href="ICalValue.html" title="ICalValue"><span class="type">ICalValue</span></a> to be freed</p></td>
+<td class="parameter_annotations"> </td>
+</tr></tbody>
+</table></div>
+</div>
+<p class="since">Since: <a class="link" href="api-index-1-0.html#api-index-1.0">1.0</a></p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="i-cal-value-is-valid"></a><h3>i_cal_value_is_valid ()</h3>
+<pre class="programlisting"><span class="returnvalue">gboolean</span>
+i_cal_value_is_valid (<em class="parameter"><code>const <a class="link" href="ICalValue.html" title="ICalValue"><span class="type">ICalValue</span></a> *value</code></em>);</pre>
+<p>Checks if <a class="link" href="ICalValue.html" title="ICalValue"><span class="type">ICalValue</span></a> is valid.</p>
+<div class="refsect3">
+<a name="i-cal-value-is-valid.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody><tr>
+<td class="parameter_name"><p>value</p></td>
+<td class="parameter_description"><p>The <a class="link" href="ICalValue.html" title="ICalValue"><span class="type">ICalValue</span></a> to be checked</p></td>
+<td class="parameter_annotations"> </td>
+</tr></tbody>
+</table></div>
+</div>
+<div class="refsect3">
+<a name="i-cal-value-is-valid.returns"></a><h4>Returns</h4>
+<p> 1 if valid, 0 if not.</p>
+</div>
+<p class="since">Since: <a class="link" href="api-index-1-0.html#api-index-1.0">1.0</a></p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="i-cal-value-as-ical-string"></a><h3>i_cal_value_as_ical_string ()</h3>
+<pre class="programlisting"><span class="returnvalue">gchar</span> *
+i_cal_value_as_ical_string (<em class="parameter"><code>const <a class="link" href="ICalValue.html" title="ICalValue"><span class="type">ICalValue</span></a> *value</code></em>);</pre>
+<p>Converts the <a class="link" href="ICalValue.html" title="ICalValue"><span class="type">ICalValue</span></a> to a string.</p>
+<div class="refsect3">
+<a name="i-cal-value-as-ical-string.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody><tr>
+<td class="parameter_name"><p>value</p></td>
+<td class="parameter_description"><p>A <a class="link" href="ICalValue.html" title="ICalValue"><span class="type">ICalValue</span></a></p></td>
+<td class="parameter_annotations"> </td>
+</tr></tbody>
+</table></div>
+</div>
+<div class="refsect3">
+<a name="i-cal-value-as-ical-string.returns"></a><h4>Returns</h4>
+<p>The string representation. </p>
+<p><span class="annotation">[<acronym title="Free data after the code is done."><span class="acronym">transfer full</span></acronym>]</span></p>
+</div>
+<p class="since">Since: <a class="link" href="api-index-1-0.html#api-index-1.0">1.0</a></p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="i-cal-value-isa"></a><h3>i_cal_value_isa ()</h3>
+<pre class="programlisting"><a class="link" href="libical-glib-i-cal-derived-value.html#ICalValueKind" title="enum ICalValueKind"><span class="returnvalue">ICalValueKind</span></a>
+i_cal_value_isa (<em class="parameter"><code>const <a class="link" href="ICalValue.html" title="ICalValue"><span class="type">ICalValue</span></a> *value</code></em>);</pre>
+<p>Gets the kind of <a class="link" href="ICalValue.html" title="ICalValue"><span class="type">ICalValue</span></a>.</p>
+<div class="refsect3">
+<a name="i-cal-value-isa.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody><tr>
+<td class="parameter_name"><p>value</p></td>
+<td class="parameter_description"><p>A <a class="link" href="ICalValue.html" title="ICalValue"><span class="type">ICalValue</span></a></p></td>
+<td class="parameter_annotations"> </td>
+</tr></tbody>
+</table></div>
+</div>
+<div class="refsect3">
+<a name="i-cal-value-isa.returns"></a><h4>Returns</h4>
+<p> The kind of <em class="parameter"><code>value</code></em>
+.</p>
+</div>
+<p class="since">Since: <a class="link" href="api-index-1-0.html#api-index-1.0">1.0</a></p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="i-cal-value-isa-value"></a><h3>i_cal_value_isa_value ()</h3>
+<pre class="programlisting"><span class="returnvalue">gint</span>
+i_cal_value_isa_value (<em class="parameter"><code><a class="link" href="ICalValue.html" title="ICalValue"><span class="type">ICalValue</span></a> *value</code></em>);</pre>
+<p>Checks whether the native part of <a class="link" href="ICalValue.html" title="ICalValue"><span class="type">ICalValue</span></a> is an icalvalue.</p>
+<div class="refsect3">
+<a name="i-cal-value-isa-value.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody><tr>
+<td class="parameter_name"><p>value</p></td>
+<td class="parameter_description"><p>A <a class="link" href="ICalValue.html" title="ICalValue"><span class="type">ICalValue</span></a></p></td>
+<td class="parameter_annotations"> </td>
+</tr></tbody>
+</table></div>
+</div>
+<div class="refsect3">
+<a name="i-cal-value-isa-value.returns"></a><h4>Returns</h4>
+<p> 1 if yes, 0 if not.</p>
+</div>
+<p class="since">Since: <a class="link" href="api-index-1-0.html#api-index-1.0">1.0</a></p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="i-cal-value-compare"></a><h3>i_cal_value_compare ()</h3>
+<pre class="programlisting"><a class="link" href="libical-glib-i-cal-derived-parameter.html#ICalParameterXliccomparetype" title="enum ICalParameterXliccomparetype"><span class="returnvalue">ICalParameterXliccomparetype</span></a>
+i_cal_value_compare (<em class="parameter"><code>const <a class="link" href="ICalValue.html" title="ICalValue"><span class="type">ICalValue</span></a> *a</code></em>,
+                     <em class="parameter"><code>const <a class="link" href="ICalValue.html" title="ICalValue"><span class="type">ICalValue</span></a> *b</code></em>);</pre>
+<p>Compares two <a class="link" href="ICalValue.html" title="ICalValue"><span class="type">ICalValue</span></a>.</p>
+<div class="refsect3">
+<a name="i-cal-value-compare.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="parameter_name"><p>a</p></td>
+<td class="parameter_description"><p>A <a class="link" href="ICalValue.html" title="ICalValue"><span class="type">ICalValue</span></a></p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>b</p></td>
+<td class="parameter_description"><p>A <a class="link" href="ICalValue.html" title="ICalValue"><span class="type">ICalValue</span></a></p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<div class="refsect3">
+<a name="i-cal-value-compare.returns"></a><h4>Returns</h4>
+<p> The compare result.</p>
+</div>
+<p class="since">Since: <a class="link" href="api-index-1-0.html#api-index-1.0">1.0</a></p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="i-cal-value-kind-from-string"></a><h3>i_cal_value_kind_from_string ()</h3>
+<pre class="programlisting"><a class="link" href="libical-glib-i-cal-derived-value.html#ICalValueKind" title="enum ICalValueKind"><span class="returnvalue">ICalValueKind</span></a>
+i_cal_value_kind_from_string (<em class="parameter"><code>const <span class="type">gchar</span> *str</code></em>);</pre>
+<p>Converts a string to <a class="link" href="libical-glib-i-cal-derived-value.html#ICalValueKind" title="enum ICalValueKind"><span class="type">ICalValueKind</span></a>.</p>
+<div class="refsect3">
+<a name="i-cal-value-kind-from-string.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody><tr>
+<td class="parameter_name"><p>str</p></td>
+<td class="parameter_description"><p>A string</p></td>
+<td class="parameter_annotations"> </td>
+</tr></tbody>
+</table></div>
+</div>
+<div class="refsect3">
+<a name="i-cal-value-kind-from-string.returns"></a><h4>Returns</h4>
+<p> A <a class="link" href="libical-glib-i-cal-derived-value.html#ICalValueKind" title="enum ICalValueKind"><span class="type">ICalValueKind</span></a>.</p>
+</div>
+<p class="since">Since: <a class="link" href="api-index-1-0.html#api-index-1.0">1.0</a></p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="i-cal-value-kind-to-string"></a><h3>i_cal_value_kind_to_string ()</h3>
+<pre class="programlisting">const <span class="returnvalue">gchar</span> *
+i_cal_value_kind_to_string (<em class="parameter"><code>const <a class="link" href="libical-glib-i-cal-derived-value.html#ICalValueKind" title="enum ICalValueKind"><span class="type">ICalValueKind</span></a> kind</code></em>);</pre>
+<p>Converts the <a class="link" href="libical-glib-i-cal-derived-value.html#ICalValueKind" title="enum ICalValueKind"><span class="type">ICalValueKind</span></a> to a string.</p>
+<div class="refsect3">
+<a name="i-cal-value-kind-to-string.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody><tr>
+<td class="parameter_name"><p>kind</p></td>
+<td class="parameter_description"><p>A <a class="link" href="libical-glib-i-cal-derived-value.html#ICalValueKind" title="enum ICalValueKind"><span class="type">ICalValueKind</span></a></p></td>
+<td class="parameter_annotations"> </td>
+</tr></tbody>
+</table></div>
+</div>
+<div class="refsect3">
+<a name="i-cal-value-kind-to-string.returns"></a><h4>Returns</h4>
+<p> The string representation of <a class="link" href="libical-glib-i-cal-derived-value.html#ICalValueKind" title="enum ICalValueKind"><span class="type">ICalValueKind</span></a>.</p>
+</div>
+<p class="since">Since: <a class="link" href="api-index-1-0.html#api-index-1.0">1.0</a></p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="i-cal-value-kind-is-valid"></a><h3>i_cal_value_kind_is_valid ()</h3>
+<pre class="programlisting"><span class="returnvalue">gboolean</span>
+i_cal_value_kind_is_valid (<em class="parameter"><code>const <a class="link" href="libical-glib-i-cal-derived-value.html#ICalValueKind" title="enum ICalValueKind"><span class="type">ICalValueKind</span></a> kind</code></em>);</pre>
+<p>Checks whether the <a class="link" href="libical-glib-i-cal-derived-value.html#ICalValueKind" title="enum ICalValueKind"><span class="type">ICalValueKind</span></a> is valid.</p>
+<div class="refsect3">
+<a name="i-cal-value-kind-is-valid.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody><tr>
+<td class="parameter_name"><p>kind</p></td>
+<td class="parameter_description"><p>The <a class="link" href="libical-glib-i-cal-derived-value.html#ICalValueKind" title="enum ICalValueKind"><span class="type">ICalValueKind</span></a> to be checked</p></td>
+<td class="parameter_annotations"> </td>
+</tr></tbody>
+</table></div>
+</div>
+<div class="refsect3">
+<a name="i-cal-value-kind-is-valid.returns"></a><h4>Returns</h4>
+<p> 1 if yes, 0 if not.</p>
+</div>
+<p class="since">Since: <a class="link" href="api-index-1-0.html#api-index-1.0">1.0</a></p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="i-cal-value-encode-ical-string"></a><h3>i_cal_value_encode_ical_string ()</h3>
+<pre class="programlisting"><span class="returnvalue">gchar</span> *
+i_cal_value_encode_ical_string (<em class="parameter"><code>const <span class="type">gchar</span> *szText</code></em>);</pre>
+<p>Encodes a character string in ical format, escape certain characters, etc.</p>
+<div class="refsect3">
+<a name="i-cal-value-encode-ical-string.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody><tr>
+<td class="parameter_name"><p>szText</p></td>
+<td class="parameter_description"><p>A string</p></td>
+<td class="parameter_annotations"> </td>
+</tr></tbody>
+</table></div>
+</div>
+<div class="refsect3">
+<a name="i-cal-value-encode-ical-string.returns"></a><h4>Returns</h4>
+<p>The encoded string. NULL if fail. </p>
+<p><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>][<acronym title="Free data after the code is done."><span class="acronym">transfer full</span></acronym>]</span></p>
+</div>
+<p class="since">Since: <a class="link" href="api-index-1-0.html#api-index-1.0">1.0</a></p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="i-cal-value-decode-ical-string"></a><h3>i_cal_value_decode_ical_string ()</h3>
+<pre class="programlisting"><span class="returnvalue">gchar</span> *
+i_cal_value_decode_ical_string (<em class="parameter"><code>const <span class="type">gchar</span> *szText</code></em>);</pre>
+<p>Extracts the original character string encoded by the above function.</p>
+<div class="refsect3">
+<a name="i-cal-value-decode-ical-string.parameters"></a><h4>Parameters</h4>
+<div class="informaltable"><table class="informaltable" width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody><tr>
+<td class="parameter_name"><p>szText</p></td>
+<td class="parameter_description"><p>A string</p></td>
+<td class="parameter_annotations"> </td>
+</tr></tbody>
+</table></div>
+</div>
+<div class="refsect3">
+<a name="i-cal-value-decode-ical-string.returns"></a><h4>Returns</h4>
+<p>The decoded string. NULL if fail. </p>
+<p><span class="annotation">[<acronym title="NULL is OK, both for passing and for returning."><span class="acronym">allow-none</span></acronym>][<acronym title="Free data after the code is done."><span class="acronym">transfer full</span></acronym>]</span></p>
+</div>
+<p class="since">Since: <a class="link" href="api-index-1-0.html#api-index-1.0">1.0</a></p>
+</div>
+</div>
+<div class="refsect1">
+<a name="ICalValue.other_details"></a><h2>Types and Values</h2>
+<div class="refsect2">
+<a name="I-CAL-TYPE-VALUE:CAPS"></a><h3>I_CAL_TYPE_VALUE</h3>
+<pre class="programlisting">#define             I_CAL_TYPE_VALUE</pre>
+</div>
+<hr>
+<div class="refsect2">
+<a name="ICalValueClass"></a><h3>struct ICalValueClass</h3>
+<pre class="programlisting">struct ICalValueClass {
+};
+</pre>
+<p>This is the ICalValue class.</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="ICalValue-struct"></a><h3>ICalValue</h3>
+<pre class="programlisting">typedef struct _ICalValue ICalValue;</pre>
+<p>This is the ICalValue instance.</p>
+</div>
+</div>
+</div>
+<div class="footer">
+<hr>Generated by GTK-Doc V1.32.1</div>
+</body>
+</html>
