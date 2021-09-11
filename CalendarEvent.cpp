@@ -7,7 +7,7 @@
 CalendarEvent::CalendarEvent(QWidget *parent) : QWidget(parent) {
     parent->installEventFilter(this);
 
-    QPalette palette(QColor::fromRgb(255, 255, 153, 100));
+    QPalette palette(QColor::fromRgb(255, 255, 153, 150));
     setAutoFillBackground(true);
     setPalette(palette);
 
@@ -17,16 +17,11 @@ CalendarEvent::CalendarEvent(QWidget *parent) : QWidget(parent) {
 }
 
 bool CalendarEvent::eventFilter(QObject *watched, QEvent *event) {
-    float startHour = 14; //TODO
-    float hours = 2; //TODO
     auto parent = dynamic_cast<QWidget*>(this->parent());
 
     if (event->type() == QEvent::Resize) {
-        this->setGeometry(5, (float)parent->height()/24*startHour, parent->width()-10, (float)parent->height()/24*hours);
+        this->setGeometry(5, (int)((float)parent->height()/(24*60)*startMinute),
+                          parent->width()-10, (int)((float)parent->height()/(24*60)*durationInMinutes));
     }
     return false;
-
-
-    //qDebug() << parent->height() << " --- " << parent->width();
-
 }
