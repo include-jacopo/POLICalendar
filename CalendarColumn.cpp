@@ -8,22 +8,25 @@ CalendarColumn::CalendarColumn(std::string date, bool isLastCol, QWidget *parent
     isLast = isLastCol;
     this->date = std::move(date);
 
-    test = new QLabel("Ciao");
-    btn = new QPushButton("Hello world!");
-    btn->resize(200, 100);
-
-    // Layout verticale
-    auto *layout = new QVBoxLayout();
-    layout->addWidget(test);
-    layout->addWidget(btn);
-    setLayout(layout);
-
     // Inizializza bordi sinistra e destra
+    middleLines = new QList<QLineF*>();
     lBorder = new QLineF();
     rBorder = new QLineF();
     for (int i = 0; i < 24+1; ++i) {
-        middleLines.push_back(new QLineF());
+        middleLines->push_back(new QLineF());
     }
+
+
+    // Layout
+    layout = new QStackedLayout();
+    layout->setStackingMode(QStackedLayout::StackAll);
+
+    //setLayout(layout);
+
+    // Inizializza lista eventi
+    events = new QList<CalendarEvent*>();
+    events->push_back(new CalendarEvent(this));
+    layout->addWidget(events->at(0));
 }
 
 void CalendarColumn::paintEvent(QPaintEvent *event) {
@@ -35,7 +38,7 @@ void CalendarColumn::paintEvent(QPaintEvent *event) {
         painter.drawLine(*rBorder);
     }
     painter.setPen(QColor::fromRgb(205, 205, 205));
-    for (auto line : middleLines){
+    for (auto line : *middleLines){
         painter.drawLine(*line);
     }
 }
@@ -47,10 +50,9 @@ void CalendarColumn::resizeEvent(QResizeEvent *event) {
     }
     for (int i = 0; i < 24+1; ++i) {
         if (i != 24) {
-            middleLines[i]->setLine(5, this->height()/24.0*i, this->width()-5, this->height()/24.0*i);
+            middleLines->at(i)->setLine(5, this->height()/24.0*i, this->width()-5, this->height()/24.0*i);
         } else {
-            middleLines[i]->setLine(5, this->height()/24.0*i-1, this->width()-5, this->height()/24.0*i-1);
+            middleLines->at(i)->setLine(5, this->height()/24.0*i-1, this->width()-5, this->height()/24.0*i-1);
         }
-
     }
 }

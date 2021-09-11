@@ -17,7 +17,7 @@ add_executable(POLICalendar main.cpp
         MainWindow.cpp MainWindow.h
         CalendarColumn.cpp CalendarColumn.h
         Calendar.cpp Calendar.h
-        Login/Login.cpp Login/Login.h HourVBar.cpp HourVBar.h)
+        Login/Login.cpp Login/Login.h HourVBar.cpp HourVBar.h CalendarEvent.cpp CalendarEvent.h)
 
 target_link_libraries(POLICalendar
         Qt::Core

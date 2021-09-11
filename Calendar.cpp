@@ -19,8 +19,9 @@ Calendar::Calendar(QWidget *parent) : QWidget(parent) {
     layout->addWidget(hourVBar);
 
     // Calendar columns
+    cols = new QList<CalendarColumn*>();
     for (int i = 0; i < NCOLS; ++i) {
-        cols.push_back(new CalendarColumn("TODO", i==NCOLS-1, this));
-        layout->addWidget(cols[i]);
+        cols->push_back(new CalendarColumn("TODO", i==NCOLS-1, this));
+        layout->addWidget(cols->at(i));
     }
 }

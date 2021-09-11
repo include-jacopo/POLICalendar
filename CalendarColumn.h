@@ -10,10 +10,11 @@
 #include <QPushButton>
 #include <QPainter>
 #include <QFont>
-#include <QVBoxLayout>
+#include <QStackedLayout>
 #include <QLineF>
 #include <QPainter>
 #include <QList>
+#include "CalendarEvent.h"
 
 class CalendarColumn : public QWidget {
     Q_OBJECT
@@ -21,10 +22,10 @@ private:
     bool isLast;
     std::string date;
 
-    QLabel *test;
-    QPushButton *btn;
+    QStackedLayout *layout;
     QLineF *lBorder, *rBorder;
-    QList<QLineF*> middleLines;
+    QList<QLineF*> *middleLines;
+    QList<CalendarEvent*> *events;
 
 public:
     explicit CalendarColumn(std::string date, bool isLastCol = false, QWidget *parent = nullptr);
