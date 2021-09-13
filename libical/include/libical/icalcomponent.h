@@ -23,7 +23,6 @@
 #ifndef ICALCOMPONENT_H
 #define ICALCOMPONENT_H
 
-#include "libical_deprecated.h"
 #include "libical_ical_export.h"
 #include "icalenums.h"  /* Defines icalcomponent_kind */
 #include "icalproperty.h"
@@ -44,12 +43,9 @@ typedef struct icalcompiter
  */
 LIBICAL_ICAL_EXPORT icalcomponent *icalcomponent_new(icalcomponent_kind kind);
 
-/**
- * @brief Deeply clones an icalcomponent.
- * Returns a pointer to the memory for the newly cloned icalcomponent.
- * @since 3.1.0
+/** @brief Constructor
  */
-LIBICAL_ICAL_EXPORT icalcomponent *icalcomponent_clone(const icalcomponent *component);
+LIBICAL_ICAL_EXPORT icalcomponent *icalcomponent_new_clone(icalcomponent *component);
 
 /** @brief Constructor
  */
@@ -77,25 +73,9 @@ LIBICAL_ICAL_EXPORT icalcomponent_kind icalcomponent_isa(const icalcomponent *co
 
 LIBICAL_ICAL_EXPORT int icalcomponent_isa_component(void *component);
 
-/* Deal with X components */
-
-LIBICAL_ICAL_EXPORT void icalcomponent_set_x_name(icalcomponent *comp, const char *name);
-LIBICAL_ICAL_EXPORT const char *icalcomponent_get_x_name(icalcomponent *comp);
-
-/** Returns the name of the component -- the type name converted to a
- *  string, or the value of _get_x_name if the type is and X component
+/*
+ * Working with properties
  */
-LIBICAL_ICAL_EXPORT const char *icalcomponent_get_component_name(const icalcomponent *comp);
-LIBICAL_ICAL_EXPORT char *icalcomponent_get_component_name_r(const icalcomponent *comp);
-
-/**
- * @copydoc icalcomponent_clone()
- * @deprecated Use icalcomponent_clone() instead
- */
-LIBICAL_ICAL_EXPORT LIBICAL_DEPRECATED(icalcomponent *icalcomponent_new_clone(
-                                           icalcomponent *component));
-
-/***** Working with Properties *****/
 
 LIBICAL_ICAL_EXPORT void icalcomponent_add_property(icalcomponent *component,
                                                     icalproperty *property);
@@ -126,7 +106,9 @@ LIBICAL_ICAL_EXPORT icalproperty *icalcomponent_get_first_property(icalcomponent
 LIBICAL_ICAL_EXPORT icalproperty *icalcomponent_get_next_property(icalcomponent *component,
                                                                   icalproperty_kind kind);
 
-/***** Working with Components *****/
+/*
+ * Working with components
+ */
 
 /** Return the first VEVENT, VTODO or VJOURNAL sub-component of cop, or
    comp if it is one of those types */
@@ -174,7 +156,7 @@ LIBICAL_ICAL_EXPORT icalcomponent *icalcompiter_prior(icalcompiter * i);
 
 LIBICAL_ICAL_EXPORT icalcomponent *icalcompiter_deref(icalcompiter * i);
 
-/***** Working with embedded error properties *****/
+/* Working with embedded error properties */
 
 /* Check the component against itip rules and insert error properties*/
 /* Working with embedded error properties */

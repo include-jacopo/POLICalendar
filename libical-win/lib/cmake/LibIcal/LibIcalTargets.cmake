@@ -70,7 +70,7 @@ add_library(ical_cxx-static STATIC IMPORTED)
 add_library(icalss SHARED IMPORTED)
 
 set_target_properties(icalss PROPERTIES
-  INTERFACE_LINK_LIBRARIES "ical"
+  INTERFACE_LINK_LIBRARIES "ical;C:/Perl/c/lib/libdb.a"
 )
 
 # Create imported target icalss-static

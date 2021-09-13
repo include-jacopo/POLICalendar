@@ -40,7 +40,7 @@ LIBICAL_ICALSS_EXPORT void icalgauge_dump(icalgauge *gauge);
 /** @brief Returns true if comp matches the gauge.
  *
  * The component must be in
- * canonical form -- a VCALENDAR with one VEVENT, VTODO or VJOURNAL
+ * cannonical form -- a VCALENDAR with one VEVENT, VTODO or VJOURNAL
  * sub component
  */
 LIBICAL_ICALSS_EXPORT int icalgauge_compare(icalgauge *g, icalcomponent *comp);
@@ -156,7 +156,7 @@ LIBICAL_ICALSS_EXPORT icalcomponent *icalset_fetch_match(icalset *set, icalcompo
    the currently selected components. */
 LIBICAL_ICALSS_EXPORT icalerrorenum icalset_modify(icalset *set,
                                                    icalcomponent *oldc, icalcomponent *newc);
-/** Iterates through the components. If a gauge has been defined, these
+/** Iterates through the components. If a guage has been defined, these
    will skip over components that do not pass the gauge */
 LIBICAL_ICALSS_EXPORT icalcomponent *icalset_get_current_component(icalset *set);
 LIBICAL_ICALSS_EXPORT icalcomponent *icalset_get_first_component(icalset *set);
@@ -188,21 +188,10 @@ LIBICAL_ICALSS_EXPORT icalcomponent *icalsetiter_to_prior(icalset *set, icalseti
 ======================================================================*/
 #ifndef ICALCLUSTER_H
 #define ICALCLUSTER_H
-#include "libical_deprecated.h"
 #include "libical_icalss_export.h"
 typedef struct icalcluster_impl icalcluster;
-/**
- * @brief Create a cluster with a key/value pair.
- *
- * @todo Always do a deep copy.
- */
 LIBICAL_ICALSS_EXPORT icalcluster *icalcluster_new(const char *key, icalcomponent *data);
-/**
- * Deeply clone an icalcluster.
- * Returns a pointer to the memory for the newly cloned icalcluster.
- * @since 3.1.0
-*/
-LIBICAL_ICALSS_EXPORT icalcluster *icalcluster_clone(const icalcluster *cluster);
+LIBICAL_ICALSS_EXPORT icalcluster *icalcluster_new_clone(const icalcluster *cluster);
 LIBICAL_ICALSS_EXPORT void icalcluster_free(icalcluster *cluster);
 LIBICAL_ICALSS_EXPORT const char *icalcluster_key(icalcluster *cluster);
 LIBICAL_ICALSS_EXPORT int icalcluster_is_changed(icalcluster *cluster);
@@ -218,12 +207,6 @@ LIBICAL_ICALSS_EXPORT icalerrorenum icalcluster_remove_component(icalcluster *cl
 LIBICAL_ICALSS_EXPORT icalcomponent *icalcluster_get_current_component(icalcluster *cluster);
 LIBICAL_ICALSS_EXPORT icalcomponent *icalcluster_get_first_component(icalcluster *cluster);
 LIBICAL_ICALSS_EXPORT icalcomponent *icalcluster_get_next_component(icalcluster *cluster);
-/**
- * @copydoc icalcluster_clone()
- * @deprecated use icalcluster_clone() instead
- */
-LIBICAL_ICALSS_EXPORT LIBICAL_DEPRECATED(icalcluster *icalcluster_new_clone(
-                                             const icalcluster *cluster));
 #endif /* !ICALCLUSTER_H */
 /*======================================================================
  FILE: icalfileset.h
@@ -332,9 +315,9 @@ extern icalfileset_options icalfileset_options_default;
   The primary interfaces are icaldirset__get_first_component and
   icaldirset_get_next_component. These routine iterate through all of
   the components in the store, subject to the current gauge. A gauge
-  is an icalcomponent that is tested against other components for a
+  is an icalcomponent that is tested against other componets for a
   match. If a gauge has been set with icaldirset_select,
-  icaldirset_first and icaldirset_next will only return components
+  icaldirset_first and icaldirset_next will only return componentes
   that match the gauge.
   The Store generated UIDs for all objects that are stored if they do
   not already have a UID. The UID is the name of the cluster (month &

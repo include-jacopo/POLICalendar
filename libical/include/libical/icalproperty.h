@@ -19,7 +19,6 @@
 #ifndef ICALPROPERTY_H
 #define ICALPROPERTY_H
 
-#include "libical_deprecated.h"
 #include "libical_ical_export.h"
 #include "icalderivedproperty.h"        /* To get icalproperty_kind enumerations */
 
@@ -31,12 +30,7 @@ LIBICAL_ICAL_EXPORT icalproperty *icalproperty_new(icalproperty_kind kind);
 
 LIBICAL_ICAL_EXPORT icalproperty *icalproperty_new_impl(icalproperty_kind kind);
 
-/** @brief Deeply clones an icalproperty.
- *
- * Returns a pointer to the memory for the newly cloned icalproperty.
- * @since 3.1.0
- */
-LIBICAL_ICAL_EXPORT icalproperty *icalproperty_clone(const icalproperty *prop);
+LIBICAL_ICAL_EXPORT icalproperty *icalproperty_new_clone(icalproperty *prop);
 
 LIBICAL_ICAL_EXPORT icalproperty *icalproperty_new_from_string(const char *str);
 
@@ -183,11 +177,5 @@ LIBICAL_ICAL_EXPORT int icalproperty_enum_belongs_to_property(icalproperty_kind 
  * @since 3.0
  */
 LIBICAL_ICAL_EXPORT void icalproperty_normalize(icalproperty *prop);
-
-/**
- * @copydoc icalproperty_clone()
- * @deprecated use icalproperty_clone() instead
- */
-LIBICAL_ICAL_EXPORT LIBICAL_DEPRECATED(icalproperty *icalproperty_new_clone(icalproperty *prop));
 
 #endif /*ICALPROPERTY_H */

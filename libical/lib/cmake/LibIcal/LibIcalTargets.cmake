@@ -16,7 +16,7 @@ set(CMAKE_IMPORT_FILE_VERSION 1)
 set(_targetsDefined)
 set(_targetsNotDefined)
 set(_expectedTargets)
-foreach(_expectedTarget ical ical-static ical_cxx ical_cxx-static icalss icalss-static icalss_cxx icalss_cxx-static icalvcal icalvcal-static ical-glib ical-glib-static)
+foreach(_expectedTarget ical ical-static ical_cxx ical_cxx-static icalss icalss-static icalss_cxx icalss_cxx-static icalvcal icalvcal-static)
   list(APPEND _expectedTargets ${_expectedTarget})
   if(NOT TARGET ${_expectedTarget})
     list(APPEND _targetsNotDefined ${_expectedTarget})
@@ -99,17 +99,6 @@ set_target_properties(icalvcal PROPERTIES
 
 # Create imported target icalvcal-static
 add_library(icalvcal-static STATIC IMPORTED)
-
-# Create imported target ical-glib
-add_library(ical-glib SHARED IMPORTED)
-
-# Create imported target ical-glib-static
-add_library(ical-glib-static STATIC IMPORTED)
-
-set_target_properties(ical-glib-static PROPERTIES
-  INTERFACE_COMPILE_OPTIONS "-I/usr/include/glib-2.0;-I/usr/lib/x86_64-linux-gnu/glib-2.0/include;-DG_LOG_DOMAIN=\"libical-glib\";-DLIBICAL_GLIB_COMPILATION"
-  INTERFACE_LINK_LIBRARIES "-lgobject-2.0;-lglib-2.0"
-)
 
 if(CMAKE_VERSION VERSION_LESS 2.8.12)
   message(FATAL_ERROR "This file relies on consumers using CMake 2.8.12 or greater.")

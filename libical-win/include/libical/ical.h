@@ -30,7 +30,7 @@ extern "C" {
 
 #define ICAL_MAJOR_VERSION (3)
 #define ICAL_MINOR_VERSION (0)
-#define ICAL_PATCH_VERSION (95)
+#define ICAL_PATCH_VERSION (10)
 #define ICAL_MICRO_VERSION ICAL_PATCH_VERSION
 
 /**
@@ -137,7 +137,7 @@ extern "C" {
 #include <time.h>
 
 /* An opaque struct representing a timezone. We declare this here to avoid
-   a circular dependency. */
+   a circular dependancy. */
 #if !defined(ICALTIMEZONE_DEFINED)
 #define ICALTIMEZONE_DEFINED
 typedef struct _icaltimezone icaltimezone;
@@ -225,7 +225,7 @@ LIBICAL_ICAL_EXPORT struct icaltimetype icaltime_from_timet_with_zone(const time
                                                                       const int is_date,
                                                                       const icaltimezone *zone);
 
-/**     @brief Constructor.
+/**     @brief Contructor.
  *
  * Creates a time from an ISO format string.
  *
@@ -236,7 +236,7 @@ LIBICAL_ICAL_EXPORT struct icaltimetype icaltime_from_timet_with_zone(const time
  */
 LIBICAL_ICAL_EXPORT struct icaltimetype icaltime_from_string(const char *str);
 
-/**     @brief Constructor.
+/**     @brief Contructor.
  *
  *      Creates a new time, given a day of year and a year.
  *
@@ -549,7 +549,7 @@ LIBICAL_ICAL_EXPORT struct icaldurationtype icaldurationtype_from_int(int t);
  *
  * @par Error handling
  * When given bad input, it sets ::icalerrno to ::ICAL_MALFORMEDDATA_ERROR and
- * returns icaldurationtype_bad_duration().
+ * returnes icaldurationtype_bad_duration().
  *
  * ### Usage
  * ```c
@@ -799,7 +799,7 @@ struct icalperiodtype
 /**
  * @brief Constructs a new ::icalperiodtype from @a str
  * @param str The string from which to construct a time period
- * @return An ::icalperiodtype representing the period @a str
+ * @return An ::icalperiodtype representing the peroid @a str
  * @sa icaltime_from_string(), icaldurationtype_from_string()
  *
  * @par Error handling
@@ -1190,6 +1190,28 @@ LIBICAL_ICAL_EXPORT const char *icalreqstattype_as_string(struct icalreqstattype
 
 LIBICAL_ICAL_EXPORT char *icalreqstattype_as_string_r(struct icalreqstattype);
 
+struct icaltimezonephase
+{
+    const char *tzname;
+    int is_stdandard;   /* 1 = standard tme, 0 = daylight savings time */
+    struct icaltimetype dtstart;
+    int offsetto;
+    int tzoffsetfrom;
+    const char *comment;
+    struct icaldatetimeperiodtype rdate;
+    const char *rrule;
+};
+
+struct icaltimezonetype
+{
+    const char *tzid;
+    struct icaltimetype last_mod;
+    const char *tzurl;
+
+    /* Array of phases. The end of the array is a phase with tzname == 0 */
+    struct icaltimezonephase *phases;
+};
+
 /* ical_unknown_token_handling :
  *    How should the ICAL library handle components, properties and parameters with
  *    unknown names?
@@ -1384,7 +1406,7 @@ LIBICAL_ICAL_EXPORT void icalarray_append(icalarray *array, const void *element)
  *
  * @par Error handling
  * If @a array is `NULL`, using this function results in undefined behaviour.
- * If the array is empty, using this function results in undefined behaviour.
+ * If the array is empty, using this functino results in undefined behaviour.
  * If the @a position is non-existent, it removes the last element.
  *
  * ### Usage
@@ -1749,8 +1771,6 @@ LIBICAL_ICAL_EXPORT void icalrecurrencetype_clear(struct icalrecurrencetype *r);
  *
  * The day's position in the period ( Nth-ness) and the numerical
  * value of the day are encoded together as: pos*7 + dow.
- *
- * A position of 0 means 'any' or 'every'.
  */
 LIBICAL_ICAL_EXPORT enum icalrecurrencetype_weekday icalrecurrencetype_day_day_of_week(short day);
 
@@ -1762,35 +1782,13 @@ LIBICAL_ICAL_EXPORT enum icalrecurrencetype_weekday icalrecurrencetype_day_day_o
  */
 LIBICAL_ICAL_EXPORT int icalrecurrencetype_day_position(short day);
 
-/** Encodes the @p weekday and @p position into a form, which can be stored
- *  to icalrecurrencetype::by_day array. Use icalrecurrencetype_day_day_of_week()
- *  and icalrecurrencetype_day_position() to split the encoded value back into the parts.
- * @since 3.1
- */
-LIBICAL_ICAL_EXPORT short icalrecurrencetype_encode_day(enum icalrecurrencetype_weekday weekday,
-                                                        int position);
-
 /*
  * Routines to decode the 'month' element of the by_month array
  */
 
-/**
- * The @p month element of the by_month array is encoded to allow
- * representation of the "L" leap suffix (RFC 7529).
- * These routines decode the month values.
- *
- * The "L" suffix is encoded by setting a high-order bit.
- */
 LIBICAL_ICAL_EXPORT int icalrecurrencetype_month_is_leap(short month);
 
 LIBICAL_ICAL_EXPORT int icalrecurrencetype_month_month(short month);
-
-/** Encodes the @p month and the @p is_leap into a form, which can be stored
- *  to icalrecurrencetype::by_month array. Use icalrecurrencetype_month_is_leap()
- *  and icalrecurrencetype_month_month() to split the encoded value back into the parts
- *  @since 3.1
- */
-LIBICAL_ICAL_EXPORT short icalrecurrencetype_encode_month(int month, int is_leap);
 
 /*
  * Recurrence rule parser
@@ -1823,43 +1821,8 @@ LIBICAL_ICAL_EXPORT icalrecur_iterator *icalrecur_iterator_new(struct icalrecurr
 LIBICAL_ICAL_EXPORT int icalrecur_iterator_set_start(icalrecur_iterator *impl,
                                                      struct icaltimetype start);
 
-/** Set the date-time at which the iterator will stop at the latest.
- *  Values equal to or greater than end will not be returned by the iterator.
-*/
-LIBICAL_ICAL_EXPORT int icalrecur_iterator_set_end(icalrecur_iterator *impl,
-                                                   struct icaltimetype end);
-
-/**
- * Sets the date-times over which the iterator will run,
- * where @p from is a value between DTSTART and UNTIL.
- *
- * If @p to is null time, the forward iterator will return values
- * up to and including UNTIL (if present), otherwise up to the year 2582.
- *
- * if @p to is non-null time and later than @p from,
- * the forward iterator will return values up to and including 'to'.
- *
- * If @p to is non-null time and earlier than @p from,
- * the reverse iterator will be set to start at @p from
- * and will return values down to and including @p to.
- *
- * NOTE: CAN NOT be used with RRULEs that contain COUNT.
- * @since 3.1
- */
-LIBICAL_ICAL_EXPORT int icalrecur_iterator_set_range(icalrecur_iterator *impl,
-                                                     struct icaltimetype from,
-                                                     struct icaltimetype to);
-
-/**
- * Gets the next occurrence from an iterator.
- */
+/** Gets the next occurrence from an iterator. */
 LIBICAL_ICAL_EXPORT struct icaltimetype icalrecur_iterator_next(icalrecur_iterator *);
-
-/**
- * Gets the previous occurrence from an iterator.
- * @since 3.1
- */
-LIBICAL_ICAL_EXPORT struct icaltimetype icalrecur_iterator_prev(icalrecur_iterator *);
 
 /** Frees the iterator. */
 LIBICAL_ICAL_EXPORT void icalrecur_iterator_free(icalrecur_iterator *);
@@ -1877,21 +1840,7 @@ LIBICAL_ICAL_EXPORT void icalrecur_iterator_free(icalrecur_iterator *);
 LIBICAL_ICAL_EXPORT int icalrecur_expand_recurrence(const char *rule, time_t start,
                                                     int count, time_t *array);
 
-/* ical_invalid_rrule_handling :
- *    How should the ICAL library handle RRULEs with invalid BYxxx part combos?
- */
-typedef enum ical_invalid_rrule_handling
-{
-    ICAL_RRULE_TREAT_AS_ERROR = 0,
-    ICAL_RRULE_IGNORE_INVALID = 1
-} ical_invalid_rrule_handling;
-
-LIBICAL_ICAL_EXPORT ical_invalid_rrule_handling ical_get_invalid_rrule_handling_setting(void);
-
-LIBICAL_ICAL_EXPORT void ical_set_invalid_rrule_handling_setting(
-    ical_invalid_rrule_handling newSetting);
-
-#endif /* ICALRECUR_H */
+#endif
 
 /*======================================================================
  FILE: icalattach.h
@@ -2250,7 +2199,7 @@ typedef enum icalvalue_kind {
     ICAL_X_VALUE=5022,
     ICAL_XLICCLASS_VALUE=5025,
    ICAL_NO_VALUE=5031
-} icalvalue_kind;
+} icalvalue_kind ;
 
 #define ICALPROPERTY_FIRST_ENUM 10000
 
@@ -3118,7 +3067,6 @@ LIBICAL_ICAL_EXPORT void icalparameter_set_xlicerrortype(icalparameter *value, i
 #ifndef ICALVALUE_H
 #define ICALVALUE_H
 
-#include "libical_deprecated.h"
 #include "libical_ical_export.h"
 
 
@@ -3129,12 +3077,7 @@ LIBICAL_ICAL_EXPORT void icalparameter_set_xlicerrortype(icalparameter *value, i
 
 LIBICAL_ICAL_EXPORT icalvalue *icalvalue_new(icalvalue_kind kind);
 
-/** @brief Deeply clones an icalvalue.
- *
- * Returns a pointer to the memory for the newly cloned icalvalue.
- * @since 3.1.0
- */
-LIBICAL_ICAL_EXPORT icalvalue *icalvalue_clone(const icalvalue *value);
+LIBICAL_ICAL_EXPORT icalvalue *icalvalue_new_clone(const icalvalue *value);
 
 LIBICAL_ICAL_EXPORT icalvalue *icalvalue_new_from_string(icalvalue_kind kind, const char *str);
 
@@ -3152,12 +3095,6 @@ LIBICAL_ICAL_EXPORT int icalvalue_isa_value(void *);
 
 LIBICAL_ICAL_EXPORT icalparameter_xliccomparetype icalvalue_compare(const icalvalue *a,
                                                                     const icalvalue *b);
-
-/**
- * @copydoc icalvalue_clone()
- * @deprecated Use icalvalue_clone() instead
- */
-LIBICAL_ICAL_EXPORT LIBICAL_DEPRECATED(icalvalue *icalvalue_new_clone(const icalvalue *value));
 
 /* Special, non autogenerated value accessors */
 
@@ -3184,7 +3121,7 @@ LIBICAL_ICAL_EXPORT const char *icalvalue_kind_to_string(const icalvalue_kind ki
 /** Check validity of a specific icalvalue_kind **/
 LIBICAL_ICAL_EXPORT int icalvalue_kind_is_valid(const icalvalue_kind kind);
 
-/** Encode a character string in ical format, escape certain characters, etc. */
+/** Encode a character string in ical format, esacpe certain characters, etc. */
 LIBICAL_ICAL_EXPORT int icalvalue_encode_ical_string(const char *szText,
                                                      char *szEncText, int MaxBufferLen);
 
@@ -3228,7 +3165,6 @@ extern void print_datetime_to_string(char *str, const struct icaltimetype *data)
 #ifndef ICALPARAMETER_H
 #define ICALPARAMETER_H
 
-#include "libical_deprecated.h"
 #include "libical_ical_export.h"
 
 
@@ -3284,7 +3220,7 @@ LIBICAL_ICAL_EXPORT icalparameter *icalparameter_new(icalparameter_kind kind);
  * icalparameter *param = icalparameter_new_from_string("ROLE=CHAIR");
  *
  * // clone the parameter
- * icalparameter *clone = icalparameter_clone(param);
+ * icalparameter *clone = icalparameter_new_clone(param);
  *
  * if(clone) {
  *     // use clone ...
@@ -3294,15 +3230,8 @@ LIBICAL_ICAL_EXPORT icalparameter *icalparameter_new(icalparameter_kind kind);
  * icalparameter_free(param);
  * icalparameter_free(clone);
  * ```
- * @since 3.1.0
  */
-LIBICAL_ICAL_EXPORT icalparameter *icalparameter_clone(const icalparameter *p);
-
-/**
- * @copydoc icalparameter_clone()
- * @deprecated Use icalparameter_clone() instead
- */
-LIBICAL_ICAL_EXPORT LIBICAL_DEPRECATED(icalparameter *icalparameter_new_clone(icalparameter *p));
+LIBICAL_ICAL_EXPORT icalparameter *icalparameter_new_clone(icalparameter *p);
 
 /**
  * @brief Creates new ::icalparameter object from string
@@ -3367,10 +3296,9 @@ LIBICAL_ICAL_EXPORT icalparameter *icalparameter_new_from_value_string(icalparam
  * @param parameter The icalparameter to free
  *
  * This method needs to be used on all parameter objects returned
- * from any of the `_new()` methods including icalparameter_new(),
- * icalparameter_new_from_string() and icalparameter_new_from_value_string()
- * and on cloned parameter objects returned by icalparameter_clone()
- * when these object are not needed anymore and to be released.
+ * from any of the `_new()` methods including icalparameter_new(), icalparameter_new_clone(),
+ * icalparameter_new_from_string() and icalparameter_new_from_value_string(),
+ * when they are not needed anymore and to be released.
  *
  * ### Usage
  * ```c
@@ -4753,7 +4681,6 @@ LIBICAL_ICAL_EXPORT icalproperty *icalproperty_vanew_xlicmimeoptinfo(const char 
 #ifndef ICALPROPERTY_H
 #define ICALPROPERTY_H
 
-#include "libical_deprecated.h"
 #include "libical_ical_export.h"
         /* To get icalproperty_kind enumerations */
 
@@ -4765,12 +4692,7 @@ LIBICAL_ICAL_EXPORT icalproperty *icalproperty_new(icalproperty_kind kind);
 
 LIBICAL_ICAL_EXPORT icalproperty *icalproperty_new_impl(icalproperty_kind kind);
 
-/** @brief Deeply clones an icalproperty.
- *
- * Returns a pointer to the memory for the newly cloned icalproperty.
- * @since 3.1.0
- */
-LIBICAL_ICAL_EXPORT icalproperty *icalproperty_clone(const icalproperty *prop);
+LIBICAL_ICAL_EXPORT icalproperty *icalproperty_new_clone(icalproperty *prop);
 
 LIBICAL_ICAL_EXPORT icalproperty *icalproperty_new_from_string(const char *str);
 
@@ -4918,12 +4840,6 @@ LIBICAL_ICAL_EXPORT int icalproperty_enum_belongs_to_property(icalproperty_kind 
  */
 LIBICAL_ICAL_EXPORT void icalproperty_normalize(icalproperty *prop);
 
-/**
- * @copydoc icalproperty_clone()
- * @deprecated use icalproperty_clone() instead
- */
-LIBICAL_ICAL_EXPORT LIBICAL_DEPRECATED(icalproperty *icalproperty_new_clone(icalproperty *prop));
-
 #endif /*ICALPROPERTY_H */
 
 /*======================================================================
@@ -5003,7 +4919,7 @@ LIBICAL_ICAL_EXPORT void pvl_clear(pvl_list);   /* Remove all elements, de-alloc
 
 LIBICAL_ICAL_EXPORT int pvl_count(pvl_list);
 
-/* Navigate the list */
+/* Navagate the list */
 LIBICAL_ICAL_EXPORT pvl_elem pvl_next(pvl_elem e);
 
 LIBICAL_ICAL_EXPORT pvl_elem pvl_prior(pvl_elem e);
@@ -5057,7 +4973,6 @@ LIBICAL_ICAL_EXPORT void pvl_apply(pvl_list l, pvl_applyf f, void *v);
 #ifndef ICALCOMPONENT_H
 #define ICALCOMPONENT_H
 
-#include "libical_deprecated.h"
 #include "libical_ical_export.h"
 
 
@@ -5076,12 +4991,9 @@ typedef struct icalcompiter
  */
 LIBICAL_ICAL_EXPORT icalcomponent *icalcomponent_new(icalcomponent_kind kind);
 
-/**
- * @brief Deeply clones an icalcomponent.
- * Returns a pointer to the memory for the newly cloned icalcomponent.
- * @since 3.1.0
+/** @brief Constructor
  */
-LIBICAL_ICAL_EXPORT icalcomponent *icalcomponent_clone(const icalcomponent *component);
+LIBICAL_ICAL_EXPORT icalcomponent *icalcomponent_new_clone(icalcomponent *component);
 
 /** @brief Constructor
  */
@@ -5109,25 +5021,9 @@ LIBICAL_ICAL_EXPORT icalcomponent_kind icalcomponent_isa(const icalcomponent *co
 
 LIBICAL_ICAL_EXPORT int icalcomponent_isa_component(void *component);
 
-/* Deal with X components */
-
-LIBICAL_ICAL_EXPORT void icalcomponent_set_x_name(icalcomponent *comp, const char *name);
-LIBICAL_ICAL_EXPORT const char *icalcomponent_get_x_name(icalcomponent *comp);
-
-/** Returns the name of the component -- the type name converted to a
- *  string, or the value of _get_x_name if the type is and X component
+/*
+ * Working with properties
  */
-LIBICAL_ICAL_EXPORT const char *icalcomponent_get_component_name(const icalcomponent *comp);
-LIBICAL_ICAL_EXPORT char *icalcomponent_get_component_name_r(const icalcomponent *comp);
-
-/**
- * @copydoc icalcomponent_clone()
- * @deprecated Use icalcomponent_clone() instead
- */
-LIBICAL_ICAL_EXPORT LIBICAL_DEPRECATED(icalcomponent *icalcomponent_new_clone(
-                                           icalcomponent *component));
-
-/***** Working with Properties *****/
 
 LIBICAL_ICAL_EXPORT void icalcomponent_add_property(icalcomponent *component,
                                                     icalproperty *property);
@@ -5158,7 +5054,9 @@ LIBICAL_ICAL_EXPORT icalproperty *icalcomponent_get_first_property(icalcomponent
 LIBICAL_ICAL_EXPORT icalproperty *icalcomponent_get_next_property(icalcomponent *component,
                                                                   icalproperty_kind kind);
 
-/***** Working with Components *****/
+/*
+ * Working with components
+ */
 
 /** Return the first VEVENT, VTODO or VJOURNAL sub-component of cop, or
    comp if it is one of those types */
@@ -5206,7 +5104,7 @@ LIBICAL_ICAL_EXPORT icalcomponent *icalcompiter_prior(icalcompiter * i);
 
 LIBICAL_ICAL_EXPORT icalcomponent *icalcompiter_deref(icalcompiter * i);
 
-/***** Working with embedded error properties *****/
+/* Working with embedded error properties */
 
 /* Check the component against itip rules and insert error properties*/
 /* Working with embedded error properties */
@@ -5596,7 +5494,7 @@ LIBICAL_ICAL_EXPORT icalcomponent *icalcomponent_new_xpatch(void);
 #if !defined(ICALTIMEZONE_DEFINED)
 #define ICALTIMEZONE_DEFINED
 /** @brief An opaque struct representing a timezone.
- * We declare this here to avoid a circular dependency.
+ * We declare this here to avoid a circular dependancy.
  */
 typedef struct _icaltimezone icaltimezone;
 #endif
@@ -5837,32 +5735,8 @@ extern const char *icaltimezone_tzid_prefix(void);
 #define ZONES_TAB_SYSTEM_FILENAME "zone.tab"
 #endif
 
-/**
- * Returns the fullpath to the system zoneinfo directory (where zone.tab lives).
- * The returned value points to static memory inside the library and should not try to be freed.
- *
- * If the TZDIR variable appears in the environment, it will be searched first for zone.tab.
- * If zone.tab is not located in TZDIR (or if TZDIR is not in the environment), then a
- * list of well-known paths where the system zone.tab typically is installed is searched.
- */
 LIBICAL_ICAL_EXPORT const char *icaltzutil_get_zone_directory(void);
 
-/**
- * Sets the fullpath to the zoneinfo directory (zone.tab must reside in there).
- * @param A const character string containing the fullpath to the zoneinfo directory.
- *
- * The internal zoneinfo path can be cleared if @p zonepath is empty or NULL.
- * @since 3.1
- */
-LIBICAL_ICAL_EXPORT void icaltzutil_set_zone_directory(const char *zonepath);
-
-/**
- * Returns a pointer to a timezone icalcomponent corresponding to the specified location
- * (a file residing in the zoneinfo).
- *
- * @param location is a string containing the name of a location with a timezone file
- *        found under the zoneinfo data.
- */
 LIBICAL_ICAL_EXPORT icalcomponent *icaltzutil_fetch_timezone(const char *location);
 
 #endif

@@ -40,7 +40,7 @@ LIBICAL_ICALSS_EXPORT void icalgauge_dump(icalgauge *gauge);
 /** @brief Returns true if comp matches the gauge.
  *
  * The component must be in
- * canonical form -- a VCALENDAR with one VEVENT, VTODO or VJOURNAL
+ * cannonical form -- a VCALENDAR with one VEVENT, VTODO or VJOURNAL
  * sub component
  */
 LIBICAL_ICALSS_EXPORT int icalgauge_compare(icalgauge *g, icalcomponent *comp);
@@ -156,7 +156,7 @@ LIBICAL_ICALSS_EXPORT icalcomponent *icalset_fetch_match(icalset *set, icalcompo
    the currently selected components. */
 LIBICAL_ICALSS_EXPORT icalerrorenum icalset_modify(icalset *set,
                                                    icalcomponent *oldc, icalcomponent *newc);
-/** Iterates through the components. If a gauge has been defined, these
+/** Iterates through the components. If a guage has been defined, these
    will skip over components that do not pass the gauge */
 LIBICAL_ICALSS_EXPORT icalcomponent *icalset_get_current_component(icalset *set);
 LIBICAL_ICALSS_EXPORT icalcomponent *icalset_get_first_component(icalset *set);
@@ -188,21 +188,10 @@ LIBICAL_ICALSS_EXPORT icalcomponent *icalsetiter_to_prior(icalset *set, icalseti
 ======================================================================*/
 #ifndef ICALCLUSTER_H
 #define ICALCLUSTER_H
-#include "libical_deprecated.h"
 #include "libical_icalss_export.h"
 typedef struct icalcluster_impl icalcluster;
-/**
- * @brief Create a cluster with a key/value pair.
- *
- * @todo Always do a deep copy.
- */
 LIBICAL_ICALSS_EXPORT icalcluster *icalcluster_new(const char *key, icalcomponent *data);
-/**
- * Deeply clone an icalcluster.
- * Returns a pointer to the memory for the newly cloned icalcluster.
- * @since 3.1.0
-*/
-LIBICAL_ICALSS_EXPORT icalcluster *icalcluster_clone(const icalcluster *cluster);
+LIBICAL_ICALSS_EXPORT icalcluster *icalcluster_new_clone(const icalcluster *cluster);
 LIBICAL_ICALSS_EXPORT void icalcluster_free(icalcluster *cluster);
 LIBICAL_ICALSS_EXPORT const char *icalcluster_key(icalcluster *cluster);
 LIBICAL_ICALSS_EXPORT int icalcluster_is_changed(icalcluster *cluster);
@@ -218,12 +207,6 @@ LIBICAL_ICALSS_EXPORT icalerrorenum icalcluster_remove_component(icalcluster *cl
 LIBICAL_ICALSS_EXPORT icalcomponent *icalcluster_get_current_component(icalcluster *cluster);
 LIBICAL_ICALSS_EXPORT icalcomponent *icalcluster_get_first_component(icalcluster *cluster);
 LIBICAL_ICALSS_EXPORT icalcomponent *icalcluster_get_next_component(icalcluster *cluster);
-/**
- * @copydoc icalcluster_clone()
- * @deprecated use icalcluster_clone() instead
- */
-LIBICAL_ICALSS_EXPORT LIBICAL_DEPRECATED(icalcluster *icalcluster_new_clone(
-                                             const icalcluster *cluster));
 #endif /* !ICALCLUSTER_H */
 /*======================================================================
  FILE: icalfileset.h
@@ -332,9 +315,9 @@ extern icalfileset_options icalfileset_options_default;
   The primary interfaces are icaldirset__get_first_component and
   icaldirset_get_next_component. These routine iterate through all of
   the components in the store, subject to the current gauge. A gauge
-  is an icalcomponent that is tested against other components for a
+  is an icalcomponent that is tested against other componets for a
   match. If a gauge has been set with icaldirset_select,
-  icaldirset_first and icaldirset_next will only return components
+  icaldirset_first and icaldirset_next will only return componentes
   that match the gauge.
   The Store generated UIDs for all objects that are stored if they do
   not already have a UID. The UID is the name of the cluster (month &
@@ -590,6 +573,121 @@ LIBICAL_ICALSS_EXPORT icalcomponent *icalmessage_new_error_reply(icalcomponent *
                                                                  const char *debug,
                                                                  icalrequeststatus rs);
 #endif /* ICALMESSAGE_H */
+/*======================================================================
+ FILE: icalbdbset.h
+ (C) COPYRIGHT 2001, Critical Path
+ This library is free software; you can redistribute it and/or modify
+ it under the terms of either:
+    The LGPL as published by the Free Software Foundation, version
+    2.1, available at: https://www.gnu.org/licenses/lgpl-2.1.html
+ Or:
+    The Mozilla Public License Version 2.0. You may obtain a copy of
+    the License at https://www.mozilla.org/MPL/
+======================================================================*/
+#ifndef ICALBDBSET_H
+#define ICALBDBSET_H
+#include "libical_icalss_export.h"
+#include <db.h>
+typedef struct icalbdbset_impl icalbdbset;
+enum icalbdbset_subdb_type
+{ ICALBDB_CALENDARS, ICALBDB_EVENTS, ICALBDB_TODOS, ICALBDB_REMINDERS };
+typedef enum icalbdbset_subdb_type icalbdbset_subdb_type;
+/** sets up the db environment, should be done in parent thread.. */
+LIBICAL_ICALSS_EXPORT int icalbdbset_init_dbenv(char *db_env_dir,
+                                                void (*logDbFunc) (const DB_ENV *,
+                                                                   const char *, const char *));
+LIBICAL_ICALSS_EXPORT icalset *icalbdbset_init(icalset *set, const char *dsn, void *options);
+LIBICAL_ICALSS_EXPORT int icalbdbset_cleanup(void);
+LIBICAL_ICALSS_EXPORT void icalbdbset_checkpoint(void);
+LIBICAL_ICALSS_EXPORT void icalbdbset_rmdbLog(void);
+/** Creates a component handle.  flags allows caller to
+   specify if database is internally a BTREE or HASH */
+LIBICAL_ICALSS_EXPORT icalset *icalbdbset_new(const char *database_filename,
+                                              icalbdbset_subdb_type subdb_type,
+                                              int dbtype, u_int32_t flag);
+LIBICAL_ICALSS_EXPORT DB *icalbdbset_bdb_open_secondary(DB *dbp,
+                                                        const char *subdb,
+                                                        const char *sindex,
+                                                        int (*callback) (DB *db,
+                                                                         const DBT *dbt1,
+                                                                         const DBT *dbt2,
+                                                                         DBT *dbt3), int type);
+LIBICAL_ICALSS_EXPORT char *icalbdbset_parse_data(DBT *dbt, char *(*pfunc) (const DBT *dbt));
+LIBICAL_ICALSS_EXPORT void icalbdbset_free(icalset *set);
+/* cursor operations */
+LIBICAL_ICALSS_EXPORT int icalbdbset_acquire_cursor(DB *dbp, DB_TXN *tid, DBC ** rdbcp);
+LIBICAL_ICALSS_EXPORT int icalbdbset_cget(DBC *dbcp, DBT *key, DBT *data,
+                                          u_int32_t access_method);
+LIBICAL_ICALSS_EXPORT int icalbdbset_cput(DBC *dbcp, DBT *key, DBT *data,
+                                          u_int32_t access_method);
+LIBICAL_ICALSS_EXPORT int icalbdbset_get_first(DBC *dbcp, DBT *key, DBT *data);
+LIBICAL_ICALSS_EXPORT int icalbdbset_get_next(DBC *dbcp, DBT *key, DBT *data);
+LIBICAL_ICALSS_EXPORT int icalbdbset_get_last(DBC *dbcp, DBT *key, DBT *data);
+LIBICAL_ICALSS_EXPORT int icalbdbset_get_key(DBC *dbcp, DBT *key, DBT *data);
+LIBICAL_ICALSS_EXPORT int icalbdbset_delete(DB *dbp, DBT *key);
+LIBICAL_ICALSS_EXPORT int icalbdbset_put(DB *dbp, DBT *key, DBT *data, u_int32_t access_method);
+LIBICAL_ICALSS_EXPORT int icalbdbset_get(DB *dbp, DB_TXN *tid, DBT *key, DBT *data,
+                                         u_int32_t flags);
+LIBICAL_ICALSS_EXPORT const char *icalbdbset_path(icalset *set);
+LIBICAL_ICALSS_EXPORT const char *icalbdbset_subdb(icalset *set);
+/* Mark the set as changed, so it will be written to disk when it
+   is freed. Commit writes to disk immediately. */
+LIBICAL_ICALSS_EXPORT void icalbdbset_mark(icalset *set);
+LIBICAL_ICALSS_EXPORT icalerrorenum icalbdbset_commit(icalset *set);
+LIBICAL_ICALSS_EXPORT icalerrorenum icalbdbset_add_component(icalset *set, icalcomponent *child);
+LIBICAL_ICALSS_EXPORT icalerrorenum icalbdbset_remove_component(icalset *set,
+                                                                icalcomponent *child);
+LIBICAL_ICALSS_EXPORT int icalbdbset_count_components(icalset *set, icalcomponent_kind kind);
+/* Restrict the component returned by icalbdbset_first, _next to those
+   that pass the gauge. _clear removes the gauge */
+LIBICAL_ICALSS_EXPORT icalerrorenum icalbdbset_select(icalset *store, icalgauge *gauge);
+LIBICAL_ICALSS_EXPORT void icalbdbset_clear(icalset *store);
+/* Gets and searches for a component by uid */
+LIBICAL_ICALSS_EXPORT icalcomponent *icalbdbset_fetch(icalset *set,
+                                                      icalcomponent_kind kind, const char *uid);
+LIBICAL_ICALSS_EXPORT int icalbdbset_has_uid(icalset *set, const char *uid);
+LIBICAL_ICALSS_EXPORT icalcomponent *icalbdbset_fetch_match(icalset *set, icalcomponent *c);
+LIBICAL_ICALSS_EXPORT icalerrorenum icalbdbset_modify(icalset *set, icalcomponent *old,
+                                                      icalcomponent *newc);
+/* cluster management functions */
+LIBICAL_ICALSS_EXPORT icalerrorenum icalbdbset_set_cluster(icalset *set, icalcomponent *cluster);
+LIBICAL_ICALSS_EXPORT icalerrorenum icalbdbset_free_cluster(icalset *set);
+LIBICAL_ICALSS_EXPORT icalcomponent *icalbdbset_get_cluster(icalset *set);
+/* Iterate through components. If a gauge has been defined, these
+   will skip over components that do not pass the gauge */
+LIBICAL_ICALSS_EXPORT icalcomponent *icalbdbset_get_current_component(icalset *set);
+LIBICAL_ICALSS_EXPORT icalcomponent *icalbdbset_get_first_component(icalset *set);
+LIBICAL_ICALSS_EXPORT icalcomponent *icalbdbset_get_next_component(icalset *set);
+/* External iterator for thread safety */
+LIBICAL_ICALSS_EXPORT icalsetiter icalbdbset_begin_component(icalset *set,
+                                                             icalcomponent_kind kind,
+                                                             icalgauge *gauge, const char *tzid);
+LIBICAL_ICALSS_EXPORT icalcomponent *icalbdbset_form_a_matched_recurrence_component(icalsetiter *
+                                                                                    itr);
+LIBICAL_ICALSS_EXPORT icalcomponent *icalbdbsetiter_to_next(icalset *set, icalsetiter *i);
+LIBICAL_ICALSS_EXPORT icalcomponent *icalbdbsetiter_to_prior(icalset *set, icalsetiter *i);
+/* Return a reference to the internal component. You probably should
+   not be using this. */
+LIBICAL_ICALSS_EXPORT icalcomponent *icalbdbset_get_component(icalset *set);
+LIBICAL_ICALSS_EXPORT DB_ENV *icalbdbset_get_env(void);
+LIBICAL_ICALSS_EXPORT int icalbdbset_begin_transaction(DB_TXN *parent_id, DB_TXN ** txnid);
+LIBICAL_ICALSS_EXPORT int icalbdbset_commit_transaction(DB_TXN *txnid);
+LIBICAL_ICALSS_EXPORT DB *icalbdbset_bdb_open(const char *path,
+                                              const char *subdb,
+                                              int type, int mode, u_int32_t flag);
+typedef struct icalbdbset_options
+{
+    icalbdbset_subdb_type subdb;     /**< the subdatabase to open */
+    int dbtype;                      /**< db_open type: DB_HASH | DB_BTREE */
+    int mode;                        /**< file mode */
+    u_int32_t flag;                  /**< DB->set_flags(): DB_DUP | DB_DUPSORT */
+    char *(*pfunc) (const DBT *dbt);
+                                    /**< parsing function */
+    int (*callback) (DB *db,
+                            /**< callback for secondary db open */
+                     const DBT *dbt1, const DBT *dbt2, DBT *dbt3);
+} icalbdbset_options;
+#endif /* !ICALBDBSET_H */
 
 #ifdef __cplusplus
 }

@@ -241,8 +241,6 @@ LIBICAL_ICAL_EXPORT void icalrecurrencetype_clear(struct icalrecurrencetype *r);
  *
  * The day's position in the period ( Nth-ness) and the numerical
  * value of the day are encoded together as: pos*7 + dow.
- *
- * A position of 0 means 'any' or 'every'.
  */
 LIBICAL_ICAL_EXPORT enum icalrecurrencetype_weekday icalrecurrencetype_day_day_of_week(short day);
 
@@ -254,35 +252,13 @@ LIBICAL_ICAL_EXPORT enum icalrecurrencetype_weekday icalrecurrencetype_day_day_o
  */
 LIBICAL_ICAL_EXPORT int icalrecurrencetype_day_position(short day);
 
-/** Encodes the @p weekday and @p position into a form, which can be stored
- *  to icalrecurrencetype::by_day array. Use icalrecurrencetype_day_day_of_week()
- *  and icalrecurrencetype_day_position() to split the encoded value back into the parts.
- * @since 3.1
- */
-LIBICAL_ICAL_EXPORT short icalrecurrencetype_encode_day(enum icalrecurrencetype_weekday weekday,
-                                                        int position);
-
 /*
  * Routines to decode the 'month' element of the by_month array
  */
 
-/**
- * The @p month element of the by_month array is encoded to allow
- * representation of the "L" leap suffix (RFC 7529).
- * These routines decode the month values.
- *
- * The "L" suffix is encoded by setting a high-order bit.
- */
 LIBICAL_ICAL_EXPORT int icalrecurrencetype_month_is_leap(short month);
 
 LIBICAL_ICAL_EXPORT int icalrecurrencetype_month_month(short month);
-
-/** Encodes the @p month and the @p is_leap into a form, which can be stored
- *  to icalrecurrencetype::by_month array. Use icalrecurrencetype_month_is_leap()
- *  and icalrecurrencetype_month_month() to split the encoded value back into the parts
- *  @since 3.1
- */
-LIBICAL_ICAL_EXPORT short icalrecurrencetype_encode_month(int month, int is_leap);
 
 /*
  * Recurrence rule parser
@@ -315,43 +291,8 @@ LIBICAL_ICAL_EXPORT icalrecur_iterator *icalrecur_iterator_new(struct icalrecurr
 LIBICAL_ICAL_EXPORT int icalrecur_iterator_set_start(icalrecur_iterator *impl,
                                                      struct icaltimetype start);
 
-/** Set the date-time at which the iterator will stop at the latest.
- *  Values equal to or greater than end will not be returned by the iterator.
-*/
-LIBICAL_ICAL_EXPORT int icalrecur_iterator_set_end(icalrecur_iterator *impl,
-                                                   struct icaltimetype end);
-
-/**
- * Sets the date-times over which the iterator will run,
- * where @p from is a value between DTSTART and UNTIL.
- *
- * If @p to is null time, the forward iterator will return values
- * up to and including UNTIL (if present), otherwise up to the year 2582.
- *
- * if @p to is non-null time and later than @p from,
- * the forward iterator will return values up to and including 'to'.
- *
- * If @p to is non-null time and earlier than @p from,
- * the reverse iterator will be set to start at @p from
- * and will return values down to and including @p to.
- *
- * NOTE: CAN NOT be used with RRULEs that contain COUNT.
- * @since 3.1
- */
-LIBICAL_ICAL_EXPORT int icalrecur_iterator_set_range(icalrecur_iterator *impl,
-                                                     struct icaltimetype from,
-                                                     struct icaltimetype to);
-
-/**
- * Gets the next occurrence from an iterator.
- */
+/** Gets the next occurrence from an iterator. */
 LIBICAL_ICAL_EXPORT struct icaltimetype icalrecur_iterator_next(icalrecur_iterator *);
-
-/**
- * Gets the previous occurrence from an iterator.
- * @since 3.1
- */
-LIBICAL_ICAL_EXPORT struct icaltimetype icalrecur_iterator_prev(icalrecur_iterator *);
 
 /** Frees the iterator. */
 LIBICAL_ICAL_EXPORT void icalrecur_iterator_free(icalrecur_iterator *);
@@ -369,18 +310,4 @@ LIBICAL_ICAL_EXPORT void icalrecur_iterator_free(icalrecur_iterator *);
 LIBICAL_ICAL_EXPORT int icalrecur_expand_recurrence(const char *rule, time_t start,
                                                     int count, time_t *array);
 
-/* ical_invalid_rrule_handling :
- *    How should the ICAL library handle RRULEs with invalid BYxxx part combos?
- */
-typedef enum ical_invalid_rrule_handling
-{
-    ICAL_RRULE_TREAT_AS_ERROR = 0,
-    ICAL_RRULE_IGNORE_INVALID = 1
-} ical_invalid_rrule_handling;
-
-LIBICAL_ICAL_EXPORT ical_invalid_rrule_handling ical_get_invalid_rrule_handling_setting(void);
-
-LIBICAL_ICAL_EXPORT void ical_set_invalid_rrule_handling_setting(
-    ical_invalid_rrule_handling newSetting);
-
-#endif /* ICALRECUR_H */
+#endif
