@@ -12,12 +12,16 @@ find_package(Qt6 COMPONENTS
         Widgets
         REQUIRED)
 
-if(UNIX)
-set(LibIcal_DIR libical-macos/lib/cmake/LibIcal)
+if(UNIX AND NOT APPLE)
+set(LibIcal_DIR libical/libical-unix/lib/cmake/LibIcal)
+endif()
+
+if(APPLE)
+    set(LibIcal_DIR libical/libical-macos/lib/cmake/LibIcal)
 endif()
 
 if (WIN32)
-    set(LibIcal_DIR libical-win/lib/cmake/LibIcal)
+    set(LibIcal_DIR libical/libical-win/lib/cmake/LibIcal)
 endif()
 
 find_package(LibIcal REQUIRED)
