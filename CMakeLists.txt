@@ -12,21 +12,9 @@ find_package(Qt6 COMPONENTS
         Widgets
         REQUIRED)
 
-if(UNIX AND NOT APPLE)
-set(LibIcal_DIR libical/libical-unix/lib/cmake/LibIcal)
-endif()
-
-if(APPLE)
-    set(LibIcal_DIR libical/libical-macos/lib/cmake/LibIcal)
-endif()
-
-if (WIN32)
-    set(LibIcal_DIR libical/libical-win/lib/cmake/LibIcal)
-endif()
-
 find_package(LibIcal REQUIRED)
 include_directories(${LibIcal_INCLUDE_DIR})
-link_directories(${LibIcal_LIBRARIES_DIR})
+#link_directories(${LibIcal_LIBRARIES_DIR})
 
 add_executable(POLICalendar main.cpp
         MainWindow.cpp MainWindow.h
