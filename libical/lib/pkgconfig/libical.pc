@@ -8,5 +8,5 @@ Description: An implementation of basic iCAL protocols
 Version: 3.0.10
 Libs: -L${libdir} -lical -licalss -licalvcal
 Libs.private: -lpthread
-Requires.private: icu-i18n
+
 Cflags: -I${includedir}

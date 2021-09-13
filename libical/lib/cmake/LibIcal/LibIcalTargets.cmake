@@ -54,7 +54,7 @@ endif()
 add_library(ical SHARED IMPORTED)
 
 set_target_properties(ical PROPERTIES
-  INTERFACE_LINK_LIBRARIES "-lpthread;/usr/lib/x86_64-linux-gnu/libicuuc.so;/usr/lib/x86_64-linux-gnu/libicui18n.so"
+  INTERFACE_LINK_LIBRARIES "-lpthread"
 )
 
 # Create imported target ical-static
