@@ -12,10 +12,14 @@ find_package(Qt6 COMPONENTS
         Widgets
         REQUIRED)
 
-set(LibIcal_DIR libical/lib/cmake/LibIcal)
+if(UNIX)
+set(LibIcal_DIR libical-macos/lib/cmake/LibIcal)
+endif()
+
 if (WIN32)
     set(LibIcal_DIR libical-win/lib/cmake/LibIcal)
 endif()
+
 find_package(LibIcal REQUIRED)
 include_directories(${LibIcal_INCLUDE_DIR})
 link_directories(${LibIcal_LIBRARIES_DIR})
@@ -33,7 +37,6 @@ target_link_libraries(POLICalendar
         Qt::Gui
         Qt::Widgets
         ${LibIcal_LIBRARIES})
-
 
 if (WIN32)
     set(DEBUG_SUFFIX)
