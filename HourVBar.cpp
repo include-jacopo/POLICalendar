@@ -15,7 +15,7 @@ HourVBar::HourVBar(QWidget *parent) : QWidget(parent) {
     layout->setSpacing(0);
 
     for (int i = 0; i < 24; ++i) {
-        auto l = new QLabel(QString::number(i));
+        auto l = new QLabel(QString::number(i) + ":00");
         auto lMargins = l->contentsMargins();
         lMargins.setTop(0);
         l->setContentsMargins(lMargins);
