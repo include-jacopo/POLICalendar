@@ -23,15 +23,12 @@ private:
     std::string date;
 
     QStackedLayout *layout;
-    QLineF *lBorder, *rBorder;
-    QList<QLineF*> *middleLines;
-    QList<CalendarEvent*> *events;
+    QList<CalendarEvent*> events;
 
 public:
     explicit CalendarColumn(std::string date, bool isLastCol = false, QWidget *parent = nullptr);
 
     void paintEvent(QPaintEvent *event) override;
-    void resizeEvent(QResizeEvent *event) override;
 
 public slots:
 

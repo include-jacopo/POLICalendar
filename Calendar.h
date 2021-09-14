@@ -14,7 +14,7 @@
 class Calendar : public QWidget {
     Q_OBJECT
 private:
-    QList<CalendarColumn*> *cols;
+    QList<CalendarColumn*> cols;
     HourVBar *hourVBar;
 
 public:
