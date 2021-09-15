@@ -14,11 +14,6 @@ CalendarEvents::CalendarEvents(bool isLastCol, QWidget *widget) : QWidget(widget
 
 void CalendarEvents::paintEvent(QPaintEvent *event) {
     QPainter painter(this);
-    painter.setPen(Qt::blue);
-    painter.drawLine(QLine(1,0,1,this->height()));
-    if (isLastCol) {
-        painter.drawLine(QLine(this->width()-1, 0, this->width()-1, this->height()));
-    }
     painter.setPen(QColor::fromRgb(205, 205, 205));
     for (int i = 0; i < 24+1; ++i) {
         if (i != 24) {
