@@ -11,7 +11,10 @@ using namespace std;
 int new_session() {
     ne_session *sess;
     sess = ne_session_create("http", "www.google.com", 80);
-    cout << sess;
+
+    ne_request
+
+
 
     return 1;
 }
