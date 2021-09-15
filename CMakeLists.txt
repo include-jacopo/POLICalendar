@@ -12,9 +12,10 @@ find_package(Qt6 COMPONENTS
         Widgets
         REQUIRED)
 
+find_library(NEON neon)
+
 find_package(LibIcal REQUIRED)
 include_directories(${LibIcal_INCLUDE_DIR})
-#link_directories(${LibIcal_LIBRARIES_DIR})
 
 add_executable(POLICalendar main.cpp
         MainWindow.cpp MainWindow.h
@@ -23,13 +24,15 @@ add_executable(POLICalendar main.cpp
         Login/Login.cpp Login/Login.h
         HourVBar.cpp HourVBar.h
         CalendarEvent.cpp CalendarEvent.h
-        CalendarEvents.cpp CalendarEvents.h backend/session.cpp backend/session.h)
+        CalendarEvents.cpp CalendarEvents.h
+        backend/session.cpp backend/session.h)
 
 target_link_libraries(POLICalendar
         Qt::Core
         Qt::Gui
         Qt::Widgets
         ${LibIcal_LIBRARIES}
+        ${NEON}
         )
 
 if (WIN32)
