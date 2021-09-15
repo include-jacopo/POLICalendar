@@ -5,6 +5,6 @@
 #ifndef POLICALENDAR_SESSION_H
 #define POLICALENDAR_SESSION_H
 
-int new_session();
+int do_get();
 
 #endif //POLICALENDAR_SESSION_H

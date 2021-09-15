@@ -11,15 +11,6 @@
 #include <iostream>
 using namespace std;
 
-int cbReader(void *userdata, const char *buf, size_t len){
-    //__PRINTFUNC__;
-
-    ne_xml_parser *parser = (ne_xml_parser *)userdata;
-    ne_xml_parse(parser, buf, len);
-
-    return 0;
-}
-
 int httpResponseReader(void *userdata, const char *buf, size_t len)
 {
     string *str = (string *)userdata;
@@ -27,12 +18,12 @@ int httpResponseReader(void *userdata, const char *buf, size_t len)
     return 0;
 }
 
-int new_session() {
+int do_get() {
     ne_session *sess;
-    sess = ne_session_create("http", "www.google.com", 80);
+    sess = ne_session_create("http", "dav.fruux.com", 80);
     string response;
 
-    ne_request *req = ne_request_create(sess, "GET", "/");
+    ne_request *req = ne_request_create(sess, "GET", "/principals/uid/a3298160768/");
     //returns a pointer to a request object
 
     ne_add_response_body_reader(req, ne_accept_always, httpResponseReader, &response);
@@ -60,6 +51,5 @@ int new_session() {
         default:
             throw invalid_argument("ne_generic error");
     }
-
     return 1;
 }

@@ -8,7 +8,7 @@
 #include "backend/session.h"
 
 int main(int argc, char *argv[]) {
-    new_session();
+    do_get();
 
     /*
     icalcomponent *event; //prova di utilizzo
