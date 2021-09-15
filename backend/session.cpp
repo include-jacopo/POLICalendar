@@ -4,12 +4,14 @@
 
 #include "session.h"
 #include <neon/ne_session.h>
+#include <neon/ne_request.h>
+#include <iostream>
+using namespace std;
 
+int new_session() {
+    ne_session *sess;
+    sess = ne_session_create("http", "www.google.com", 80);
+    cout << sess;
 
-
-ne_session *sess;
-sess = ne_session_create("http","www.google.com", 80);
-
-void ne_close_connection(	ne_session *session);
-
-void ne_session_destroy(	ne_session *session);
+    return 1;
+}
