@@ -8,14 +8,23 @@
 #include <QWidget>
 #include <QGridLayout>
 #include <QPalette>
+#include <QCalendarWidget>
+#include <QList>
 #include "HourVBar.h"
 #include "CalendarDate.h"
 #include "CalendarEvents.h"
 
 class Calendar : public QWidget {
     Q_OBJECT
+private:
+    QWidget *calendarColumns;
+    QList<std::tuple<CalendarDate*, CalendarEvents*>> columns;
+
 public:
     explicit Calendar(QWidget *parent = nullptr);
+
+protected:
+    void resizeEvent(QResizeEvent *event) override;
 };
 
 

@@ -22,3 +22,7 @@ void MainWindow::loginSuccessful() {
     calendar = new Calendar(this);
     setCentralWidget(calendar);
 }
+
+QSize MainWindow::sizeHint() const {
+    return QSize(1280, 720);
+}

@@ -18,6 +18,7 @@ private:
 
 public:
     explicit MainWindow(QWidget *parent = nullptr);
+    QSize sizeHint() const override;
 
 public slots:
     void loginSuccessful();
