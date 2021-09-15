@@ -23,7 +23,7 @@ add_executable(POLICalendar main.cpp
         HourVBar.cpp HourVBar.h
         CalendarEvent.cpp CalendarEvent.h
         CalendarEvents.cpp CalendarEvents.h
-        backend/session.cpp backend/session.h)
+        backend/session.cpp backend/session.h backend/WebClient.cpp backend/WebClient.h)
 
 target_link_libraries(POLICalendar
         Qt::Core

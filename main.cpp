@@ -6,9 +6,13 @@
 #include <neon/ne_utils.h>
 #include <iostream>
 #include "backend/session.h"
+#include "backend/WebClient.h"
 
 int main(int argc, char *argv[]) {
-    do_get();
+    WebClient cal("dav.fruux.com",
+                  "b3297398995",
+                  "dap2zg5z54tu");
+    cal.do_propfind();
 
     /*
     icalcomponent *event; //prova di utilizzo

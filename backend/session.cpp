@@ -11,7 +11,7 @@
 #include <iostream>
 using namespace std;
 
-int httpResponseReader(void *userdata, const char *buf, size_t len)
+int OLDhttpResponseReader(void *userdata, const char *buf, size_t len)
 {
     string *str = (string *)userdata;
     str->append(buf, len);
@@ -20,13 +20,18 @@ int httpResponseReader(void *userdata, const char *buf, size_t len)
 
 int do_get() {
     ne_session *sess;
-    sess = ne_session_create("http", "dav.fruux.com", 80);
     string response;
+
+    ne_sock_init();
+
+    sess = ne_session_create("http", "dav.fruux.com", 80);
 
     ne_request *req = ne_request_create(sess, "GET", "/principals/uid/a3298160768/");
     //returns a pointer to a request object
 
-    ne_add_response_body_reader(req, ne_accept_always, httpResponseReader, &response);
+    //ne_set_server_auth(sess, my_auth, NULL);
+
+    ne_add_response_body_reader(req, ne_accept_always, OLDhttpResponseReader, &response);
 
     int result = ne_request_dispatch(req);
     int status = ne_get_status(req)->code;
