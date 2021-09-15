@@ -7,21 +7,20 @@
 #define NCOLS 7
 
 Calendar::Calendar(QWidget *parent) : QWidget(parent) {
-    // 7 colonne orizzontali
-    auto *layout = new QHBoxLayout(this);
+    // Grid 2 righe - NCOLS+1 colonne
+    auto layout = new QGridLayout(this);
     layout->setSpacing(0);
     setMinimumSize(640,480);
 
-
     // Time bar
-    hourVBar = new HourVBar(this);
+    auto hourVBar = new HourVBar();
     hourVBar->setMaximumWidth(60);
-    layout->addWidget(hourVBar);
+    layout->addWidget(hourVBar, 1, 0);
+    layout->setRowStretch(1, 1);
 
-    // Calendar columns
-    cols = new QList<CalendarColumn*>();
+    // Calendar daily columns
     for (int i = 0; i < NCOLS; ++i) {
-        cols->push_back(new CalendarColumn("TODO", i==NCOLS-1, this));
-        layout->addWidget(cols->at(i));
+        layout->addWidget(new CalendarDate(std::to_string(14+i)+"/09/2021"), 0, 1+i, Qt::AlignCenter);
+        layout->addWidget(new CalendarEvents(i==NCOLS-1), 1, 1+i);
     }
 }

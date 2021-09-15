@@ -15,14 +15,14 @@ class CalendarEvent : public QWidget {
     Q_OBJECT
 private:
     QVBoxLayout *layout;
-    QLabel *eventName;
-    float startMinute = 14*60; //TODO Read from web
-    float durationInMinutes = 120; //TODO Read from web
+    unsigned int startMinute = 14*60; //TODO Read from web
+    unsigned int durationInMinutes = 120; //TODO Read from web
 
 public:
     explicit CalendarEvent(QWidget *parent = nullptr);
 
-    bool eventFilter(QObject *watched, QEvent *event) override;
+    [[nodiscard]] unsigned int getStartMinute() const;
+    [[nodiscard]] unsigned int getDurationInMinutes() const;
 };
 
 

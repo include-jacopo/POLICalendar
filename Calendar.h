@@ -6,17 +6,13 @@
 #define POLICALENDAR_CALENDAR_H
 
 #include <QWidget>
-#include <QList>
-#include <QHBoxLayout>
-#include "CalendarColumn.h"
+#include <QGridLayout>
 #include "HourVBar.h"
+#include "CalendarDate.h"
+#include "CalendarEvents.h"
 
 class Calendar : public QWidget {
     Q_OBJECT
-private:
-    QList<CalendarColumn*> *cols;
-    HourVBar *hourVBar;
-
 public:
     explicit Calendar(QWidget *parent = nullptr);
 };

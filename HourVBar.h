@@ -12,7 +12,7 @@
 
 class HourVBar : public QWidget {
 private:
-    QList<QLabel*> *hours;
+    QList<QLabel*> hours;
     QVBoxLayout *layout;
 
 public:

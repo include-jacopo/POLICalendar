@@ -18,17 +18,19 @@ include_directories(${LibIcal_INCLUDE_DIR})
 
 add_executable(POLICalendar main.cpp
         MainWindow.cpp MainWindow.h
-        CalendarColumn.cpp CalendarColumn.h
+        CalendarDate.cpp CalendarDate.h
         Calendar.cpp Calendar.h
         Login/Login.cpp Login/Login.h
         HourVBar.cpp HourVBar.h
-        CalendarEvent.cpp CalendarEvent.h)
+        CalendarEvent.cpp CalendarEvent.h
+        CalendarEvents.cpp CalendarEvents.h)
 
 target_link_libraries(POLICalendar
         Qt::Core
         Qt::Gui
         Qt::Widgets
-        ${LibIcal_LIBRARIES})
+        ${LibIcal_LIBRARIES}
+        )
 
 if (WIN32)
     set(DEBUG_SUFFIX)
