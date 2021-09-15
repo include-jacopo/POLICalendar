@@ -3,6 +3,7 @@
 #include "Calendar.h"
 #include "MainWindow.h"
 #include <libical/ical.h>
+#include <neon/ne_utils.h>
 #include <iostream>
 
 int main(int argc, char *argv[]) {
