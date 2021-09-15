@@ -12,8 +12,6 @@ find_package(Qt6 COMPONENTS
         Widgets
         REQUIRED)
 
-find_library(NEON neon)
-
 find_package(LibIcal REQUIRED)
 include_directories(${LibIcal_INCLUDE_DIR})
 
@@ -32,8 +30,14 @@ target_link_libraries(POLICalendar
         Qt::Gui
         Qt::Widgets
         ${LibIcal_LIBRARIES}
-        ${NEON}
         )
+
+IF(APPLE)
+    find_library(NEON neon)
+    target_link_libraries(POLICalendar ${NEON})
+ELSE()
+    target_link_libraries(POLICalendar neon)
+ENDIF()
 
 if (WIN32)
     set(DEBUG_SUFFIX)
