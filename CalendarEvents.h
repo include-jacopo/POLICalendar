@@ -8,7 +8,6 @@
 
 #include <QWidget>
 #include <QPainter>
-#include <QCoreApplication>
 #include <QResizeEvent>
 #include "CalendarEvent.h"
 

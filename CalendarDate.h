@@ -7,13 +7,15 @@
 
 #include <QWidget>
 #include <QLabel>
+#include <QString>
 #include <QVBoxLayout>
+#include <QDate>
 
 class CalendarDate : public QWidget {
     Q_OBJECT
 
 public:
-    explicit CalendarDate(const std::string& date, QWidget *parent = nullptr);
+    explicit CalendarDate(QDate date, QWidget *parent = nullptr);
 };
 
 

@@ -13,7 +13,6 @@
 class MainWindow : public QMainWindow {
     Q_OBJECT
 private:
-    // Calendar raggruppa le CalendarColumn
     Calendar *calendar;
     Login *login;
 

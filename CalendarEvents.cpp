@@ -9,7 +9,7 @@ CalendarEvents::CalendarEvents(bool isLastCol, QWidget *widget) : QWidget(widget
 
     // Inizializza lista eventi
     events = QList<CalendarEvent*>();
-    events.push_back(new CalendarEvent(this));
+    events.push_back(new CalendarEvent(14*60, 120, this)); //TODO Get real data
 }
 
 void CalendarEvents::paintEvent(QPaintEvent *event) {

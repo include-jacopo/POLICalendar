@@ -7,6 +7,7 @@
 
 #include <QWidget>
 #include <QGridLayout>
+#include <QPalette>
 #include "HourVBar.h"
 #include "CalendarDate.h"
 #include "CalendarEvents.h"
