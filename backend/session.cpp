@@ -18,7 +18,7 @@ int new_session() {
     if (ne_request_dispatch(req)) {
         cout << "Request failed" << ne_get_error(sess);
     } else {
-        cout << "ok";
+        cout << "okk";
     }
 
     return 1;
