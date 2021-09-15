@@ -13,8 +13,10 @@
 
 class Calendar : public QWidget {
     Q_OBJECT
+
 private:
-    QWidget *calendarColumns;
+    QCalendarWidget *calendarWidget;
+    CalendarColumns *calendarColumns;
 
 public:
     explicit Calendar(QWidget *parent = nullptr);

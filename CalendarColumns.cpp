@@ -7,7 +7,7 @@
 #define NCOLS 7
 
 CalendarColumns::CalendarColumns(QWidget *parent) : QWidget(parent) {
-    auto layout = new QGridLayout(this);
+    layout = new QGridLayout(this);
     layout->setSpacing(0);
 
     // Time bar
@@ -19,17 +19,15 @@ CalendarColumns::CalendarColumns(QWidget *parent) : QWidget(parent) {
     // Calendar daily columns
     for (int i = 0; i < NCOLS; ++i) {
         auto calDate = new CalendarDate(QDate::currentDate().addDays(i));
-        layout->addWidget(calDate, 0, 1 + i, Qt::AlignCenter);
-        auto calEvents = new CalendarEvents(i == NCOLS - 1);
-        layout->addWidget(calEvents, 1, 1 + i);
+        auto calEvents = new CalendarEvents();
         columns.push_back(std::make_tuple(calDate, calEvents));
+
+        layout->addWidget(calDate, 0, 1 + i, Qt::AlignCenter);
+        layout->addWidget(calEvents, 1, 1 + i);
     }
 }
 
-void CalendarColumns::resizeEvent(QResizeEvent *event) {
-    colsOnScreen = (this->width() - 60) / 200;
-    if (colsOnScreen < 1) colsOnScreen = 1;
-    if (colsOnScreen > 7) colsOnScreen = 7;
+void CalendarColumns::hideExtraColumns() {
     for (int i = 0; i < columns.size(); ++i) {
         auto date = std::get<0>(columns[i]);
         auto events = std::get<1>(columns[i]);
@@ -45,6 +43,13 @@ void CalendarColumns::resizeEvent(QResizeEvent *event) {
     }
 }
 
+void CalendarColumns::resizeEvent(QResizeEvent *event) {
+    colsOnScreen = (this->width() - 60) / 200;
+    if (colsOnScreen < 1) colsOnScreen = 1;
+    if (colsOnScreen > 7) colsOnScreen = 7;
+    hideExtraColumns();
+}
+
 void CalendarColumns::paintEvent(QPaintEvent *event) {
     QPainter painter(this);
     painter.setPen(Qt::blue);
@@ -55,4 +60,16 @@ void CalendarColumns::paintEvent(QPaintEvent *event) {
             painter.drawLine(QLine(coord.topRight(), coord.bottomRight()));
         }
     }
+}
+
+void CalendarColumns::dateChanged(QDate date) {
+    // Generate new columns
+    for (int i = 0; i < NCOLS; ++i) {
+        auto calDate = new CalendarDate(date.addDays(i));
+        auto calEvents = new CalendarEvents();
+        layout->replaceWidget(std::get<0>(columns[i]), calDate)->widget()->close();
+        layout->replaceWidget(std::get<1>(columns[i]), calEvents)->widget()->close();
+        columns.replace(i, std::make_tuple(calDate, calEvents));
+    }
+    hideExtraColumns();
 }

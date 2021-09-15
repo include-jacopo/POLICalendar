@@ -15,13 +15,19 @@ Calendar::Calendar(QWidget *parent) : QWidget(parent) {
     auto layoutMain = new QGridLayout(this);
 
     // Calendar columns widget
-    layoutMain->addWidget(new CalendarColumns(), 0, 0, 2, 1);
+    calendarColumns = new CalendarColumns();
+    layoutMain->addWidget(calendarColumns, 0, 0, 2, 1);
     layoutMain->setColumnStretch(0, 1);
 
     // Calendar widget
-    layoutMain->addWidget(new QCalendarWidget(), 0, 1);
+    calendarWidget = new QCalendarWidget();
+    layoutMain->addWidget(calendarWidget, 0, 1);
 
     // Tasklist widget
     layoutMain->addWidget(new QLabel("TODO Tasklist"), 1, 1); //TODO Create tasklist widget
     layoutMain->setRowStretch(1, 1);
+
+    // Connect signal from calendar widget to dateChanged slot
+    connect(calendarWidget, &QCalendarWidget::selectionChanged,
+            calendarColumns, [this]() {calendarColumns->dateChanged(calendarWidget->selectedDate());});
 }

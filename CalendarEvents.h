@@ -18,7 +18,7 @@ private:
     QList<CalendarEvent*> events;
 
 public:
-    explicit CalendarEvents(bool isLastCol, QWidget *widget = nullptr);
+    explicit CalendarEvents(QWidget *widget = nullptr);
 
 protected:
     void paintEvent(QPaintEvent *event) override;

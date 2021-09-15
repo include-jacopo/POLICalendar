@@ -4,9 +4,7 @@
 
 #include "CalendarEvents.h"
 
-CalendarEvents::CalendarEvents(bool isLastCol, QWidget *widget) : QWidget(widget) {
-    this->isLastCol = isLastCol;
-
+CalendarEvents::CalendarEvents(QWidget *widget) : QWidget(widget) {
     // Inizializza lista eventi
     events = QList<CalendarEvent*>();
     events.push_back(new CalendarEvent(14*60, 120, this)); //TODO Get real data
