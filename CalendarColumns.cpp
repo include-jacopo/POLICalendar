@@ -9,25 +9,30 @@
 CalendarColumns::CalendarColumns(QWidget *parent) : QWidget(parent) {
     layout = new QGridLayout(this);
     layout->setSpacing(0);
+    layout->setContentsMargins(0, 0, 0, 0);
 
     // Time bar
     auto hourVBar = new HourVBar();
-    hourVBar->setFixedWidth(60);
+    hourVBar->setFixedWidth(50);
     layout->addWidget(hourVBar, 1, 0);
     layout->setRowStretch(1, 1);
 
     // Calendar daily columns
     for (int i = 0; i < NCOLS; ++i) {
-        auto calDate = new CalendarDate(QDate::currentDate().addDays(i));
-        auto calEvents = new CalendarEvents();
-        columns.push_back(std::make_tuple(calDate, calEvents));
+        auto date = QDate::currentDate().addDays(i);
+        auto calDate = new CalendarDate(date);
+        auto calEvents = new CalendarEvents(date);
+        calDate->layout()->setContentsMargins(0, 0, 0, 10);
 
+        columns.push_back(std::make_tuple(calDate, calEvents));
         layout->addWidget(calDate, 0, 1 + i, Qt::AlignCenter);
         layout->addWidget(calEvents, 1, 1 + i);
     }
 }
 
-void CalendarColumns::hideExtraColumns() {
+void CalendarColumns::resizeEvent(QResizeEvent *event) {
+    colsOnScreen = (this->width() - 50) / 200;
+    colsOnScreen = std::clamp(colsOnScreen, 1, 7);
     for (int i = 0; i < columns.size(); ++i) {
         auto date = std::get<0>(columns[i]);
         auto events = std::get<1>(columns[i]);
@@ -43,20 +48,13 @@ void CalendarColumns::hideExtraColumns() {
     }
 }
 
-void CalendarColumns::resizeEvent(QResizeEvent *event) {
-    colsOnScreen = (this->width() - 60) / 200;
-    if (colsOnScreen < 1) colsOnScreen = 1;
-    if (colsOnScreen > 7) colsOnScreen = 7;
-    hideExtraColumns();
-}
-
 void CalendarColumns::paintEvent(QPaintEvent *event) {
     QPainter painter(this);
     painter.setPen(Qt::blue);
     for (int i = 0; i < colsOnScreen; ++i) {
         auto coord = std::get<1>(columns[i])->geometry();
         painter.drawLine(QLine(coord.topLeft(), coord.bottomLeft()));
-        if (i == colsOnScreen-1) {
+        if (i == colsOnScreen - 1) {
             painter.drawLine(QLine(coord.topRight(), coord.bottomRight()));
         }
     }
@@ -65,11 +63,7 @@ void CalendarColumns::paintEvent(QPaintEvent *event) {
 void CalendarColumns::dateChanged(QDate date) {
     // Generate new columns
     for (int i = 0; i < NCOLS; ++i) {
-        auto calDate = new CalendarDate(date.addDays(i));
-        auto calEvents = new CalendarEvents();
-        layout->replaceWidget(std::get<0>(columns[i]), calDate)->widget()->close();
-        layout->replaceWidget(std::get<1>(columns[i]), calEvents)->widget()->close();
-        columns.replace(i, std::make_tuple(calDate, calEvents));
+        std::get<0>(columns[i])->setDate(date.addDays(i));
+        std::get<1>(columns[i])->setDate(date.addDays(i));
     }
-    hideExtraColumns();
 }

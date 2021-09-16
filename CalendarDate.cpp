@@ -6,5 +6,11 @@
 
 CalendarDate::CalendarDate(QDate date, QWidget *parent) : QWidget(parent) {
     auto layout = new QVBoxLayout(this);
-    layout->addWidget(new QLabel(date.toString(QString("dd/MM/yyyy"))));
+    labelDate = new QLabel();
+    setDate(date);
+    layout->addWidget(labelDate);
+}
+
+void CalendarDate::setDate(const QDate &date) {
+    labelDate->setText(date.toString(QString("dd/MM/yyyy")));
 }

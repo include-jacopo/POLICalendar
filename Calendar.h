@@ -10,6 +10,7 @@
 #include <QPalette>
 #include <QCalendarWidget>
 #include "CalendarColumns.h"
+#include "Tasklist.h"
 
 class Calendar : public QWidget {
     Q_OBJECT
@@ -17,9 +18,13 @@ class Calendar : public QWidget {
 private:
     QCalendarWidget *calendarWidget;
     CalendarColumns *calendarColumns;
+    QGridLayout *layout;
 
 public:
     explicit Calendar(QWidget *parent = nullptr);
+
+protected:
+    void resizeEvent(QResizeEvent *event) override;
 };
 
 

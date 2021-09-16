@@ -12,8 +12,8 @@ find_package(Qt6 COMPONENTS
         Widgets
         REQUIRED)
 
-find_package(LibIcal REQUIRED)
-include_directories(${LibIcal_INCLUDE_DIR})
+#find_package(LibIcal REQUIRED)
+#include_directories(${LibIcal_INCLUDE_DIR})
 #link_directories(${LibIcal_LIBRARIES_DIR})
 
 add_executable(POLICalendar main.cpp
@@ -23,13 +23,16 @@ add_executable(POLICalendar main.cpp
         Login/Login.cpp Login/Login.h
         HourVBar.cpp HourVBar.h
         CalendarEvent.cpp CalendarEvent.h
-        CalendarEvents.cpp CalendarEvents.h)
+        CalendarEvents.cpp CalendarEvents.h
+        CalendarColumns.cpp CalendarColumns.h
+        Tasklist.cpp Tasklist.h
+        Task.cpp Task.h)
 
 target_link_libraries(POLICalendar
         Qt::Core
         Qt::Gui
         Qt::Widgets
-        ${LibIcal_LIBRARIES}
+        #${LibIcal_LIBRARIES}
         )
 
 if (WIN32)

@@ -14,8 +14,12 @@
 class CalendarDate : public QWidget {
     Q_OBJECT
 
+private:
+    QLabel *labelDate;
+
 public:
     explicit CalendarDate(QDate date, QWidget *parent = nullptr);
+    void setDate(const QDate &date);
 };
 
 

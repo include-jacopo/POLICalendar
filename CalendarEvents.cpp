@@ -4,11 +4,21 @@
 
 #include "CalendarEvents.h"
 
-CalendarEvents::CalendarEvents(QWidget *widget) : QWidget(widget) {
+CalendarEvents::CalendarEvents(QDate date, QWidget *widget) : QWidget(widget) {
+    CalendarEvents::date = date;
+
     // Inizializza lista eventi
     events = QList<CalendarEvent*>();
-    events.push_back(new CalendarEvent(14*60, 120, this)); //TODO Get real data
+
+    //TODO Get real events
+    events.push_back(new CalendarEvent(14*60, 120, this));
 }
+
+void CalendarEvents::setDate(const QDate &date) {
+    CalendarEvents::date = date;
+    // TODO Update events
+}
+
 
 void CalendarEvents::paintEvent(QPaintEvent *event) {
     QPainter painter(this);

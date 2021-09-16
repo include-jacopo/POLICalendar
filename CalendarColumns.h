@@ -18,9 +18,8 @@ class CalendarColumns : public QWidget {
 private:
     QList<std::tuple<CalendarDate*, CalendarEvents*>> columns;
     QGridLayout *layout;
-    int colsOnScreen = 0;
 
-    void hideExtraColumns();
+    int colsOnScreen = 0;
 
 public:
     explicit CalendarColumns(QWidget *parent = nullptr);

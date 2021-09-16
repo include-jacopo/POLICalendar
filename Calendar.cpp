@@ -12,22 +12,29 @@ Calendar::Calendar(QWidget *parent) : QWidget(parent) {
     setAutoFillBackground(true);
 
     // Main grid layout
-    auto layoutMain = new QGridLayout(this);
+    layout = new QGridLayout(this);
+    layout->setSpacing(20);
 
     // Calendar columns widget
     calendarColumns = new CalendarColumns();
-    layoutMain->addWidget(calendarColumns, 0, 0, 2, 1);
-    layoutMain->setColumnStretch(0, 1);
+    layout->addWidget(calendarColumns, 0, 0, 2, 1);
+    layout->setColumnStretch(0, 1);
 
     // Calendar widget
     calendarWidget = new QCalendarWidget();
-    layoutMain->addWidget(calendarWidget, 0, 1);
+    layout->addWidget(calendarWidget, 0, 1);
 
     // Tasklist widget
-    layoutMain->addWidget(new QLabel("TODO Tasklist"), 1, 1); //TODO Create tasklist widget
-    layoutMain->setRowStretch(1, 1);
+    layout->addWidget(new Tasklist(), 1, 1);
+    layout->setRowStretch(1, 1);
 
     // Connect signal from calendar widget to dateChanged slot
     connect(calendarWidget, &QCalendarWidget::selectionChanged,
             calendarColumns, [this]() {calendarColumns->dateChanged(calendarWidget->selectedDate());});
+}
+
+void Calendar::resizeEvent(QResizeEvent *event) {
+    auto margin = this->width() / 64;
+    margin = std::clamp(margin, 10, 30);
+    layout->setContentsMargins(margin, margin, margin, margin);
 }

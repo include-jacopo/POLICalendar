@@ -8,17 +8,19 @@
 
 #include <QWidget>
 #include <QPainter>
-#include <QResizeEvent>
+#include <QDate>
 #include "CalendarEvent.h"
 
 class CalendarEvents : public QWidget {
     Q_OBJECT
+
 private:
-    bool isLastCol;
     QList<CalendarEvent*> events;
+    QDate date;
 
 public:
-    explicit CalendarEvents(QWidget *widget = nullptr);
+    explicit CalendarEvents(QDate date, QWidget *widget = nullptr);
+    void setDate(const QDate &date);
 
 protected:
     void paintEvent(QPaintEvent *event) override;
