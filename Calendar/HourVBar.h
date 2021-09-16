@@ -12,6 +12,8 @@
 #include <QVBoxLayout>
 
 class HourVBar : public QFrame {
+    Q_OBJECT
+
 private:
     QList<QLabel*> hours;
     QVBoxLayout *layout;

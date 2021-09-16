@@ -10,12 +10,13 @@
 #include <QFrame>
 #include <QGridLayout>
 #include <QList>
-#include <QPainter>
 #include "HourVBar.h"
 #include "CalendarDate.h"
 #include "CalendarEvents.h"
 
 class CalendarColumns : public QFrame {
+    Q_OBJECT
+
 private:
     QList<std::tuple<CalendarDate*, CalendarEvents*>> columns;
     QGridLayout *layout;
@@ -26,7 +27,6 @@ public:
     explicit CalendarColumns(QWidget *parent = nullptr);
 
 protected:
-    void paintEvent(QPaintEvent *event) override;
     void resizeEvent(QResizeEvent *event) override;
 
 public slots:

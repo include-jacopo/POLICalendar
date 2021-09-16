@@ -22,6 +22,8 @@ CalendarColumns::CalendarColumns(QWidget *parent) : QFrame(parent) {
         auto date = QDate::currentDate().addDays(i);
         auto calDate = new CalendarDate(date);
         auto calEvents = new CalendarEvents(date);
+        // Property for css border
+        calEvents->setProperty("isLast", i==NCOLS-1);
         calDate->layout()->setContentsMargins(0, 0, 0, 10);
 
         columns.push_back(std::make_tuple(calDate, calEvents));
@@ -30,7 +32,9 @@ CalendarColumns::CalendarColumns(QWidget *parent) : QFrame(parent) {
     }
 }
 
+
 void CalendarColumns::resizeEvent(QResizeEvent *event) {
+    auto previousColsOnScreen = colsOnScreen;
     colsOnScreen = (this->width() - 50) / 200;
     colsOnScreen = std::clamp(colsOnScreen, 1, 7);
     for (int i = 0; i < columns.size(); ++i) {
@@ -44,19 +48,14 @@ void CalendarColumns::resizeEvent(QResizeEvent *event) {
                 date->hide();
                 events->hide();
             }
+            // Update property
+            events->setProperty("isLast", i==(colsOnScreen-1));
         }
     }
-}
 
-void CalendarColumns::paintEvent(QPaintEvent *event) {
-    QPainter painter(this);
-    painter.setPen(Qt::blue);
-    for (int i = 0; i < colsOnScreen; ++i) {
-        auto coord = std::get<1>(columns[i])->geometry();
-        painter.drawLine(QLine(coord.topLeft(), coord.bottomLeft()));
-        if (i == colsOnScreen - 1) {
-            painter.drawLine(QLine(coord.topRight(), coord.bottomRight()));
-        }
+    // Necessary to reapply stylesheet after property edit
+    if (previousColsOnScreen != colsOnScreen) {
+        setStyleSheet("CalendarEvents[isLast=true] {border-right: 1px solid #086375;}");
     }
 }
 
@@ -67,3 +66,4 @@ void CalendarColumns::dateChanged(QDate date) {
         std::get<1>(columns[i])->setDate(date.addDays(i));
     }
 }
+

@@ -12,6 +12,7 @@
 
 class MainWindow : public QMainWindow {
     Q_OBJECT
+
 private:
     Calendar *calendar;
     Login *login;

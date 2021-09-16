@@ -34,7 +34,7 @@ void CalendarEvents::paintEvent(QPaintEvent *event) {
 
 void CalendarEvents::resizeEvent(QResizeEvent *event) {
     for (auto calendarEvent : events) {
-        calendarEvent->setGeometry(5, (int) (this->height() / (24 * 60.0) * calendarEvent->getStartMinute()),
-                    this->width() - 10, (int) (this->height() / (24 * 60.0) * calendarEvent->getDurationInMinutes()));
+        calendarEvent->setGeometry(5, (int) (this->height() / 24.0 * (calendarEvent->getStartMinute() / 60.0)),
+                    this->width() - 10, (int) (this->height() / 24.0 * (calendarEvent->getDurationInMinutes() / 60.0) + 1));
     }
 }

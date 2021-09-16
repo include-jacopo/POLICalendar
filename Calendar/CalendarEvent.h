@@ -13,6 +13,7 @@
 
 class CalendarEvent : public QFrame {
     Q_OBJECT
+
 private:
     QVBoxLayout *layout;
     unsigned int startMinute;
