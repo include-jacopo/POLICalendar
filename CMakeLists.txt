@@ -18,15 +18,15 @@ find_package(Qt6 COMPONENTS
 
 add_executable(POLICalendar main.cpp
         MainWindow.cpp MainWindow.h
-        CalendarDate.cpp CalendarDate.h
-        Calendar.cpp Calendar.h
         Login/Login.cpp Login/Login.h
-        HourVBar.cpp HourVBar.h
-        CalendarEvent.cpp CalendarEvent.h
-        CalendarEvents.cpp CalendarEvents.h
-        CalendarColumns.cpp CalendarColumns.h
-        Tasklist.cpp Tasklist.h
-        Task.cpp Task.h)
+        Calendar/CalendarDate.cpp Calendar/CalendarDate.h
+        Calendar/Calendar.cpp Calendar/Calendar.h
+        Calendar/HourVBar.cpp Calendar/HourVBar.h
+        Calendar/CalendarEvent.cpp Calendar/CalendarEvent.h
+        Calendar/CalendarEvents.cpp Calendar/CalendarEvents.h
+        Calendar/CalendarColumns.cpp Calendar/CalendarColumns.h
+        Calendar/Tasklist.cpp Calendar/Tasklist.h
+        Calendar/Task.cpp Calendar/Task.h)
 
 target_link_libraries(POLICalendar
         Qt::Core

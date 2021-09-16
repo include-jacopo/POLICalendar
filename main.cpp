@@ -1,6 +1,6 @@
 #include <QApplication>
 #include <QBoxLayout>
-#include "Calendar.h"
+#include "Calendar/Calendar.h"
 #include "MainWindow.h"
 
 int main(int argc, char *argv[]) {
