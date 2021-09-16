@@ -6,11 +6,12 @@
 #define POLICALENDAR_HOURVBAR_H
 
 #include <QWidget>
+#include <QFrame>
 #include <QList>
 #include <QLabel>
 #include <QVBoxLayout>
 
-class HourVBar : public QWidget {
+class HourVBar : public QFrame {
 private:
     QList<QLabel*> hours;
     QVBoxLayout *layout;

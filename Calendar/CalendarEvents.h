@@ -7,11 +7,12 @@
 
 
 #include <QWidget>
+#include <QFrame>
 #include <QPainter>
 #include <QDate>
 #include "CalendarEvent.h"
 
-class CalendarEvents : public QWidget {
+class CalendarEvents : public QFrame {
     Q_OBJECT
 
 private:

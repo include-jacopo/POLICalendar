@@ -7,9 +7,10 @@
 
 
 #include <QWidget>
+#include <QFrame>
 #include "Task.h"
 
-class Tasklist : public QWidget {
+class Tasklist : public QFrame {
     Q_OBJECT
 
 private:

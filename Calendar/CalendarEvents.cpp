@@ -4,7 +4,7 @@
 
 #include "CalendarEvents.h"
 
-CalendarEvents::CalendarEvents(QDate date, QWidget *widget) : QWidget(widget) {
+CalendarEvents::CalendarEvents(QDate date, QWidget *widget) : QFrame(widget) {
     CalendarEvents::date = date;
 
     // Inizializza lista eventi

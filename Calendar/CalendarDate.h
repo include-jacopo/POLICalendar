@@ -6,12 +6,13 @@
 #define POLICALENDAR_CALENDARDATE_H
 
 #include <QWidget>
+#include <QFrame>
 #include <QLabel>
 #include <QString>
 #include <QVBoxLayout>
 #include <QDate>
 
-class CalendarDate : public QWidget {
+class CalendarDate : public QFrame {
     Q_OBJECT
 
 private:

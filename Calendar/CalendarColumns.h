@@ -7,6 +7,7 @@
 
 
 #include <QWidget>
+#include <QFrame>
 #include <QGridLayout>
 #include <QList>
 #include <QPainter>
@@ -14,7 +15,7 @@
 #include "CalendarDate.h"
 #include "CalendarEvents.h"
 
-class CalendarColumns : public QWidget {
+class CalendarColumns : public QFrame {
 private:
     QList<std::tuple<CalendarDate*, CalendarEvents*>> columns;
     QGridLayout *layout;

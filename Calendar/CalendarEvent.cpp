@@ -4,15 +4,9 @@
 
 #include "CalendarEvent.h"
 
-CalendarEvent::CalendarEvent(unsigned int startMinute, unsigned int durationInMinutes, QWidget *parent) : QWidget(parent) {
+CalendarEvent::CalendarEvent(unsigned int startMinute, unsigned int durationInMinutes, QWidget *parent) : QFrame(parent) {
     this->startMinute = startMinute;
     this->durationInMinutes = durationInMinutes;
-
-    // Background color
-    auto palette = this->palette();
-    palette.setColor(QPalette::Window, QColor::fromRgb(255, 255, 153, 150));
-    setPalette(palette);
-    setAutoFillBackground(true);
 
     // Layout
     layout = new QVBoxLayout(this);

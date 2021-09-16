@@ -9,8 +9,11 @@
 #include <QFrame>
 #include <QVBoxLayout>
 #include <QLabel>
+#include <QFile>
 
 class Task : public QFrame {
+    Q_OBJECT
+
 public:
     Task(QWidget *parent = nullptr);
 };

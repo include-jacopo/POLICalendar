@@ -5,16 +5,6 @@
 #include "Task.h"
 
 Task::Task(QWidget *parent) : QFrame(parent) {
-    // Background color
-    auto palette = this->palette();
-    palette.setColor(QPalette::Window, QColor::fromRgb(255, 255, 153));
-    setPalette(palette);
-    setAutoFillBackground(true);
-
-    // Border
-    setFrameShape(QFrame::Box);
-    setLineWidth(1);
-
     // Layout
     auto layout = new QVBoxLayout(this);
     auto taskLabel = new QLabel("Task di prova");

@@ -7,11 +7,11 @@
 
 
 #include <QWidget>
+#include <QFrame>
 #include <QVBoxLayout>
-#include <QPalette>
 #include <QLabel>
 
-class CalendarEvent : public QWidget {
+class CalendarEvent : public QFrame {
     Q_OBJECT
 private:
     QVBoxLayout *layout;

@@ -1,0 +1,35 @@
+/* Stylesheet for Calendar and subclasses */
+/* PALETTE: https://coolors.co/adb6c4-ffefd3-ffc49b-086375-3f334d */
+
+Calendar {
+    background-color: white;
+}
+
+CalendarEvent {
+    background-color: rgba(255, 196, 155, 0.7);
+    border-top: 1px solid #086375;
+    border-bottom: 1px solid #086375;
+}
+
+Tasklist {
+    background-color: #FFEFD3;
+    border-radius: 10px;
+}
+
+Tasklist > QLabel {
+    font-family: "Helvetica", sans-serif;
+    font-weight: bold;
+    font-size: 18px;
+    color: #3F334D;
+    margin-bottom: 10px;
+}
+
+Task {
+    background-color: #FFC49B;
+    border-top: 1px solid #086375;
+    padding: 5px 0;
+}
+
+Task[isLast="true"] {
+    border-bottom: 1px solid #086375;
+}

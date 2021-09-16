@@ -4,7 +4,7 @@
 
 #include "CalendarDate.h"
 
-CalendarDate::CalendarDate(QDate date, QWidget *parent) : QWidget(parent) {
+CalendarDate::CalendarDate(QDate date, QWidget *parent) : QFrame(parent) {
     auto layout = new QVBoxLayout(this);
     labelDate = new QLabel();
     setDate(date);

@@ -4,12 +4,11 @@
 
 #include "Calendar.h"
 
-Calendar::Calendar(QWidget *parent) : QWidget(parent) {
-    // Set background color
-    auto palette = this->palette();
-    palette.setColor(QPalette::Window, Qt::white);
-    setPalette(palette);
-    setAutoFillBackground(true);
+Calendar::Calendar(QWidget *parent) : QFrame(parent) {
+    // Stylesheet
+    QFile file(QDir::current().filePath("../Calendar/Calendar.qss"));
+    file.open(QFile::ReadOnly); ;
+    setStyleSheet(file.readAll());
 
     // Main grid layout
     layout = new QGridLayout(this);

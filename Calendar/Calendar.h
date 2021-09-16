@@ -6,13 +6,14 @@
 #define POLICALENDAR_CALENDAR_H
 
 #include <QWidget>
+#include <QFrame>
 #include <QGridLayout>
-#include <QPalette>
 #include <QCalendarWidget>
+#include <QDir>
 #include "CalendarColumns.h"
 #include "Tasklist.h"
 
-class Calendar : public QWidget {
+class Calendar : public QFrame {
     Q_OBJECT
 
 private:

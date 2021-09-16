@@ -6,7 +6,7 @@
 
 #define NCOLS 7
 
-CalendarColumns::CalendarColumns(QWidget *parent) : QWidget(parent) {
+CalendarColumns::CalendarColumns(QWidget *parent) : QFrame(parent) {
     layout = new QGridLayout(this);
     layout->setSpacing(0);
     layout->setContentsMargins(0, 0, 0, 0);
