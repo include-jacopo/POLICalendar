@@ -9,10 +9,20 @@
 #include "backend/WebClient.h"
 
 int main(int argc, char *argv[]) {
-    WebClient cal("dav.fruux.com",
-                  "b3297398995",
-                  "dap2zg5z54tu");
-    cal.do_propfind();
+    const std::string host("dav.fruux.com");
+    const std::string user("b3297398995");
+    const std::string pass("dap2zg5z54tu");
+    const std::string uri("/calendars/a3298160768/51759490-6b14-4c41-88ae-1a94106fe0b6/");
+    const unsigned port = 443; //443
+
+    //const std::string uri("/principals/uid/a3298160768/");
+
+    WebClient cal(host, user, pass, port);
+
+    //cal.ls("/Users/jacopo/Desktop");
+
+    cal.do_propfind(uri);
+
 
     /*
     icalcomponent *event; //prova di utilizzo
@@ -33,4 +43,5 @@ int main(int argc, char *argv[]) {
     mainW.show();
     return QApplication::exec();
     */
+    return 0;
 }
