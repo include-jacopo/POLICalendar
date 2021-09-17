@@ -11,15 +11,15 @@ int main(int argc, char *argv[]) {
     const std::string host("dav.fruux.com");
     const std::string user("b3297398995");
     const std::string pass("dap2zg5z54tu");
-    const std::string uri("/calendars/a3298160768/51759490-6b14-4c41-88ae-1a94106fe0b6/");
+    const std::string uri("/calendars/a3298160768/51759490-6b14-4c41-88ae-1a94106fe0b6/"); //solo per calendario
     //const std::string uri("/principals/uid/a3298160768/");
     const unsigned port = 443; //443
-
-    //const std::string uri("/principals/uid/a3298160768/");
+    string xml_cal;
 
     WebClient cal(host, user, pass, port);
+    xml_cal=cal.do_propfind(uri);
 
-    cal.do_propfind(uri);
+    cout << xml_cal;
 
 
     /*

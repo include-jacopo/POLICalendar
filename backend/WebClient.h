@@ -13,39 +13,15 @@ using namespace std;
 
 #include <string>
 #include <vector>
-#include <neon/ne_props.h> /* ne_prop_result_set, ne_session */
-
-struct WebPath {
-    WebPath(string host, string path, string ressourceType, string lastModified,
-            string contentType) :
-            host(host),
-            path(path),
-            ressourceType(ressourceType),
-            lastModified(lastModified),
-            contentType(contentType) {
-
-    }
-    string host;
-    string path;
-    string ressourceType;
-    string lastModified;
-    string contentType;
-};
 
 class WebClient {
 public:
     WebClient(const string url, const string user, const string pass, const unsigned port);
     ~WebClient();
-    int do_propfind(const string uri);
-    bool get(string uri, string localDestination);
-
-    vector<WebPath> ls(string uri);
-    vector<WebPath> tree(string uri);
+    string do_propfind(const string uri);
 
 private:
     ne_session *sess;
-    vector<string> login_info;
-    string messageError;
     string base64_auth;
 
 };

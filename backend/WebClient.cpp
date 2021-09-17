@@ -35,7 +35,7 @@ WebClient::~WebClient(){
     ne_sock_exit();
 }
 
-int WebClient::do_propfind(std::string uri) {
+string WebClient::do_propfind(std::string uri) {
     string response;
     string report = "<c:calendar-query xmlns:d=\"DAV:\" xmlns:c=\"urn:ietf:params:xml:ns:caldav\">\n"
                     "    <d:prop>\n"
@@ -55,12 +55,7 @@ int WebClient::do_propfind(std::string uri) {
     ne_add_response_body_reader(req, ne_accept_always, httpResponseReader, &response);
 
     int result = ne_request_dispatch(req);
-    int status = ne_get_status(req)->code;
-
-    string errorMessage = ne_get_error(sess);
-
-    printf("result %d, status %d\n", result, status);
-    cout << response << "\n";
+    int status = ne_get_status(req)->code; //aggiungere un controllo su questi return?
 
     switch (result) {
         case NE_OK:
@@ -74,7 +69,6 @@ int WebClient::do_propfind(std::string uri) {
         default:
             throw invalid_argument("ne_generic error");
     }
-
     ne_request_destroy(req);
-    return 1;
+    return response;
 }
