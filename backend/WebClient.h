@@ -16,8 +16,8 @@ using namespace std;
 #include <neon/ne_props.h> /* ne_prop_result_set, ne_session */
 
 struct WebPath {
-    WebPath(std::string host, std::string path, std::string ressourceType, std::string lastModified,
-               std::string contentType) :
+    WebPath(string host, string path, string ressourceType, string lastModified,
+            string contentType) :
             host(host),
             path(path),
             ressourceType(ressourceType),
@@ -25,29 +25,28 @@ struct WebPath {
             contentType(contentType) {
 
     }
-    std::string host;
-    std::string path;
-    std::string ressourceType;
-    std::string lastModified;
-    std::string contentType;
+    string host;
+    string path;
+    string ressourceType;
+    string lastModified;
+    string contentType;
 };
 
 class WebClient {
 public:
-    WebClient(const std::string url, const std::string user, const std::string pass, const unsigned port);
+    WebClient(const string url, const string user, const string pass, const unsigned port);
     ~WebClient();
-    int do_propfind(const std::string uri);
-    bool get(std::string uri, std::string localDestination);
+    int do_propfind(const string uri);
+    bool get(string uri, string localDestination);
 
-    std::vector<WebPath> ls(std::string uri);
-    std::vector<WebPath> tree(std::string uri);
+    vector<WebPath> ls(string uri);
+    vector<WebPath> tree(string uri);
 
 private:
     ne_session *sess;
-    static int setLogin(void *userdata, const char *realm, int attempts, char *username, char *password);
-    static void getProps(void *userdata, const ne_uri *uri, const ne_prop_result_set *set);
-    std::vector<string> login_info;
-    std::string messageError;
+    vector<string> login_info;
+    string messageError;
+    string base64_auth;
 
 };
 
