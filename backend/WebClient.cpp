@@ -12,8 +12,7 @@
 #include <iostream>
 #include <string>
 #include "Base64.h"
-
-
+#include <pugixml.hpp>
 using namespace std;
 
 int httpResponseReader(void *userdata, const char *buf, size_t len)
@@ -70,5 +69,5 @@ string WebClient::do_propfind(std::string uri) {
             throw invalid_argument("ne_generic error");
     }
     ne_request_destroy(req);
-    return response;
+    return move(response);
 }

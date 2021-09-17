@@ -35,8 +35,11 @@ target_link_libraries(POLICalendar
 IF(APPLE)
     find_library(NEON neon)
     target_link_libraries(POLICalendar ${NEON})
+    find_library(PUGIXML pugixml)
+    target_link_libraries(POLICalendar ${PUGIXML})
 ELSE()
     target_link_libraries(POLICalendar neon)
+    target_link_libraries(POLICalendar pugixml)
 ENDIF()
 
 if (WIN32)
