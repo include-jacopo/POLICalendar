@@ -12,7 +12,6 @@ find_package(Qt6 COMPONENTS
         Widgets
         REQUIRED)
 
-# Libical
 find_package(LibIcal REQUIRED)
 include_directories(${LibIcal_INCLUDE_DIR})
 
@@ -29,19 +28,21 @@ add_executable(POLICalendar main.cpp
         View/Calendar/Task.cpp View/Calendar/Task.h
         Model/Event.cpp Model/Event.h)
 
-# Qt6
 target_link_libraries(POLICalendar
         Qt::Core
         Qt::Gui
         Qt::Widgets)
-#Libical
-target_link_libraries(${LibIcal_LIBRARIES})
-# Neon
-find_library(NEON neon)
-target_link_libraries(POLICalendar ${NEON})
-# PugiXML
-find_library(PUGIXML pugixml)
-target_link_libraries(POLICalendar ${PUGIXML})
+target_link_libraries(POLICalendar ${LibIcal_LIBRARIES})
+IF(APPLE)
+    find_library(NEON neon)
+    target_link_libraries(POLICalendar ${NEON})
+    find_library(PUGIXML pugixml)
+    target_link_libraries(POLICalendar ${PUGIXML})
+ELSE()
+    target_link_libraries(POLICalendar neon)
+    target_link_libraries(POLICalendar pugixml)
+ENDIF()
+
 
 if (WIN32)
     set(DEBUG_SUFFIX)
