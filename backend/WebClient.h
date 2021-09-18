@@ -28,5 +28,4 @@ private:
 };
 
 
-
 #endif //POLICALENDAR_WEBCLIENT_H
