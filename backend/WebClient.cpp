@@ -11,6 +11,7 @@
 #include <neon/ne_props.h>
 #include <iostream>
 #include <string>
+#include <random>
 #include "Base64.h"
 using namespace std;
 
@@ -33,7 +34,7 @@ WebClient::~WebClient(){
     ne_sock_exit();
 }
 
-string WebClient::report_calendar(std::string uri) {
+string WebClient::report_calendar(string uri) {
     string response;
     string report = "<c:calendar-query xmlns:d=\"DAV:\" xmlns:c=\"urn:ietf:params:xml:ns:caldav\">\n"
                     "    <d:prop>\n"
@@ -71,7 +72,7 @@ string WebClient::report_calendar(std::string uri) {
     return move(response);
 }
 
-string WebClient::report_todo(std::string uri) {
+string WebClient::report_todo(string uri) {
     string response;
     string report = "<c:calendar-query xmlns:d=\"DAV:\" xmlns:c=\"urn:ietf:params:xml:ns:caldav\">\n"
                     "    <d:prop>\n"
@@ -111,46 +112,30 @@ string WebClient::report_todo(std::string uri) {
     return move(response);
 }
 
-string WebClient::put_calendar(std::string uri) {
+int WebClient::put_event(string uri, string evento) {
     string response;
-    string report = "BEGIN:VCALENDAR\n"
-                    "VERSION:2.0\n"
-                    "PRODID:-//fruux//CalendarApp//EN\n"
-                    "CALSCALE:GREGORIAN\n"
-                    "X-WR-CALNAME:Calendar\n"
-                    "X-APPLE-CALENDAR-COLOR:#B90E28\n"
-                    "BEGIN:VEVENT\n"
-                    "DTSTART:20210930T150000Z\n"
-                    "UID:ec137329-0a8b-41d4-9ec8-0b886b8df13a\n"
-                    "CREATED:20210917T142720Z\n"
-                    "DTSTAMP:20210917T142734Z\n"
-                    "DTEND:20211030T170000Z\n"
-                    "SUMMARY:PROVOLA\n"
-                    "END:VEVENT\n"
-                    "END:VCALENDAR";
 
-    ne_request *req = ne_request_create(sess, "PUT", uri.c_str());
+    std::random_device rd; // obtain a random number from hardware
+    std::mt19937 gen(rd()); // seed the generator
+    uniform_int_distribution<long> random(100000000000000, 199999999999999);
+    string random_number = to_string(random(gen));
+
+    ne_request *req = ne_request_create(sess, "PUT", (uri+random_number+".ics").c_str());
     ne_add_request_header(req, "Authorization", ("Basic "+base64_auth).c_str());
-    ne_add_request_header(req, "Depth", "1");
 
-    ne_set_request_body_buffer(req, report.c_str(), report.size());
+    ne_set_request_body_buffer(req, evento.c_str(), evento.size());
     ne_add_response_body_reader(req, ne_accept_always, httpResponseReader, &response);
 
-    int result = ne_request_dispatch(req);
-    int status = ne_get_status(req)->code; //aggiungere un controllo su questi return?
+    int status = ne_get_status(req)->code;
 
-    switch (result) {
-        case NE_OK:
-            break;
-        case NE_CONNECT:
-            throw invalid_argument("ne_connect error");
-        case NE_TIMEOUT:
-            throw invalid_argument("ne_timeout error");
-        case NE_AUTH:
-            throw invalid_argument("ne_auth error");
-        default:
-            throw invalid_argument("ne_generic error");
+    cout << response;
+    cout << status;
+
+    if(status != 201) {
+        cout << "\nERROR IN THE PUT METHOD\n" << response;
+        ne_request_destroy(req);
+        return 1;
     }
     ne_request_destroy(req);
-    return move(response);
+    return 0;
 }

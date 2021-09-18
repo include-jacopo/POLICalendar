@@ -21,7 +21,7 @@ public:
     ~WebClient();
     string report_calendar(const string uri);
     string report_todo(const string uri);
-    string put_calendar(const string uri);
+    int put_event(const string uri, const string evento);
 
 private:
     ne_session *sess;

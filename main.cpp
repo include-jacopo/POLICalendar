@@ -21,23 +21,35 @@ int main(int argc, char *argv[]) {
     string xml_cal;
     string xml_todo;
 
+    string committami = "BEGIN:VCALENDAR\n"
+                        "VERSION:2.0\n"
+                        "PRODID:-//fruux//CalendarApp//EN\n"
+                        "CALSCALE:GREGORIAN\n"
+                        "X-WR-CALNAME:Calendar\n"
+                        "X-APPLE-CALENDAR-COLOR:#B90E28\n"
+                        "BEGIN:VEVENT\n"
+                        "DTSTART:20210930T150000Z\n"
+                        "UID:ec137329-0a8b-41d4-9ec8-0b886b8df13a\n"
+                        "CREATED:20210917T142720Z\n"
+                        "DTSTAMP:20210917T142734Z\n"
+                        "DTEND:20210930T170000Z\n"
+                        "SUMMARY:UFFAAAA\n"
+                        "END:VEVENT\n"
+                        "END:VCALENDAR";
+
     WebClient cal(host, user, pass, port);
 
     xml_cal = cal.report_calendar(uri_calendar);
     xml_todo = cal.report_todo(uri_todo);
 
-    string prova = cal.put_calendar(uri_calendar);
-
-    cout << prova;
+    int prova = cal.put_event(uri_calendar, committami);
 
     list<icalcomponent*> eventi_calendario = readXML(xml_cal);
     list<icalcomponent*> todo_calendario = readXML(xml_todo);
 
     /*for(auto i: eventi_calendario){
-        cout << icalcomponent_as_ical_string(i);
+        cout << icalcomponent_as_ical_string(i) << endl;
     }*/
-
-
 
     return 0;
 }
