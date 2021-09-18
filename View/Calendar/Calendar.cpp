@@ -6,7 +6,7 @@
 
 Calendar::Calendar(QWidget *parent) : QFrame(parent) {
     // Stylesheet
-    QFile file(QDir::current().filePath("../Calendar/Calendar.qss"));
+    QFile file(QDir::current().filePath("../View/Calendar/Calendar.qss"));
     file.open(QFile::ReadOnly); ;
     setStyleSheet(file.readAll());
 

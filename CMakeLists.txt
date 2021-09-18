@@ -12,28 +12,36 @@ find_package(Qt6 COMPONENTS
         Widgets
         REQUIRED)
 
-#find_package(LibIcal REQUIRED)
-#include_directories(${LibIcal_INCLUDE_DIR})
-#link_directories(${LibIcal_LIBRARIES_DIR})
+# Libical
+find_package(LibIcal REQUIRED)
+include_directories(${LibIcal_INCLUDE_DIR})
 
 add_executable(POLICalendar main.cpp
-        MainWindow.cpp MainWindow.h
-        Login/Login.cpp Login/Login.h
-        Calendar/CalendarDate.cpp Calendar/CalendarDate.h
-        Calendar/Calendar.cpp Calendar/Calendar.h
-        Calendar/HourVBar.cpp Calendar/HourVBar.h
-        Calendar/CalendarEvent.cpp Calendar/CalendarEvent.h
-        Calendar/CalendarEvents.cpp Calendar/CalendarEvents.h
-        Calendar/CalendarColumns.cpp Calendar/CalendarColumns.h
-        Calendar/Tasklist.cpp Calendar/Tasklist.h
-        Calendar/Task.cpp Calendar/Task.h)
+        View/MainWindow.cpp View/MainWindow.h
+        View/Login/Login.cpp View/Login/Login.h
+        View/Calendar/CalendarDate.cpp View/Calendar/CalendarDate.h
+        View/Calendar/Calendar.cpp View/Calendar/Calendar.h
+        View/Calendar/HourVBar.cpp View/Calendar/HourVBar.h
+        View/Calendar/CalendarEvent.cpp View/Calendar/CalendarEvent.h
+        View/Calendar/CalendarEvents.cpp View/Calendar/CalendarEvents.h
+        View/Calendar/CalendarColumns.cpp View/Calendar/CalendarColumns.h
+        View/Calendar/Tasklist.cpp View/Calendar/Tasklist.h
+        View/Calendar/Task.cpp View/Calendar/Task.h
+        Model/Event.cpp Model/Event.h)
 
+# Qt6
 target_link_libraries(POLICalendar
         Qt::Core
         Qt::Gui
-        Qt::Widgets
-        #${LibIcal_LIBRARIES}
-        )
+        Qt::Widgets)
+#Libical
+target_link_libraries(${LibIcal_LIBRARIES})
+# Neon
+find_library(NEON neon)
+target_link_libraries(POLICalendar ${NEON})
+# PugiXML
+find_library(PUGIXML pugixml)
+target_link_libraries(POLICalendar ${PUGIXML})
 
 if (WIN32)
     set(DEBUG_SUFFIX)

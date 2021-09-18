@@ -1,7 +1,7 @@
 #include <QApplication>
 #include <QBoxLayout>
-#include "Calendar/Calendar.h"
-#include "MainWindow.h"
+#include "View/Calendar/Calendar.h"
+#include "View/MainWindow.h"
 
 int main(int argc, char *argv[]) {
     QApplication a(argc, argv);
