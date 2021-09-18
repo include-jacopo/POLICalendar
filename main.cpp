@@ -8,70 +8,36 @@
 #include "backend/WebClient.h"
 #include <pugixml.hpp>
 #include <sstream>
-#include "backend/xmlReader.h"
+#include "backend/XMLReader.h"
 using namespace std;
 
 int main(int argc, char *argv[]) {
-    const std::string host("dav.fruux.com");
-    const std::string user("b3297398995");
-    const std::string pass("dap2zg5z54tu");
-    const std::string uri("/calendars/a3298160768/51759490-6b14-4c41-88ae-1a94106fe0b6/"); //solo per calendario
-    //const std::string uri("/principals/uid/a3298160768/");
+    const string host("dav.fruux.com");
+    const string user("b3297398995");
+    const string pass("dap2zg5z54tu");
+    const string uri_calendar("/calendars/a3298160768/51759490-6b14-4c41-88ae-1a94106fe0b6/");
+    const string uri_todo("/calendars/a3298160768/4e84299f-0505-4cbb-8007-c29808fe25b6/");
     const unsigned port = 443; //443
     string xml_cal;
+    string xml_todo;
 
     WebClient cal(host, user, pass, port);
-    xml_cal = cal.do_propfind(uri);
-    //cout << xml_cal;
 
-    /*
-    icalcomponent *event; //prova di utilizzo
-    icalproperty *desc;
-    icalvalue *val;
-    event = icalcomponent_new(ICAL_VEVENT_COMPONENT);
-    desc = icalproperty_new(ICAL_DESCRIPTION_PROPERTY);
-    val = icalvalue_new_string("AUAUAU");
-    icalproperty_set_value(desc, val);
-    icalcomponent_add_property(event, desc);
-    std::cout << icalcomponent_get_description(event);
-    icalvalue_free(val);
-    icalproperty_free(desc);
-    icalcomponent_free(event);
+    xml_cal = cal.report_calendar(uri_calendar);
+    xml_todo = cal.report_todo(uri_todo);
 
-    QApplication a(argc, argv);
-    MainWindow mainW = MainWindow();
-    mainW.show();
-    return QApplication::exec();
-    */
+    string prova = cal.put_calendar(uri_calendar);
 
-    /*
-    pugi::xml_document doc;
-    std::stringstream ss;
-    ss<<xml_cal;
-    pugi::xml_parse_result result = doc.load(ss, pugi::parse_default|pugi::parse_declaration);
-    //if (!doc.load("<node id='123'>text</node><!-- comment -->", pugi::parse_default | pugi::parse_comments)) return -1;
+    cout << prova;
 
-    if(!result){
-        std::cout << "Parse error: " << result.description()<< ", character pos= " << result.offset;
-    }
+    list<icalcomponent*> eventi_calendario = readXML(xml_cal);
+    list<icalcomponent*> todo_calendario = readXML(xml_todo);
 
-   vector<string> v;
-    for(auto node: doc.child("d:multistatus").children()){
-        /*
-        for(auto node2: doc.child("d:multistatus").child("d:response").child("d:propstat").child("d:prop").child("cal:calendar-data")){
-            std::cout<<node2.name()<<": "<<node2.text().as_string()<<endl;
-        }
+    /*for(auto i: eventi_calendario){
+        cout << icalcomponent_as_ical_string(i);
+    }*/
 
 
-        for( auto node2: node.child("d:propstat").child("d:prop").child("cal:calendar-data")) {
-            //std::cout << node2.name() << ": " << node2.text().as_string() << endl;
-            cout<<node2.text().as_string()<<endl;
-            v.push_back(node2.text().as_string());
-
-        }
-        }
-    */
-    vector<string> result = readXML(xml_cal);
 
     return 0;
 }

@@ -19,7 +19,9 @@ class WebClient {
 public:
     WebClient(const string url, const string user, const string pass, const unsigned port);
     ~WebClient();
-    string do_propfind(const string uri);
+    string report_calendar(const string uri);
+    string report_todo(const string uri);
+    string put_calendar(const string uri);
 
 private:
     ne_session *sess;

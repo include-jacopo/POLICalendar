@@ -5,11 +5,14 @@
 #ifndef POLICALENDAR_XMLREADER_H
 #define POLICALENDAR_XMLREADER_H
 
-#endif //POLICALENDAR_XMLREADER_H
-
 #include <string>
-#include <vector>
+#include <libical/ical.h>
+#include <list>
 
 using namespace std;
 
-vector<string> readXML(string str);
+list<icalcomponent*> readXML(string str);
+
+#endif //POLICALENDAR_XMLREADER_H
+
+

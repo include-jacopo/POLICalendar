@@ -33,7 +33,7 @@ WebClient::~WebClient(){
     ne_sock_exit();
 }
 
-string WebClient::do_propfind(std::string uri) {
+string WebClient::report_calendar(std::string uri) {
     string response;
     string report = "<c:calendar-query xmlns:d=\"DAV:\" xmlns:c=\"urn:ietf:params:xml:ns:caldav\">\n"
                     "    <d:prop>\n"
@@ -46,6 +46,90 @@ string WebClient::do_propfind(std::string uri) {
                     "</c:calendar-query>";
 
     ne_request *req = ne_request_create(sess, "REPORT", uri.c_str());
+    ne_add_request_header(req, "Authorization", ("Basic "+base64_auth).c_str());
+    ne_add_request_header(req, "Depth", "1");
+
+    ne_set_request_body_buffer(req, report.c_str(), report.size());
+    ne_add_response_body_reader(req, ne_accept_always, httpResponseReader, &response);
+
+    int result = ne_request_dispatch(req);
+    int status = ne_get_status(req)->code; //aggiungere un controllo su questi return?
+
+    switch (result) {
+        case NE_OK:
+            break;
+        case NE_CONNECT:
+            throw invalid_argument("ne_connect error");
+        case NE_TIMEOUT:
+            throw invalid_argument("ne_timeout error");
+        case NE_AUTH:
+            throw invalid_argument("ne_auth error");
+        default:
+            throw invalid_argument("ne_generic error");
+    }
+    ne_request_destroy(req);
+    return move(response);
+}
+
+string WebClient::report_todo(std::string uri) {
+    string response;
+    string report = "<c:calendar-query xmlns:d=\"DAV:\" xmlns:c=\"urn:ietf:params:xml:ns:caldav\">\n"
+                    "    <d:prop>\n"
+                    "        <d:getetag />\n"
+                    "        <c:calendar-data />\n"
+                    "    </d:prop>\n"
+                    "    <c:filter>\n"
+                    "        <c:comp-filter name=\"VCALENDAR\">\n"
+                    "            <c:comp-filter name=\"VTODO\" />\n"
+                    "        </c:comp-filter>\n"
+                    "    </c:filter>\n"
+                    "</c:calendar-query>";
+
+    ne_request *req = ne_request_create(sess, "REPORT", uri.c_str());
+    ne_add_request_header(req, "Authorization", ("Basic "+base64_auth).c_str());
+    ne_add_request_header(req, "Depth", "1");
+
+    ne_set_request_body_buffer(req, report.c_str(), report.size());
+    ne_add_response_body_reader(req, ne_accept_always, httpResponseReader, &response);
+
+    int result = ne_request_dispatch(req);
+    int status = ne_get_status(req)->code; //aggiungere un controllo su questi return?
+
+    switch (result) {
+        case NE_OK:
+            break;
+        case NE_CONNECT:
+            throw invalid_argument("ne_connect error");
+        case NE_TIMEOUT:
+            throw invalid_argument("ne_timeout error");
+        case NE_AUTH:
+            throw invalid_argument("ne_auth error");
+        default:
+            throw invalid_argument("ne_generic error");
+    }
+    ne_request_destroy(req);
+    return move(response);
+}
+
+string WebClient::put_calendar(std::string uri) {
+    string response;
+    string report = "BEGIN:VCALENDAR\n"
+                    "VERSION:2.0\n"
+                    "PRODID:-//fruux//CalendarApp//EN\n"
+                    "CALSCALE:GREGORIAN\n"
+                    "X-WR-CALNAME:Calendar\n"
+                    "X-APPLE-CALENDAR-COLOR:#B90E28\n"
+                    "BEGIN:VEVENT\n"
+                    "DTSTART:20210930T150000Z\n"
+                    "UID:ec137329-0a8b-41d4-9ec8-0b886b8df13a\n"
+                    "CREATED:20210917T142720Z\n"
+                    "DTSTAMP:20210917T142734Z\n"
+                    "DTEND:20211030T170000Z\n"
+                    "SUMMARY:PROVOLA\n"
+                    "END:VEVENT\n"
+                    "END:VCALENDAR";
+
+    ne_request *req = ne_request_create(sess, "PUT", uri.c_str());
     ne_add_request_header(req, "Authorization", ("Basic "+base64_auth).c_str());
     ne_add_request_header(req, "Depth", "1");
 
