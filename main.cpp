@@ -8,6 +8,7 @@
 #include "backend/WebClient.h"
 #include <pugixml.hpp>
 #include <sstream>
+#include "backend/xmlReader.h"
 using namespace std;
 
 int main(int argc, char *argv[]) {
@@ -21,7 +22,7 @@ int main(int argc, char *argv[]) {
 
     WebClient cal(host, user, pass, port);
     xml_cal = cal.do_propfind(uri);
-    cout << xml_cal;
+    //cout << xml_cal;
 
     /*
     icalcomponent *event; //prova di utilizzo
@@ -43,7 +44,7 @@ int main(int argc, char *argv[]) {
     return QApplication::exec();
     */
 
-
+    /*
     pugi::xml_document doc;
     std::stringstream ss;
     ss<<xml_cal;
@@ -60,7 +61,7 @@ int main(int argc, char *argv[]) {
         for(auto node2: doc.child("d:multistatus").child("d:response").child("d:propstat").child("d:prop").child("cal:calendar-data")){
             std::cout<<node2.name()<<": "<<node2.text().as_string()<<endl;
         }
-          */
+
 
         for( auto node2: node.child("d:propstat").child("d:prop").child("cal:calendar-data")) {
             //std::cout << node2.name() << ": " << node2.text().as_string() << endl;
@@ -69,7 +70,8 @@ int main(int argc, char *argv[]) {
 
         }
         }
-
+    */
+    vector<string> result = readXML(xml_cal);
 
     return 0;
 }
