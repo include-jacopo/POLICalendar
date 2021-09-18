@@ -6,6 +6,7 @@
 #include <neon/ne_utils.h>
 #include <iostream>
 #include "backend/WebClient.h"
+#include <pugixml.hpp>
 using namespace std;
 
 int main(int argc, char *argv[]) {
@@ -21,17 +22,6 @@ int main(int argc, char *argv[]) {
     xml_cal = cal.do_propfind(uri);
     cout << xml_cal;
 
-    icalcomponent* comp = icalparser_parse_string(xml_cal.c_str());
-
-    icalcomponent *c;
-/*
-    for(c = icalcomponent_get_first_component(comp, ICAL_ANY_COMPONENT);
-        c != 0;
-        c = icalcomponent_get_next_component(comp, ICAL_ANY_COMPONENT))
-    {
-        cout << c;
-    }
-*/
     /*
     icalcomponent *event; //prova di utilizzo
     icalproperty *desc;

@@ -12,7 +12,6 @@
 #include <iostream>
 #include <string>
 #include "Base64.h"
-#include <pugixml.hpp>
 using namespace std;
 
 int httpResponseReader(void *userdata, const char *buf, size_t len)
