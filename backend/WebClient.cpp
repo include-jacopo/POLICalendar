@@ -126,13 +126,11 @@ int WebClient::put_event(string uri, string evento) {
     ne_set_request_body_buffer(req, evento.c_str(), evento.size());
     ne_add_response_body_reader(req, ne_accept_always, httpResponseReader, &response);
 
+    ne_request_dispatch(req);
     int status = ne_get_status(req)->code;
 
-    cout << response;
-    cout << status;
-
     if(status != 201) {
-        cout << "\nERROR IN THE PUT METHOD\n" << response;
+        cout << "\nERROR IN THE PUT METHOD\n" << response; //da cancellare
         ne_request_destroy(req);
         return 1;
     }

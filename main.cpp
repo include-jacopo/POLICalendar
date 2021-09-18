@@ -33,7 +33,7 @@ int main(int argc, char *argv[]) {
                         "CREATED:20210917T142720Z\n"
                         "DTSTAMP:20210917T142734Z\n"
                         "DTEND:20210930T170000Z\n"
-                        "SUMMARY:UFFAAAA\n"
+                        "SUMMARY:STUPIRE RICCARDO\n"
                         "END:VEVENT\n"
                         "END:VCALENDAR";
 
