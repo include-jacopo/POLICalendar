@@ -7,6 +7,7 @@
 #include <iostream>
 #include "backend/WebClient.h"
 #include <pugixml.hpp>
+#include <sstream>
 using namespace std;
 
 int main(int argc, char *argv[]) {
@@ -41,5 +42,34 @@ int main(int argc, char *argv[]) {
     mainW.show();
     return QApplication::exec();
     */
+
+
+    pugi::xml_document doc;
+    std::stringstream ss;
+    ss<<xml_cal;
+    pugi::xml_parse_result result = doc.load(ss, pugi::parse_default|pugi::parse_declaration);
+    //if (!doc.load("<node id='123'>text</node><!-- comment -->", pugi::parse_default | pugi::parse_comments)) return -1;
+
+    if(!result){
+        std::cout << "Parse error: " << result.description()<< ", character pos= " << result.offset;
+    }
+
+   vector<string> v;
+    for(auto node: doc.child("d:multistatus").children()){
+        /*
+        for(auto node2: doc.child("d:multistatus").child("d:response").child("d:propstat").child("d:prop").child("cal:calendar-data")){
+            std::cout<<node2.name()<<": "<<node2.text().as_string()<<endl;
+        }
+          */
+
+        for( auto node2: node.child("d:propstat").child("d:prop").child("cal:calendar-data")) {
+            //std::cout << node2.name() << ": " << node2.text().as_string() << endl;
+            cout<<node2.text().as_string()<<endl;
+            v.push_back(node2.text().as_string());
+
+        }
+        }
+
+
     return 0;
 }
