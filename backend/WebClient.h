@@ -6,6 +6,7 @@
 #include <neon/ne_auth.h> /* ne_set_server_auth, ne_ssl_trust_default_ca */
 #include <neon/ne_basic.h> /* ne_session, ne_put, ne_get, ne_delete, ne_mkcol */
 #include <vector>
+
 using namespace std;
 
 #ifndef POLICALENDAR_WEBCLIENT_H
