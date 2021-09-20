@@ -9,6 +9,7 @@
 #include <pugixml.hpp>
 #include <sstream>
 #include "backend/XMLReader.h"
+#include "backend/IcalHandler.h"
 using namespace std;
 
 int main(int argc, char *argv[]) {
@@ -42,21 +43,23 @@ int main(int argc, char *argv[]) {
     xml_cal = cal.report_calendar(uri_calendar);
     xml_todo = cal.report_todo(uri_todo);
 
-    int prova = cal.put_event(uri_calendar, committami);
+    //ESEMPIO DI AGGIUNTA DI UN EVENTO
+    //int prova = cal.put_event(uri_calendar, committami);
 
     list<icalcomponent*> eventi_calendario = readXML(xml_cal);
     list<icalcomponent*> todo_calendario = readXML(xml_todo);
 
-    /*for(auto i: eventi_calendario){
-        cout << icalcomponent_as_ical_string(i) << endl;
-    }*/
+    //Scorro ogni evento e i suoi sottoeventi per riempire Event.cpp
+    for(auto evento: eventi_calendario){
+        icalcomponent *c;
+        for(c = icalcomponent_get_first_component(evento,ICAL_VEVENT_COMPONENT);
+            c != 0;
+            c = icalcomponent_get_next_component(evento,ICAL_VEVENT_COMPONENT)){
+            IcalHandler::find_properties(c); //Chiamata alla funzione per aggiungere in Event.cpp
+        }
+    }
+
 
     return 0;
 
-    /*
-    QApplication a(argc, argv);
-    MainWindow mainW = MainWindow();
-    mainW.show();
-    return QApplication::exec();
-    */
 }
