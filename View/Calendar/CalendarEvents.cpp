@@ -4,6 +4,8 @@
 
 #include "CalendarEvents.h"
 
+using namespace std::literals::chrono_literals; //TODO TEMP
+
 CalendarEvents::CalendarEvents(QDate date, QWidget *widget) : QFrame(widget) {
     CalendarEvents::date = date;
 
@@ -11,7 +13,9 @@ CalendarEvents::CalendarEvents(QDate date, QWidget *widget) : QFrame(widget) {
     events = QList<CalendarEvent*>();
 
     //TODO Get real events
-    events.push_back(new CalendarEvent(14 * 60, 120, this));
+    auto test = new Event("1000202", "Evento di prova", "Descrizione di prova", "Mare",
+                          std::chrono::system_clock::now(), std::chrono::system_clock::now(), std::chrono::system_clock::now() + 2h);
+    events.push_back(new CalendarEvent(*test, this));
 }
 
 void CalendarEvents::setDate(const QDate &date) {

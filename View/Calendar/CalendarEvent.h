@@ -10,17 +10,20 @@
 #include <QFrame>
 #include <QVBoxLayout>
 #include <QLabel>
+#include <QScrollArea>
+#include <chrono>
+#include <iomanip>
+#include "../../Model/Event.h"
 
 class CalendarEvent : public QFrame {
     Q_OBJECT
 
 private:
-    QVBoxLayout *layout;
     unsigned int startMinute;
     unsigned int durationInMinutes;
 
 public:
-    explicit CalendarEvent(unsigned int startMinute, unsigned int durationInMinutes, QWidget *parent = nullptr);
+    explicit CalendarEvent(Event& event, QWidget *parent = nullptr);
 
     [[nodiscard]] unsigned int getStartMinute() const;
     [[nodiscard]] unsigned int getDurationInMinutes() const;

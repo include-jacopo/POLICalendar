@@ -20,6 +20,19 @@ CalendarEvent {
     border-bottom: 1px solid #086375;
 }
 
+QScrollArea {
+    border: none;
+    background: transparent;
+}
+
+QWidget#ScrollContent  {
+    background: transparent;
+}
+
+HourVBar {
+    text-align: right;
+}
+
 Tasklist {
     background-color: #FFEFD3;
     border-radius: 10px;

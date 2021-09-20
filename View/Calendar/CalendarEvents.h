@@ -10,6 +10,7 @@
 #include <QFrame>
 #include <QPainter>
 #include <QDate>
+#include "../../Model/Event.h"
 #include "CalendarEvent.h"
 
 class CalendarEvents : public QFrame {
@@ -26,6 +27,9 @@ public:
 protected:
     void paintEvent(QPaintEvent *event) override;
     void resizeEvent(QResizeEvent *event) override;
+
+public slots:
+
 };
 
 

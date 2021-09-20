@@ -5,13 +5,11 @@
 #include "HourVBar.h"
 
 HourVBar::HourVBar(QWidget *parent) : QFrame(parent) {
-    hours = QList<QLabel*>();
-    layout = new QVBoxLayout(this);
+    auto layout = new QVBoxLayout(this);
     auto margins = layout->contentsMargins();
     margins.setTop(0);
     margins.setBottom(0);
     layout->setContentsMargins(margins);
-    layout->setAlignment(Qt::AlignRight);
     layout->setSpacing(0);
 
     for (int i = 0; i < 24; ++i) {
@@ -20,7 +18,6 @@ HourVBar::HourVBar(QWidget *parent) : QFrame(parent) {
         lMargins.setTop(0);
         l->setContentsMargins(lMargins);
         l->setAlignment(Qt::AlignTop | Qt::AlignRight);
-        hours.push_back(l);
         layout->addWidget(l);
     }
 }

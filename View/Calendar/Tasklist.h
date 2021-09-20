@@ -8,6 +8,9 @@
 
 #include <QWidget>
 #include <QFrame>
+#include <QScrollArea>
+#include <QVBoxLayout>
+#include <QLabel>
 #include "Task.h"
 
 class Tasklist : public QFrame {

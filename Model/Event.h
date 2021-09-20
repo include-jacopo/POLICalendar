@@ -1,5 +1,5 @@
 //
-// Created by Riccardo Mengoli on 18/09/2021 17:22.
+// Created by Riccardo Mengoli on 19/09/2021 22:11.
 //
 
 #ifndef POLICALENDAR_EVENT_H
@@ -10,14 +10,17 @@
 
 class Event {
 private:
-
+    std::string uid;
+    std::string summary, description, location;
+    std::chrono::time_point<std::chrono::system_clock> creationTime, startTime, endTime;
 
 public:
     Event();
-    Event(const std::string &uid, const std::string &name, const std::string &description, const std::string &location,
-          const std::chrono::time_point<std::chrono::system_clock> &creationTime,
-          const std::chrono::time_point<std::chrono::system_clock> &startTime,
-          const std::chrono::time_point<std::chrono::system_clock> &endTime);
+    explicit Event(const std::string &uid);
+    Event(const std::string &uid, const std::string &summary, const std::string &description,
+              const std::string &location, const std::chrono::time_point<std::chrono::system_clock> &creationTime,
+              const std::chrono::time_point<std::chrono::system_clock> &startTime,
+              const std::chrono::time_point<std::chrono::system_clock> &endTime);
 
     const std::string &getUid() const;
     void setUid(const std::string &uid);

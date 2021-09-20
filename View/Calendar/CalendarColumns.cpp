@@ -13,7 +13,6 @@ CalendarColumns::CalendarColumns(QWidget *parent) : QFrame(parent) {
 
     // Time bar
     auto hourVBar = new HourVBar();
-    hourVBar->setFixedWidth(50);
     layout->addWidget(hourVBar, 1, 0);
     layout->setRowStretch(1, 1);
 
@@ -22,8 +21,6 @@ CalendarColumns::CalendarColumns(QWidget *parent) : QFrame(parent) {
         auto date = QDate::currentDate().addDays(i);
         auto calDate = new CalendarDate(date);
         auto calEvents = new CalendarEvents(date);
-        // Property for css border
-        calEvents->setProperty("isLast", i==NCOLS-1);
         calDate->layout()->setContentsMargins(0, 0, 0, 10);
 
         columns.push_back(std::make_tuple(calDate, calEvents));
@@ -45,11 +42,13 @@ void CalendarColumns::resizeEvent(QResizeEvent *event) {
             if (i < colsOnScreen) {
                 date->show();
                 events->show();
+                layout->setColumnStretch(1 + i, 1);
             } else {
                 date->hide();
                 events->hide();
+                layout->setColumnStretch(1 + i, 0);
             }
-            // Update property
+            // Update property for css right border
             events->setProperty("isLast", i == (colsOnScreen - 1));
         }
 

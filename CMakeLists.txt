@@ -26,7 +26,7 @@ add_executable(POLICalendar main.cpp
         View/Calendar/CalendarColumns.cpp View/Calendar/CalendarColumns.h
         View/Calendar/Tasklist.cpp View/Calendar/Tasklist.h
         View/Calendar/Task.cpp View/Calendar/Task.h
-        #Model/Event.cpp Model/Event.h
+        Model/Event.cpp Model/Event.h
         )
 
 target_link_libraries(POLICalendar
