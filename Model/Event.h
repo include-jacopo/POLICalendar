@@ -10,15 +10,10 @@
 
 class Event {
 private:
-    std::string uid;
-    std::string summary, description, location;
-    std::chrono::time_point<std::chrono::system_clock> creationTime, startTime, endTime;
+
 
 public:
     Event();
-
-    Event(const std::string &uid);
-
     Event(const std::string &uid, const std::string &name, const std::string &description, const std::string &location,
           const std::chrono::time_point<std::chrono::system_clock> &creationTime,
           const std::chrono::time_point<std::chrono::system_clock> &startTime,

@@ -36,11 +36,12 @@ CalendarColumns::CalendarColumns(QWidget *parent) : QFrame(parent) {
 void CalendarColumns::resizeEvent(QResizeEvent *event) {
     auto previousColsOnScreen = colsOnScreen;
     colsOnScreen = (this->width() - 50) / 200;
-    colsOnScreen = std::clamp(colsOnScreen, 1, 7);
-    for (int i = 0; i < columns.size(); ++i) {
-        auto date = std::get<0>(columns[i]);
-        auto events = std::get<1>(columns[i]);
-        if (date != nullptr && events != nullptr) {
+    colsOnScreen = std::clamp(colsOnScreen, 1, NCOLS);
+
+    if (previousColsOnScreen != colsOnScreen) {
+        for (int i = 0; i < NCOLS; ++i) {
+            auto date = std::get<0>(columns[i]);
+            auto events = std::get<1>(columns[i]);
             if (i < colsOnScreen) {
                 date->show();
                 events->show();
@@ -49,12 +50,10 @@ void CalendarColumns::resizeEvent(QResizeEvent *event) {
                 events->hide();
             }
             // Update property
-            events->setProperty("isLast", i==(colsOnScreen-1));
+            events->setProperty("isLast", i == (colsOnScreen - 1));
         }
-    }
 
-    // Necessary to reapply stylesheet after property edit
-    if (previousColsOnScreen != colsOnScreen) {
+        // Necessary to reapply stylesheet after property edit
         setStyleSheet("CalendarEvents[isLast=true] {border-right: 1px solid #086375;}");
     }
 }
