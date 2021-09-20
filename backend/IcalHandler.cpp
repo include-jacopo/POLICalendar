@@ -4,7 +4,6 @@
 
 #include "IcalHandler.h"
 #include <libical/ical.h>
-#include <libical/icalenums.h>
 #include <iostream>
 using namespace std;
 
