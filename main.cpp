@@ -1,7 +1,7 @@
 #include <QApplication>
 #include <QBoxLayout>
-#include "Calendar.h"
-#include "MainWindow.h"
+#include "View/Calendar/Calendar.h"
+#include "View/MainWindow.h"
 #include <libical/ical.h>
 #include <neon/ne_utils.h>
 #include <iostream>
@@ -52,4 +52,11 @@ int main(int argc, char *argv[]) {
     }*/
 
     return 0;
+
+    /*
+    QApplication a(argc, argv);
+    MainWindow mainW = MainWindow();
+    mainW.show();
+    return QApplication::exec();
+    */
 }

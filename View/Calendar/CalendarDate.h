@@ -6,14 +6,21 @@
 #define POLICALENDAR_CALENDARDATE_H
 
 #include <QWidget>
+#include <QFrame>
 #include <QLabel>
+#include <QString>
 #include <QVBoxLayout>
+#include <QDate>
 
-class CalendarDate : public QWidget {
+class CalendarDate : public QFrame {
     Q_OBJECT
 
+private:
+    QLabel *labelDate;
+
 public:
-    explicit CalendarDate(const std::string& date, QWidget *parent = nullptr);
+    explicit CalendarDate(QDate date, QWidget *parent = nullptr);
+    void setDate(const QDate &date);
 };
 
 

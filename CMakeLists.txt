@@ -16,23 +16,26 @@ find_package(LibIcal REQUIRED)
 include_directories(${LibIcal_INCLUDE_DIR})
 
 add_executable(POLICalendar main.cpp
-        MainWindow.cpp MainWindow.h
-        CalendarDate.cpp CalendarDate.h
-        Calendar.cpp Calendar.h
-        Login/Login.cpp Login/Login.h
-        HourVBar.cpp HourVBar.h
-        CalendarEvent.cpp CalendarEvent.h
-        CalendarEvents.cpp CalendarEvents.h
+        View/MainWindow.cpp View/MainWindow.h
+        View/Login/Login.cpp View/Login/Login.h
+        View/Calendar/CalendarDate.cpp View/Calendar/CalendarDate.h
+        View/Calendar/Calendar.cpp View/Calendar/Calendar.h
+        View/Calendar/HourVBar.cpp View/Calendar/HourVBar.h
+        View/Calendar/CalendarEvent.cpp View/Calendar/CalendarEvent.h
+        View/Calendar/CalendarEvents.cpp View/Calendar/CalendarEvents.h
+        View/Calendar/CalendarColumns.cpp View/Calendar/CalendarColumns.h
+        View/Calendar/Tasklist.cpp View/Calendar/Tasklist.h
+        View/Calendar/Task.cpp View/Calendar/Task.h
+        #Model/Event.cpp Model/Event.h
         backend/WebClient.cpp backend/WebClient.h backend/Base64.h
-        backend/XMLReader.cpp backend/XMLReader.h)
+        backend/XMLReader.cpp backend/XMLReader.h
+        )
 
 target_link_libraries(POLICalendar
         Qt::Core
         Qt::Gui
-        Qt::Widgets
-        ${LibIcal_LIBRARIES}
-        )
-
+        Qt::Widgets)
+target_link_libraries(POLICalendar ${LibIcal_LIBRARIES})
 IF(APPLE)
     find_library(NEON neon)
     target_link_libraries(POLICalendar ${NEON})
@@ -42,6 +45,7 @@ ELSE()
     target_link_libraries(POLICalendar neon)
     target_link_libraries(POLICalendar pugixml)
 ENDIF()
+
 
 if (WIN32)
     set(DEBUG_SUFFIX)

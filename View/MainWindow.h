@@ -7,18 +7,19 @@
 
 #include <QMainWindow>
 #include <QWidget>
-#include "Calendar.h"
+#include "Calendar/Calendar.h"
 #include "Login/Login.h"
 
 class MainWindow : public QMainWindow {
     Q_OBJECT
+
 private:
-    // Calendar raggruppa le CalendarColumn
     Calendar *calendar;
     Login *login;
 
 public:
     explicit MainWindow(QWidget *parent = nullptr);
+    [[nodiscard]] QSize sizeHint() const override;
 
 public slots:
     void loginSuccessful();

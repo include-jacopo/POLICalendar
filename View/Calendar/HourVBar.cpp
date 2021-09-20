@@ -4,7 +4,7 @@
 
 #include "HourVBar.h"
 
-HourVBar::HourVBar(QWidget *parent) : QWidget(parent) {
+HourVBar::HourVBar(QWidget *parent) : QFrame(parent) {
     hours = QList<QLabel*>();
     layout = new QVBoxLayout(this);
     auto margins = layout->contentsMargins();

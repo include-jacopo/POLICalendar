@@ -7,19 +7,20 @@
 
 
 #include <QWidget>
+#include <QFrame>
 #include <QVBoxLayout>
 #include <QLabel>
-#include <QEvent>
 
-class CalendarEvent : public QWidget {
+class CalendarEvent : public QFrame {
     Q_OBJECT
+
 private:
     QVBoxLayout *layout;
-    unsigned int startMinute = 14*60; //TODO Read from web
-    unsigned int durationInMinutes = 120; //TODO Read from web
+    unsigned int startMinute;
+    unsigned int durationInMinutes;
 
 public:
-    explicit CalendarEvent(QWidget *parent = nullptr);
+    explicit CalendarEvent(unsigned int startMinute, unsigned int durationInMinutes, QWidget *parent = nullptr);
 
     [[nodiscard]] unsigned int getStartMinute() const;
     [[nodiscard]] unsigned int getDurationInMinutes() const;
