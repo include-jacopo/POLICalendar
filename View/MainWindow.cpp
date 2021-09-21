@@ -5,12 +5,18 @@
 #include "MainWindow.h"
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
+    // Stylesheet
+    QFile file(QDir::current().filePath("../View/AppStyle.qss"));
+    file.open(QFile::ReadOnly);
+    setStyleSheet(file.readAll());
+
+    // Login component
     login = new Login(this);
 
     // Connetti loginSuccessful di login ad azione locale
     connect(login, SIGNAL(loginSuccessful()), this, SLOT(loginSuccessful()));
 
-    setMinimumSize(640, 480);
+    resize(login->sizeHint());
     setCentralWidget(login);
 
     //TODO TEMPORARY
@@ -20,6 +26,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
 void MainWindow::loginSuccessful() {
     login->close();
     calendar = new Calendar(this);
+    resize(calendar->sizeHint());
     setCentralWidget(calendar);
 }
 

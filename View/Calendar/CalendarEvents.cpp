@@ -11,16 +11,20 @@ CalendarEvents::CalendarEvents(QDate date, QWidget *widget) : QFrame(widget) {
 
     // Inizializza lista eventi
     events = QList<CalendarEvent*>();
-
-    //TODO Get real events
-    auto test = new Event("1000202", "Evento di prova", "Descrizione di prova", "Mare",
-                          std::chrono::system_clock::now(), std::chrono::system_clock::now(), std::chrono::system_clock::now() + 2h);
-    events.push_back(new CalendarEvent(*test, this));
+    updateEvents();
 }
 
 void CalendarEvents::setDate(const QDate &date) {
     CalendarEvents::date = date;
-    // TODO Update events
+    updateEvents();
+}
+
+void CalendarEvents::updateEvents() {
+    events.clear();
+    //TODO Get real events
+    auto test = new Event("1000202", "Evento di prova", "Descrizione di prova", "Mare",
+                          std::chrono::system_clock::now(), std::chrono::system_clock::now(), std::chrono::system_clock::now() + 3h);
+    events.push_back(new CalendarEvent(*test, this));
 }
 
 

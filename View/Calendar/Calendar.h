@@ -10,6 +10,7 @@
 #include <QGridLayout>
 #include <QCalendarWidget>
 #include <QDir>
+#include <QSize>
 #include "CalendarColumns.h"
 #include "Tasklist.h"
 
@@ -23,6 +24,7 @@ private:
 
 public:
     explicit Calendar(QWidget *parent = nullptr);
+    QSize sizeHint() const override;
 
 protected:
     void resizeEvent(QResizeEvent *event) override;

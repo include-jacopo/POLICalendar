@@ -7,18 +7,14 @@
 
 
 #include <QWidget>
-#include <QFrame>
-#include <QVBoxLayout>
-#include <QLabel>
-#include <QScrollArea>
-#include <chrono>
-#include <iomanip>
+#include <QMouseEvent>
 #include "../../Model/Event.h"
 
 class CalendarEvent : public QFrame {
     Q_OBJECT
 
 private:
+    Event *calEvent;
     unsigned int startMinute;
     unsigned int durationInMinutes;
 
@@ -27,6 +23,9 @@ public:
 
     [[nodiscard]] unsigned int getStartMinute() const;
     [[nodiscard]] unsigned int getDurationInMinutes() const;
+
+protected:
+    void mousePressEvent(QMouseEvent *event) override;
 };
 
 

@@ -1,14 +1,14 @@
 #ifndef LOGIN_H
 #define LOGIN_H
 
-#include <QWidget>
+#include <QFrame>
 
 namespace Ui {
     class Login;
 }
 
-class Login : public QWidget {
-Q_OBJECT
+class Login : public QFrame {
+    Q_OBJECT
 
 public:
     explicit Login(QWidget *parent = nullptr);
@@ -18,10 +18,10 @@ private:
     Ui::Login *ui;
 
 private slots:
-    void on_pushButton_login_clicked();
+    void onLoginClicked();
 
 signals:
     void loginSuccessful();
-
 };
+
 #endif // LOGIN_H

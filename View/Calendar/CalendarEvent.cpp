@@ -2,10 +2,18 @@
 // Created by Riccardo Mengoli on 10/09/2021 19:26.
 //
 
-#include <iostream>
+#include <QFrame>
+#include <QVBoxLayout>
+#include <QLabel>
+#include <QScrollArea>
+#include <chrono>
+#include <iomanip>
 #include "CalendarEvent.h"
+#include "DialogEdit.h"
 
 CalendarEvent::CalendarEvent(Event &event, QWidget *parent) : QFrame(parent) {
+    calEvent = &event;
+
     std::stringstream startTime, endTime;
     auto st = std::chrono::system_clock::to_time_t(event.getStartTime());
     auto end = std::chrono::system_clock::to_time_t(event.getEndTime());
@@ -26,12 +34,13 @@ CalendarEvent::CalendarEvent(Event &event, QWidget *parent) : QFrame(parent) {
     // Layout
     auto layout = new QVBoxLayout(this);
     layout->setSpacing(0);
-    layout->setContentsMargins(0, 0, 0, 0);
+    layout->setContentsMargins(8, 5, 8, 5);
 
     // Scroll area
     auto scrollarea = new QScrollArea();
     scrollarea->setWidgetResizable(true);
     scrollarea->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    scrollarea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     layout->addWidget(scrollarea);
 
     // Scroll area internal content
@@ -41,7 +50,7 @@ CalendarEvent::CalendarEvent(Event &event, QWidget *parent) : QFrame(parent) {
 
     auto layout2 = new QVBoxLayout(w);
     layout2->setSpacing(1);
-    layout2->setContentsMargins(8, 5, 8, 5);
+    layout2->setContentsMargins(0, 0, 0, 0);
     layout2->setAlignment(Qt::AlignTop | Qt::AlignLeft);
     layout2->addWidget(new QLabel(QString::fromStdString(event.getName())));
     layout2->addWidget(new QLabel(QString::fromStdString(startTime.str() + " - " + endTime.str())));
@@ -54,4 +63,12 @@ unsigned int CalendarEvent::getStartMinute() const {
 
 unsigned int CalendarEvent::getDurationInMinutes() const {
     return durationInMinutes;
+}
+
+void CalendarEvent::mousePressEvent(QMouseEvent *event) {
+    QFrame::mousePressEvent(event);
+    if (event->button() == Qt::LeftButton) {
+        auto dialog = new DialogEdit(*calEvent, this);
+        dialog->exec();
+    }
 }

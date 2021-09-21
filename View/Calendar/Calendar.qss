@@ -20,15 +20,6 @@ CalendarEvent {
     border-bottom: 1px solid #086375;
 }
 
-QScrollArea {
-    border: none;
-    background: transparent;
-}
-
-QWidget#ScrollContent  {
-    background: transparent;
-}
-
 HourVBar {
     text-align: right;
 }
@@ -54,4 +45,25 @@ Task {
 
 Task[isLast="true"] {
     border-bottom: 1px solid #086375;
+}
+
+/* SCROLL AREA AND SCROLL BAR */
+
+QScrollArea {
+    border: none;
+    background: transparent;
+}
+
+QWidget#ScrollContent  {
+    background: transparent;
+}
+
+QScrollBar::vertical {
+    background:white;
+    width: 10px;
+    margin: 0;
+}
+
+QScrollBar::handle:vertical {
+    background: #086375;
 }

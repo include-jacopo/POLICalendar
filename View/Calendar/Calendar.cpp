@@ -13,6 +13,7 @@ Calendar::Calendar(QWidget *parent) : QFrame(parent) {
     // Main grid layout
     layout = new QGridLayout(this);
     layout->setSpacing(20);
+    setMinimumSize(640, 480);
 
     // Calendar columns widget
     calendarColumns = new CalendarColumns();
@@ -36,4 +37,8 @@ void Calendar::resizeEvent(QResizeEvent *event) {
     auto margin = this->width() / 64;
     margin = std::clamp(margin, 10, 30);
     layout->setContentsMargins(margin, margin, margin, margin);
+}
+
+QSize Calendar::sizeHint() const {
+    return QSize(1280, 720);
 }

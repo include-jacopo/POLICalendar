@@ -20,6 +20,8 @@ private:
     QList<CalendarEvent*> events;
     QDate date;
 
+    void updateEvents();
+
 public:
     explicit CalendarEvents(QDate date, QWidget *widget = nullptr);
     void setDate(const QDate &date);

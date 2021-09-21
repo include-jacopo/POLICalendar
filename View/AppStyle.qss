@@ -1,0 +1,32 @@
+/* Stylesheet for common components */
+/* PALETTE: https://coolors.co/adb6c4-ffefd3-ffc49b-086375-3f334d */
+
+QLineEdit, QTextEdit, QDateTimeEdit {
+    padding: 2px 4px;
+    background-color: #fff;
+    border: 1px solid #8b8a8b;
+    border-radius: 4px;
+}
+
+QLineEdit:focus, QTextEdit:focus, QDateTimeEdit:focus {
+    border-color: hsl(245, 100%, 42%);
+}
+
+QPushButton {
+    background-color: #086375;
+    color: white;
+    padding: 6px 20px;
+    font-size: 14px;
+    border: 1px solid #086375;
+    border-radius: 16px;
+    min-width: 50px;
+    text-transform: uppercase;
+}
+
+QPushButton:hover {
+    background-color: #3F334D;
+}
+
+QPushButton:focus {
+    background-color: #3F334D;
+}
