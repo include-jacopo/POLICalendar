@@ -10,6 +10,13 @@
 
 class Event {
 private:
+    std::string uidS;
+    std::string nameS;
+    std::string descr;
+    std::string loc;
+    std::chrono::time_point<std::chrono::system_clock> creationT;
+    std::chrono::time_point<std::chrono::system_clock> startT;
+    std::chrono::time_point<std::chrono::system_clock> endT;
 
 
 public:

@@ -5,12 +5,43 @@
 #include "IcalHandler.h"
 #include <libical/ical.h>
 #include <iostream>
+#include <vector>
+#include <map>
+#include <string>
+
+#include <sstream>
+#include <chrono>
+#include <ctime>
+#include <iomanip>
+
 using namespace std;
 
-void IcalHandler::find_properties(icalcomponent* comp)
+map<string,string> IcalHandler::find_properties(icalcomponent* comp)
 {
     icalproperty* p;
 
+    vector<string> eventProperties;                 /* vector che ospita le varie proprietà dell'evento */
+    map<string,string> eventProp;
+
+
+    cout<<icalcomponent_as_ical_string(comp)<<endl;
+
+    for(p = icalcomponent_get_first_property(comp, ICAL_ANY_PROPERTY); p != 0 ; p = icalcomponent_get_next_property(comp, ICAL_ANY_PROPERTY)){
+        //string st = icalproperty_get_property_name(p);
+        eventProp.insert({icalproperty_get_property_name(p),icalproperty_get_value_as_string(p)});
+        //eventProperties.push_back(icalproperty_get_value_as_string(p));
+
+    }
+
+    for(auto i : eventProp){
+        cout<<"Prop name: "<<i.first<<" Prop Value: "<<i.second<<endl;
+        //cout<<"numero di parametri: "<<eventProp.size()<<endl;
+
+    }
+    event_creator(eventProp);
+
+    return eventProp;
+    /*
     if((p = icalcomponent_get_first_property(comp, ICAL_SUMMARY_PROPERTY))) {
         cout << icalproperty_get_value_as_string(p) << endl;
         //qui avviene l'aggiunta in Event.cpp per il summary
@@ -19,10 +50,94 @@ void IcalHandler::find_properties(icalcomponent* comp)
     if((p = icalcomponent_get_first_property(comp, ICAL_LOCATION_PROPERTY))) {
         cout << icalproperty_get_value_as_string(p) << endl;
     }
+     */
 
     //AGGIUNGERE TUTTI GLI IF NECESSARI A PESCARE TUTTI I DATI DI NOSTRO INTERESSE
 
 }
+
+
+Event IcalHandler::event_creator(map<string,string> eventProp){
+    Event ev1;
+
+
+    tm tm_start = {};
+    tm tm_end = {};
+    tm tm_creation = {};
+
+    /* eseguo il parsing della stringa contenente la data */
+    /* per il parsing ho guardato questo sito */
+    /* https://www.ibm.com/docs/en/i/7.3?topic=functions-strptime-convert-string-datetime */
+    strptime(   eventProp["DTSTART"].c_str(), "%Y%M%D%T%H%M%S", &tm_start);
+    strptime(   eventProp["DTSTART"].c_str(), "%Y%M%D%T%H%M%S", &tm_end);
+    strptime(   eventProp["DTSTART"].c_str(), "%Y%M%D%T%H%M%S", &tm_creation);
+
+    /* creo gli oggetti di tipo system_clock */
+    auto tp_start = std::chrono::system_clock::from_time_t(std::mktime(&tm_start));
+    auto tp_end = std::chrono::system_clock::from_time_t(std::mktime(&tm_end));
+    auto tp_creation = std::chrono::system_clock::from_time_t(std::mktime(&tm_creation));
+
+
+     /* print per capire se ho diviso bene le date
+    std::time_t tt1, tt2, tt3;
+    tt1 = chrono::system_clock::to_time_t ( tp_start );
+    tt2 = chrono::system_clock::to_time_t ( tp_end );
+    tt3 = chrono::system_clock::to_time_t ( tp_creation );
+    std::cout << "The time was just "
+              << std::put_time(std::localtime(&tt1), "%Y %M %D  %H %M %D" ) <<
+             std::put_time(std::localtime(&tt2), "%F %T") <<
+            std::put_time(std::localtime(&tt3), "%F %T") <<endl;
+
+            */
+
+
+
+    //cout<<"non funziona"<<endl;
+    /*creo l'evento */
+    string location, description;
+    /* non ho la proprietà location, quindi passo una stringa vuota al costruttore */
+    if(eventProp.find("LOCATION")==eventProp.end()){
+        location = "location assente";
+    }
+    else{
+        location = eventProp["LOCATION"];
+    }
+    /* non ho la proprietà description, quindi passo una stringa vuota al costruttore */
+    if(eventProp.find("DESCRIPTION")==eventProp.end()){
+        description = "descrizione assente!";
+    }
+    else{
+        description = eventProp["DESCRIPTION"];
+    }
+
+    Event ev = Event(eventProp["UID"], eventProp["SUMMARY"],description,location,tp_creation, tp_start,tp_end);
+    cout<<"UID: "<<ev.getUid()<<" NAME: "<<ev.getName()<<endl<<" DESCRIPTION: "<<ev.getDescription()<<" location: "<<ev.getLocation()<<endl;
+    return ev;
+
+
+
+    /*
+    if(eventProp.size()>6){
+        cout<<"l'evento ha 7 campi!"<<endl;
+        Event ev = Event(eventProp["UID"], eventProp["SUMMARY"],eventProp["DESCRIPTION"],eventProp["LOCATION"],tp_creation, tp_start,tp_end);
+        cout<<"UID: "<<ev.getUid()<<" NAME: "<<ev.getName()<<endl;
+        return ev;
+    }
+    if(eventProp.find("LOCATION")==eventProp.end()){
+        /* non ho la proprietà location, quindi passo una stringa vuota al costruttore
+        Event ev = Event(eventProp["UID"], eventProp["SUMMARY"],eventProp["DESCRIPTION"],"",tp_creation, tp_start,tp_end);
+        return ev;
+    } */
+
+
+
+
+    /* evento con tutti i campi quindi chiamo il costruttore senza cercare il campo mancante */
+
+    return ev1;
+
+    // }
+};
 
 //ESEMPIO DI EVENTO PIU' COMPLETO
 /* BEGIN:VCALENDAR
