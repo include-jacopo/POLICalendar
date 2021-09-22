@@ -4,69 +4,88 @@
 
 #include "Event.h"
 
-Event::Event() = default;
+#include <utility>
+#include <iostream>
 
-Event::Event(const std::string &uid) : uid(uid) {}
+Event::Event() {
 
-Event::Event(const std::string &uid, const std::string &summary, const std::string &description,
-             const std::string &location, const std::chrono::time_point<std::chrono::system_clock> &creationTime,
+}
+
+Event::Event(const std::string &uid, const std::string &name, const std::string &description,
+             const std::string &location, const std::string &url, const std::chrono::time_point<std::chrono::system_clock> &creationTime,
              const std::chrono::time_point<std::chrono::system_clock> &startTime,
-             const std::chrono::time_point<std::chrono::system_clock> &endTime) : uid(uid), summary(summary),
-             description(description), location(location), creationTime(creationTime), startTime(startTime), endTime(endTime) {};
+             const std::chrono::time_point<std::chrono::system_clock> &endTime):
+        uidS(uid),nameS(name),descr(description),loc(location),url(url),
+        creationT(creationTime), startT(startTime), endT(endTime){
+
+}
 
 const std::string &Event::getUid() const {
-    return uid;
+    return uidS;
 }
 
 void Event::setUid(const std::string &uid) {
-    Event::uid = uid;
+    this->uidS = uid;
+
 }
 
 const std::string &Event::getName() const {
-    return summary;
+    return nameS;
 }
 
 void Event::setName(const std::string &name) {
-    Event::summary = name;
+    this->nameS = name;
 }
 
 const std::string &Event::getDescription() const {
-    return description;
+    return  descr;
 }
 
 void Event::setDescription(const std::string &description) {
-    Event::description = description;
+    this->descr = description;
 }
 
 const std::string &Event::getLocation() const {
-    return location;
+    return loc;
 }
 
 void Event::setLocation(const std::string &location) {
-    Event::location = location;
+    this->loc = location;
+}
+
+const std::string &Event::getUrl() const {
+    return url;
+}
+void Event::setUrl(const std::string &url) {
+    this->url = url;
 }
 
 const std::chrono::time_point<std::chrono::system_clock> &Event::getCreationTime() const {
-    return creationTime;
+    return creationT;
 }
 
 void Event::setCreationTime(const std::chrono::time_point<std::chrono::system_clock> &creationTime) {
-    Event::creationTime = creationTime;
+    this->creationT = creationTime;
 }
 
 const std::chrono::time_point<std::chrono::system_clock> &Event::getStartTime() const {
-    return startTime;
+    return startT;
 }
 
 void Event::setStartTime(const std::chrono::time_point<std::chrono::system_clock> &startTime) {
-    Event::startTime = startTime;
+    this->startT = startTime;
 }
 
 const std::chrono::time_point<std::chrono::system_clock> &Event::getEndTime() const {
-    return endTime;
+    return endT;
 }
 
 void Event::setEndTime(const std::chrono::time_point<std::chrono::system_clock> &endTime) {
-    Event::endTime = endTime;
+    this->endT = endTime;
+}
+
+void Event::printEvent() {
+    std::cout<<"I campi dell'evento sono i seguenti (stampa solo alcuni)"<<std::endl;
+    std::cout<<"UID: "<<uidS<<" NAME: "<<nameS<<" DESCRIPTION: "<<descr<<" location: "<<loc<<" URL: "<<url<<std::endl;
 }
 
