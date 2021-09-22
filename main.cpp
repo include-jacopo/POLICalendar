@@ -67,6 +67,11 @@ int main(int argc, char *argv[]) {
 
     contenitore_eventi.displayEvents();
 
+    //Event ev1 = contenitore_eventi.findEvent("7fe9b5cf-676f-4f77-8fa6-cc66b61ce4b3");
+    //Event ev2(ev1.getName(),ev1.getDescription(),ev1.getLocation(),ev1.getUrl(),ev1.getCreationTime(),ev1.getStartTime(),ev1.getEndTime());
+    //cout<<ev1.getUid()<<" name: "<<ev1.getName()<<endl;
+    //cout<<"provo il costruttore senza uid"<<endl;
+    //cout<<ev2.getUid()<<" name: "<<ev2.getName()<<endl;
 
     return 0;
 

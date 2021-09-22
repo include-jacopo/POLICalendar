@@ -63,9 +63,9 @@ Event IcalHandler::event_creator(map<string,string> eventProp){
     /* eseguo il parsing della stringa contenente la data */
     /* per il parsing ho guardato questo sito */
     /* https://www.ibm.com/docs/en/i/7.3?topic=functions-strptime-convert-string-datetime */
-    strptime(   eventProp["DTSTART"].c_str(), "%Y%m%dT%H%M%S", &tm_start);
-    strptime(   eventProp["DTSTART"].c_str(), "%Y%m%dT%H%M%S", &tm_end);
-    strptime(   eventProp["DTSTART"].c_str(), "%Y%m%dT%H%M%S", &tm_creation);
+    strptime(   eventProp["DTSTART"].c_str(), "%Y%m%dT%H%M%SZ", &tm_start);
+    strptime(   eventProp["DTEND"].c_str(), "%Y%m%dT%H%M%SZ", &tm_end);
+    strptime(   eventProp["CREATED"].c_str(), "%Y%m%dT%H%M%SZ", &tm_creation);
 
     /* creo gli oggetti di tipo system_clock */
     auto tp_start = std::chrono::system_clock::from_time_t(std::mktime(&tm_start));
@@ -73,22 +73,23 @@ Event IcalHandler::event_creator(map<string,string> eventProp){
     auto tp_creation = std::chrono::system_clock::from_time_t(std::mktime(&tm_creation));
 
 
-     /* print per capire se ho diviso bene le date
+    tm tm_start1, tm_end1, tm_creation1;
+    stringstream ss_start(eventProp["DTSTART"].c_str());
+
+
+     /* print per capire se ho diviso bene le date */
+
+     /*
     std::time_t tt1, tt2, tt3;
     tt1 = chrono::system_clock::to_time_t ( tp_start );
     tt2 = chrono::system_clock::to_time_t ( tp_end );
     tt3 = chrono::system_clock::to_time_t ( tp_creation );
-    std::cout << "STart Time: "<< std::put_time(std::localtime(&tt1), "%Y %m %d  %H %M %S" ) <<
-                " End Time: "<< std::put_time(std::localtime(&tt2), "%Y %m %d  %H %M %D" ) <<
-              " Creation Time: "<< std::put_time(std::localtime(&tt3), "%Y %m %d  %H %M %D" ) <<endl;
+    std::cout << "STart Time: "<< std::put_time(std::localtime(&tt1), "%b %d %Y %H:%M:%S" ) <<endl<<
+                "End Time: "<< std::put_time(std::localtime(&tt2), "%b %d %Y %H:%M:%S" ) <<endl<<
+              "Creation Time: "<< std::put_time(std::localtime(&tt3), "%b %d %Y %H:%M:%S" ) <<endl;
 
-*/
+      */
 
-
-
-
-
-    //cout<<"non funziona"<<endl;
     /*creo l'evento */
     string location, description, url;
     /* non ho la proprietà location, quindi passo una stringa vuota al costruttore */

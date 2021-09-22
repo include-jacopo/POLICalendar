@@ -43,7 +43,7 @@ optional<Event> EventsContainer::deleteEvent(string uid){
     */
 }
 
-optional<Event> EventsContainer::findEvent(string uid){
+Event EventsContainer::findEvent(string uid){
 
     map<string,Event>::iterator it = Events.find(uid);
     Event found;

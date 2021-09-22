@@ -19,10 +19,16 @@ private:
     std::chrono::time_point<std::chrono::system_clock> startT;
     std::chrono::time_point<std::chrono::system_clock> endT;
 
+    std::string gen_random(std::string  s,  int len);
+
 
 public:
     Event();
     Event(const std::string &uid, const std::string &name, const std::string &description, const std::string &location, const std::string &url,
+          const std::chrono::time_point<std::chrono::system_clock> &creationTime,
+          const std::chrono::time_point<std::chrono::system_clock> &startTime,
+          const std::chrono::time_point<std::chrono::system_clock> &endTime);
+    Event(const std::string &name, const std::string &description, const std::string &location, const std::string &url,
           const std::chrono::time_point<std::chrono::system_clock> &creationTime,
           const std::chrono::time_point<std::chrono::system_clock> &startTime,
           const std::chrono::time_point<std::chrono::system_clock> &endTime);
