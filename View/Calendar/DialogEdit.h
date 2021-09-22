@@ -13,11 +13,16 @@ class DialogEdit : public QDialog {
 
 public:
     explicit DialogEdit(QWidget *parent = nullptr);
-    DialogEdit(const Event& event, QWidget* parent = nullptr);
-    ~DialogEdit();
+    explicit DialogEdit(const Event& event, QWidget* parent = nullptr);
+    ~DialogEdit() override;
+
+    void accept() override;
+    Event getEvent();
 
 private:
     Ui::DialogEdit *ui;
+
+    Event event;
 
     QString getName();
     QString getLocation();

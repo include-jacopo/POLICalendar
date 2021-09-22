@@ -58,8 +58,8 @@ QWidget#ScrollContent  {
     background: transparent;
 }
 
-QScrollBar::vertical {
-    background:white;
+QScrollBar:vertical {
+    background: #FFEFD3;
     width: 10px;
     margin: 0;
 }
