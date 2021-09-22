@@ -1,13 +1,7 @@
 #include <QApplication>
-#include <QBoxLayout>
-#include "View/Calendar/Calendar.h"
 #include "View/MainWindow.h"
 #include <libical/ical.h>
-#include <neon/ne_utils.h>
-#include <iostream>
 #include "backend/WebClient.h"
-#include <pugixml.hpp>
-#include <sstream>
 #include "backend/XMLReader.h"
 #include "backend/IcalHandler.h"
 
@@ -65,9 +59,9 @@ int main(int argc, char *argv[]) {
         }
     }
 
-    contenitore_eventi.displayEvents();
-
-
-    return 0;
-
+    // GUI
+    QApplication a(argc, argv);
+    MainWindow mainW = MainWindow();
+    mainW.show();
+    return QApplication::exec();
 }
