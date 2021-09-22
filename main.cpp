@@ -10,6 +10,8 @@
 #include <sstream>
 #include "backend/XMLReader.h"
 #include "backend/IcalHandler.h"
+
+#include "Model/EventsContainer.h"
 using namespace std;
 
 int main(int argc, char *argv[]) {
@@ -49,15 +51,21 @@ int main(int argc, char *argv[]) {
     list<icalcomponent*> eventi_calendario = readXML(xml_cal);
     list<icalcomponent*> todo_calendario = readXML(xml_todo);
 
+    EventsContainer contenitore_eventi;
+
     //Scorro ogni evento e i suoi sottoeventi per riempire Event.cpp
     for(auto evento: eventi_calendario){
         icalcomponent *c;
         for(c = icalcomponent_get_first_component(evento,ICAL_VEVENT_COMPONENT);
             c != 0;
             c = icalcomponent_get_next_component(evento,ICAL_VEVENT_COMPONENT)){
-            IcalHandler::find_properties(c); //Chiamata alla funzione per aggiungere in Event.cpp
+            //IcalHandler::find_properties(c); //Chiamata alla funzione per aggiungere in Event.cpp
+            Event ev = IcalHandler::event_from_ical_component(c);
+            contenitore_eventi.addEvent(ev);
         }
     }
+
+    contenitore_eventi.displayEvents();
 
 
     return 0;

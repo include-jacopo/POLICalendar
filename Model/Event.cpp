@@ -5,6 +5,7 @@
 #include "Event.h"
 
 #include <utility>
+#include <iostream>
 
 Event::Event() {
 
@@ -81,5 +82,10 @@ const std::chrono::time_point<std::chrono::system_clock> &Event::getEndTime() co
 
 void Event::setEndTime(const std::chrono::time_point<std::chrono::system_clock> &endTime) {
     this->endT = endTime;
+}
+
+void Event::printEvent() {
+    std::cout<<"I campi dell'evento sono i seguenti (stampa solo alcuni)"<<std::endl;
+    std::cout<<"UID: "<<uidS<<" NAME: "<<nameS<<" DESCRIPTION: "<<descr<<" location: "<<loc<<" URL: "<<url<<std::endl;
 }
 

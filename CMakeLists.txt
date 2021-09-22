@@ -29,7 +29,7 @@ add_executable(POLICalendar main.cpp
         Model/Event.cpp Model/Event.h
         backend/WebClient.cpp backend/WebClient.h backend/Base64.h
         backend/XMLReader.cpp backend/XMLReader.h
-        backend/IcalHandler.cpp backend/IcalHandler.h)
+        backend/IcalHandler.cpp backend/IcalHandler.h Model/EventsContainer.cpp Model/EventsContainer.h)
 
 target_link_libraries(POLICalendar
         Qt::Core

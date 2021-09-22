@@ -43,6 +43,7 @@ public:
     void setStartTime(const std::chrono::time_point<std::chrono::system_clock> &startTime);
     const std::chrono::time_point<std::chrono::system_clock> &getEndTime() const;
     void setEndTime(const std::chrono::time_point<std::chrono::system_clock> &endTime);
+    void printEvent();
 };
 
 #endif //POLICALENDAR_EVENT_H

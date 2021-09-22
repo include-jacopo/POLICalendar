@@ -16,6 +16,7 @@ class IcalHandler {
 public:
     static map<string,string> find_properties(icalcomponent* comp);
     static Event event_creator(map<string,string> eventProp);
+    static Event event_from_ical_component(icalcomponent* comp);
 
 };
 

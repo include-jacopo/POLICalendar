@@ -33,12 +33,7 @@ map<string,string> IcalHandler::find_properties(icalcomponent* comp)
 
     }
 
-    for(auto i : eventProp){
-        cout<<"Prop name: "<<i.first<<" Prop Value: "<<i.second<<endl;
-        //cout<<"numero di parametri: "<<eventProp.size()<<endl;
-
-    }
-    event_creator(eventProp);
+    //event_creator(eventProp);
 
     return eventProp;
     /*
@@ -78,7 +73,7 @@ Event IcalHandler::event_creator(map<string,string> eventProp){
     auto tp_creation = std::chrono::system_clock::from_time_t(std::mktime(&tm_creation));
 
 
-     // print per capire se ho diviso bene le date
+     /* print per capire se ho diviso bene le date
     std::time_t tt1, tt2, tt3;
     tt1 = chrono::system_clock::to_time_t ( tp_start );
     tt2 = chrono::system_clock::to_time_t ( tp_end );
@@ -87,6 +82,7 @@ Event IcalHandler::event_creator(map<string,string> eventProp){
                 " End Time: "<< std::put_time(std::localtime(&tt2), "%Y %m %d  %H %M %D" ) <<
               " Creation Time: "<< std::put_time(std::localtime(&tt3), "%Y %m %d  %H %M %D" ) <<endl;
 
+*/
 
 
 
@@ -118,7 +114,7 @@ Event IcalHandler::event_creator(map<string,string> eventProp){
     }
 
     Event ev = Event(eventProp["UID"], eventProp["SUMMARY"],description,location,url,tp_creation, tp_start,tp_end);
-    cout<<"UID: "<<ev.getUid()<<" NAME: "<<ev.getName()<<endl<<" DESCRIPTION: "<<ev.getDescription()<<" location: "<<ev.getLocation()<<" URL: "<<ev.getUrl()<<endl;
+
     return ev;
 
 
@@ -145,6 +141,16 @@ Event IcalHandler::event_creator(map<string,string> eventProp){
 
     // }
 };
+
+Event IcalHandler::event_from_ical_component(icalcomponent* comp){
+    map<string,string> eventProps;           /* mappa con il nome della proprietà come key e il valore della proprietà come value */
+    eventProps = find_properties(comp);      /* estraggo le proprietà dal componente */
+
+    Event ev = event_creator(eventProps);   /* creo il nuovo evento passando le proprietà */
+
+    return ev;
+
+}
 
 //ESEMPIO DI EVENTO PIU' COMPLETO
 /* BEGIN:VCALENDAR
