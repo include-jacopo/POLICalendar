@@ -22,7 +22,7 @@ public:
     void setView(IView *view);
 
     void addEvent(Event ev);
-    optional<Event> findEvent(string uid);
+    Event findEvent(string uid);
     optional<Event> deleteEvent(string uid);
     void displayEvents();
 
