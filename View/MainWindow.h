@@ -9,6 +9,7 @@
 #include <QWidget>
 #include "Calendar/Calendar.h"
 #include "Login/Login.h"
+#include "../Controller/Controller.h"
 
 class MainWindow : public QMainWindow {
     Q_OBJECT
@@ -16,9 +17,12 @@ class MainWindow : public QMainWindow {
 private:
     Calendar *calendar;
     Login *login;
+    Controller *controller;
 
 public:
     explicit MainWindow(QWidget *parent = nullptr);
+    void setController(Controller *c);
+
     [[nodiscard]] QSize sizeHint() const override;
 
 public slots:
