@@ -68,9 +68,9 @@ Event IcalHandler::event_creator(map<string,string> eventProp){
     /* eseguo il parsing della stringa contenente la data */
     /* per il parsing ho guardato questo sito */
     /* https://www.ibm.com/docs/en/i/7.3?topic=functions-strptime-convert-string-datetime */
-    strptime(   eventProp["DTSTART"].c_str(), "%Y%M%D%T%H%M%S", &tm_start);
-    strptime(   eventProp["DTSTART"].c_str(), "%Y%M%D%T%H%M%S", &tm_end);
-    strptime(   eventProp["DTSTART"].c_str(), "%Y%M%D%T%H%M%S", &tm_creation);
+    strptime(   eventProp["DTSTART"].c_str(), "%Y%m%dT%H%M%S", &tm_start);
+    strptime(   eventProp["DTSTART"].c_str(), "%Y%m%dT%H%M%S", &tm_end);
+    strptime(   eventProp["DTSTART"].c_str(), "%Y%m%dT%H%M%S", &tm_creation);
 
     /* creo gli oggetti di tipo system_clock */
     auto tp_start = std::chrono::system_clock::from_time_t(std::mktime(&tm_start));
@@ -78,40 +78,47 @@ Event IcalHandler::event_creator(map<string,string> eventProp){
     auto tp_creation = std::chrono::system_clock::from_time_t(std::mktime(&tm_creation));
 
 
-     /* print per capire se ho diviso bene le date
+     // print per capire se ho diviso bene le date
     std::time_t tt1, tt2, tt3;
     tt1 = chrono::system_clock::to_time_t ( tp_start );
     tt2 = chrono::system_clock::to_time_t ( tp_end );
     tt3 = chrono::system_clock::to_time_t ( tp_creation );
-    std::cout << "The time was just "
-              << std::put_time(std::localtime(&tt1), "%Y %M %D  %H %M %D" ) <<
-             std::put_time(std::localtime(&tt2), "%F %T") <<
-            std::put_time(std::localtime(&tt3), "%F %T") <<endl;
+    std::cout << "STart Time: "<< std::put_time(std::localtime(&tt1), "%Y %m %d  %H %M %S" ) <<
+                " End Time: "<< std::put_time(std::localtime(&tt2), "%Y %m %d  %H %M %D" ) <<
+              " Creation Time: "<< std::put_time(std::localtime(&tt3), "%Y %m %d  %H %M %D" ) <<endl;
 
-            */
+
+
 
 
 
     //cout<<"non funziona"<<endl;
     /*creo l'evento */
-    string location, description;
+    string location, description, url;
     /* non ho la proprietà location, quindi passo una stringa vuota al costruttore */
     if(eventProp.find("LOCATION")==eventProp.end()){
-        location = "location assente";
+        location = "";
     }
     else{
         location = eventProp["LOCATION"];
     }
     /* non ho la proprietà description, quindi passo una stringa vuota al costruttore */
     if(eventProp.find("DESCRIPTION")==eventProp.end()){
-        description = "descrizione assente!";
+        description = "";
     }
     else{
         description = eventProp["DESCRIPTION"];
     }
+    /* non ho la proprietà description, quindi passo una stringa vuota al costruttore */
+    if(eventProp.find("URL")==eventProp.end()){
+        url= "";
+    }
+    else{
+        url = eventProp["URL"];
+    }
 
-    Event ev = Event(eventProp["UID"], eventProp["SUMMARY"],description,location,tp_creation, tp_start,tp_end);
-    cout<<"UID: "<<ev.getUid()<<" NAME: "<<ev.getName()<<endl<<" DESCRIPTION: "<<ev.getDescription()<<" location: "<<ev.getLocation()<<endl;
+    Event ev = Event(eventProp["UID"], eventProp["SUMMARY"],description,location,url,tp_creation, tp_start,tp_end);
+    cout<<"UID: "<<ev.getUid()<<" NAME: "<<ev.getName()<<endl<<" DESCRIPTION: "<<ev.getDescription()<<" location: "<<ev.getLocation()<<" URL: "<<ev.getUrl()<<endl;
     return ev;
 
 

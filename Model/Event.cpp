@@ -11,10 +11,10 @@ Event::Event() {
 }
 
 Event::Event(const std::string &uid, const std::string &name, const std::string &description,
-             const std::string &location, const std::chrono::time_point<std::chrono::system_clock> &creationTime,
+             const std::string &location, const std::string &url, const std::chrono::time_point<std::chrono::system_clock> &creationTime,
              const std::chrono::time_point<std::chrono::system_clock> &startTime,
              const std::chrono::time_point<std::chrono::system_clock> &endTime):
-        uidS(uid),nameS(name),descr(description),loc(location),
+        uidS(uid),nameS(name),descr(description),loc(location),url(url),
         creationT(creationTime), startT(startTime), endT(endTime){
 
 }
@@ -50,6 +50,13 @@ const std::string &Event::getLocation() const {
 
 void Event::setLocation(const std::string &location) {
     this->loc = location;
+}
+
+const std::string &Event::getUrl() const {
+    return url;
+}
+void Event::setUrl(const std::string &url) {
+    this->url = url;
 }
 
 const std::chrono::time_point<std::chrono::system_clock> &Event::getCreationTime() const {

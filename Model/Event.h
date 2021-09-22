@@ -14,6 +14,7 @@ private:
     std::string nameS;
     std::string descr;
     std::string loc;
+    std::string url;
     std::chrono::time_point<std::chrono::system_clock> creationT;
     std::chrono::time_point<std::chrono::system_clock> startT;
     std::chrono::time_point<std::chrono::system_clock> endT;
@@ -21,7 +22,7 @@ private:
 
 public:
     Event();
-    Event(const std::string &uid, const std::string &name, const std::string &description, const std::string &location,
+    Event(const std::string &uid, const std::string &name, const std::string &description, const std::string &location, const std::string &url,
           const std::chrono::time_point<std::chrono::system_clock> &creationTime,
           const std::chrono::time_point<std::chrono::system_clock> &startTime,
           const std::chrono::time_point<std::chrono::system_clock> &endTime);
@@ -34,6 +35,8 @@ public:
     void setDescription(const std::string &description);
     const std::string &getLocation() const;
     void setLocation(const std::string &location);
+    const std::string &getUrl() const;
+    void setUrl(const std::string &url);
     const std::chrono::time_point<std::chrono::system_clock> &getCreationTime() const;
     void setCreationTime(const std::chrono::time_point<std::chrono::system_clock> &creationTime);
     const std::chrono::time_point<std::chrono::system_clock> &getStartTime() const;
