@@ -13,7 +13,7 @@
 
 using namespace std;
 
-Controller::Controller(){
+Controller::Controller() {
     const string host("dav.fruux.com");
     const string user("b3297398995");
     const string pass("dap2zg5z54tu");
@@ -47,15 +47,15 @@ Controller::Controller(){
     //ESEMPIO DI AGGIUNTA DI UN EVENTO
     //int prova = cal.put_event(uri_calendar, committami);
 
-    list<icalcomponent*> eventi_calendario = readXML(xml_cal);
-    list<icalcomponent*> todo_calendario = readXML(xml_todo);
+    list<icalcomponent *> eventi_calendario = readXML(xml_cal);
+    list<icalcomponent *> todo_calendario = readXML(xml_todo);
 
     //Scorro ogni evento e i suoi sottoeventi per riempire Event.cpp
-    for(auto evento : eventi_calendario){
+    for (auto evento: eventi_calendario) {
         icalcomponent *c;
-        for(c = icalcomponent_get_first_component(evento,ICAL_VEVENT_COMPONENT);
-            c != 0;
-            c = icalcomponent_get_next_component(evento,ICAL_VEVENT_COMPONENT)){
+        for (c = icalcomponent_get_first_component(evento, ICAL_VEVENT_COMPONENT);
+             c != 0;
+             c = icalcomponent_get_next_component(evento, ICAL_VEVENT_COMPONENT)) {
             //IcalHandler::find_properties(c); //Chiamata alla funzione per aggiungere in Event.cpp
             Event ev = IcalHandler::event_from_ical_component(c);
             addEvent(ev);
@@ -63,21 +63,29 @@ Controller::Controller(){
     }
 };
 
-void Controller::addEvent(Event ev) {
-    Events.insert({ev.getUid(), ev});
+pair<forward_iterator_tag, forward_iterator_tag> Controller::getEvents() {
+    return pair<forward_iterator_tag, forward_iterator_tag>();
 }
-optional<Event> Controller::deleteEvent(string uid){
 
-    map<string,Event>::iterator it = Events.find(uid);
-    Event removed;
+bool Controller::updateEvents() {
+    return false;
+}
 
-    if(it!= Events.end()){
+bool Controller::addEvent(Event ev) {
+    Events.insert({ev.getUid(), ev});
+    return true;
+}
+
+bool Controller::deleteEvent(string uid) {
+
+    auto it = Events.find(uid);
+
+    if (it != Events.end()) {
         /* ho trovato l'evento da rimuovere */
-        removed = it->second;
         Events.erase(it);
-        return removed;
+        return true;
     }
-
+    return false;
 
     /*
      * vecchia implementazione con il vector
@@ -95,16 +103,16 @@ optional<Event> Controller::deleteEvent(string uid){
     */
 }
 
-optional<Event> Controller::findEvent(string uid){
+optional<Event> Controller::findEvent(string uid) {
 
-    map<string,Event>::iterator it = Events.find(uid);
-    Event found;
+    auto it = Events.find(uid);
 
-    if(it!= Events.end()){
+    if (it != Events.end()) {
         /* ho trovato l'evento e lo ritorno */
-        found = it->second;
-        return found;
+        return it->second;
     }
+
+    return {};
 
     /*
      *  vecchia implementazione con vector
@@ -122,12 +130,13 @@ optional<Event> Controller::findEvent(string uid){
         return removed;
     */
 }
-void Controller::displayEvents(){
-    cout<<"**EVENTI ATTUALMENTE PRESENTI NEL CONTENITORE**"<<endl;
-    for(auto i : Events){
+
+void Controller::displayEvents() {
+    cout << "**EVENTI ATTUALMENTE PRESENTI NEL CONTENITORE**" << endl;
+    for (auto i: Events) {
         i.second.printEvent();
     }
-    cout<<"***********************************************"<<endl;
+    cout << "***********************************************" << endl;
 }
 
 void Controller::setView(IView *view) {

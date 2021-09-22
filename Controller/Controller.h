@@ -19,14 +19,15 @@ private:
     map<string, Event> Events;
 public:
     Controller();
-    void setView(IView *view);
 
-    void addEvent(Event ev);
-    Event findEvent(string uid);
-    optional<Event> deleteEvent(string uid);
+    pair<forward_iterator_tag, forward_iterator_tag> getEvents() override;
+    bool updateEvents() override;
+    bool addEvent(Event ev) override;
+    optional<Event> findEvent(string uid) override;
+    bool deleteEvent(string uid) override;
     void displayEvents();
 
-
+    void setView(IView *view);
 };
 
 
