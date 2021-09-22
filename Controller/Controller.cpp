@@ -130,6 +130,6 @@ void Controller::displayEvents(){
     cout<<"***********************************************"<<endl;
 }
 
-void Controller::setView(MainWindow *view) {
+void Controller::setView(IView *view) {
     this->view = view;
 }

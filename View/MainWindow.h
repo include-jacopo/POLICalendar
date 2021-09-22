@@ -9,27 +9,27 @@
 #include <QWidget>
 #include "Calendar/Calendar.h"
 #include "Login/Login.h"
-#include "../Controller/Controller.h"
+#include "IView.h"
+#include "../Controller/IController.h"
 
-class MainWindow : public QMainWindow {
+class MainWindow : public QMainWindow, public IView {
     Q_OBJECT
 
 private:
     Calendar *calendar;
     Login *login;
-    Controller *controller;
+    IController *controller;
 
 public:
     explicit MainWindow(QWidget *parent = nullptr);
-    void setController(Controller *c);
 
     [[nodiscard]] QSize sizeHint() const override;
 
+    void updateEvents() override;
+    void setController(IController *c);
+
 public slots:
     void loginSuccessful();
-
-signals:
-
 };
 
 

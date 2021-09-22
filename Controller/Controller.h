@@ -6,19 +6,20 @@
 #define POLICALENDAR_CONTROLLER_H
 
 #include "../Model/Event.h"
-#include "../View/MainWindow.h"
+#include "../View/IView.h"
+#include "IController.h"
 #include <map>
 #include <optional>
 
 using namespace std;
 
-class Controller {
+class Controller : public IController {
 private:
-    MainWindow *view;
+    IView *view;
     map<string, Event> Events;
 public:
     Controller();
-    void setView(MainWindow *view);
+    void setView(IView *view);
 
     void addEvent(Event ev);
     optional<Event> findEvent(string uid);
