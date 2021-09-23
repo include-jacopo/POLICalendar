@@ -14,15 +14,16 @@ class CalendarEvent : public QFrame {
     Q_OBJECT
 
 private:
-    Event *calEvent;
+    Event calEvent;
     unsigned int startMinute;
     unsigned int durationInMinutes;
 
 public:
-    explicit CalendarEvent(Event& event, QWidget *parent = nullptr);
+    explicit CalendarEvent(const Event& event, QWidget *parent = nullptr);
 
     [[nodiscard]] unsigned int getStartMinute() const;
     [[nodiscard]] unsigned int getDurationInMinutes() const;
+    QString getEventUid();
 
 protected:
     void mousePressEvent(QMouseEvent *event) override;

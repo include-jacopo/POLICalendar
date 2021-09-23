@@ -10,7 +10,7 @@
 #include <QFrame>
 #include <QGridLayout>
 #include <QList>
-#include "HourVBar.h"
+#include <QDate>
 #include "CalendarDate.h"
 #include "CalendarEvents.h"
 
@@ -18,10 +18,12 @@ class CalendarColumns : public QFrame {
     Q_OBJECT
 
 private:
-    QList<std::tuple<CalendarDate*, CalendarEvents*>> columns;
+    QList<std::pair<CalendarDate*, CalendarEvents*>> columns;
     QGridLayout *layout;
-
+    QDate firstColDate;
     int colsOnScreen = 0;
+
+    void updateEvents();
 
 public:
     explicit CalendarColumns(QWidget *parent = nullptr);

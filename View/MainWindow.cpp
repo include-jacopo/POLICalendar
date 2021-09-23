@@ -38,7 +38,3 @@ QSize MainWindow::sizeHint() const {
 void MainWindow::updateEvents() {
     // TODO
 }
-
-void MainWindow::setController(IController *c) {
-    controller = c;
-}

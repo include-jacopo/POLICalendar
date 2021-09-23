@@ -10,7 +10,6 @@
 #include "Calendar/Calendar.h"
 #include "Login/Login.h"
 #include "IView.h"
-#include "../Controller/IController.h"
 
 class MainWindow : public QMainWindow, public IView {
     Q_OBJECT
@@ -18,7 +17,6 @@ class MainWindow : public QMainWindow, public IView {
 private:
     Calendar *calendar;
     Login *login;
-    IController *controller;
 
 public:
     explicit MainWindow(QWidget *parent = nullptr);
@@ -26,7 +24,6 @@ public:
     [[nodiscard]] QSize sizeHint() const override;
 
     void updateEvents() override;
-    void setController(IController *c);
 
 public slots:
     void loginSuccessful();

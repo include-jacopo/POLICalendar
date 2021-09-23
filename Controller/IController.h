@@ -10,10 +10,10 @@ using namespace std;
 class IController {
 public:
     /*
-     * Get the iterators to read all the events.
-     * @return std::pair<>(begin_it, end_it)
+     * Get the container reference to read all the events.
+     * @return const reference to a map -> key = uid, value = Event
      */
-    virtual pair<forward_iterator_tag, forward_iterator_tag> getEvents() = 0;
+    virtual const std::map<std::string, Event>& getEvents() = 0;
 
     /*
      * Update events.

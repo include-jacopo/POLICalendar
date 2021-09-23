@@ -3,6 +3,7 @@
 //
 
 #include <iostream>
+#include <iomanip>
 #include "Event.h"
 
 Event::Event() {
@@ -105,9 +106,15 @@ void Event::setEndTime(const std::chrono::time_point<std::chrono::system_clock> 
 }
 
 void Event::printEvent() {
-    std::cout << "I campi dell'evento sono i seguenti (stampa solo alcuni)" << std::endl;
-    std::cout << "UID: " << uidS << " NAME: " << nameS << " DESCRIPTION: " << descr << " location: " << loc << " URL: "
-              << url << std::endl;
+    std::cout << "Evento:\n";
+    std::cout << "UID: " << uidS << " NAME: " << nameS << "\nDESCRIPTION: " << descr << "\nLOCATION: " << loc << "\nURL: "
+              << url << "\n";
+    auto tt = std::chrono::system_clock::to_time_t(startT);
+    auto lt = std::localtime(&tt);
+    std::cout << "START TIME: " << std::put_time(lt, "%d/%m/%Y %H:%M:%S") << "\n";
+    tt = std::chrono::system_clock::to_time_t(endT);
+    lt = std::localtime(&tt);
+    std::cout << "END TIME: " << std::put_time(lt, "%d/%m/%Y %H:%M:%S") << "\n\n";
 }
 
 

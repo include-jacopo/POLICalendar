@@ -20,11 +20,14 @@ private:
     QList<CalendarEvent*> events;
     QDate date;
 
-    void updateEvents();
+    void setGeometryEvent(CalendarEvent *e);
 
 public:
     explicit CalendarEvents(QDate date, QWidget *widget = nullptr);
     void setDate(const QDate &date);
+    void addEvent(const Event &event);
+    bool removeEvent(const Event &event);
+    void clearEvents();
 
 protected:
     void paintEvent(QPaintEvent *event) override;

@@ -13,6 +13,15 @@
 
 using namespace std;
 
+Controller* Controller::instance = nullptr;
+
+Controller* Controller::getInstance() {
+    if (instance == nullptr) {
+        instance = new Controller();
+    }
+    return instance;
+}
+
 Controller::Controller() {
     const string host("dav.fruux.com");
     const string user("b3297398995");
@@ -63,8 +72,8 @@ Controller::Controller() {
     }
 };
 
-pair<forward_iterator_tag, forward_iterator_tag> Controller::getEvents() {
-    return pair<forward_iterator_tag, forward_iterator_tag>();
+const map<string, Event>& Controller::getEvents() {
+    return Events;
 }
 
 bool Controller::updateEvents() {
@@ -137,8 +146,4 @@ void Controller::displayEvents() {
         i.second.printEvent();
     }
     cout << "***********************************************" << endl;
-}
-
-void Controller::setView(IView *view) {
-    this->view = view;
 }

@@ -11,8 +11,8 @@
 #include "CalendarEvent.h"
 #include "DialogEdit.h"
 
-CalendarEvent::CalendarEvent(Event &event, QWidget *parent) : QFrame(parent) {
-    calEvent = &event;
+CalendarEvent::CalendarEvent(const Event& event, QWidget *parent) : QFrame(parent) {
+    calEvent = event;
 
     std::stringstream startTime, endTime;
     auto st = std::chrono::system_clock::to_time_t(event.getStartTime());
@@ -65,10 +65,14 @@ unsigned int CalendarEvent::getDurationInMinutes() const {
     return durationInMinutes;
 }
 
+QString CalendarEvent::getEventUid() {
+    return QString::fromStdString(calEvent.getUid());
+}
+
 void CalendarEvent::mousePressEvent(QMouseEvent *event) {
     QFrame::mousePressEvent(event);
     if (event->button() == Qt::LeftButton) {
-        auto dialog = new DialogEdit(*calEvent, this);
+        auto dialog = new DialogEdit(calEvent, this);
         dialog->exec();
     }
 }
