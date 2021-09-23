@@ -7,6 +7,7 @@
 
 #include "../Model/Event.h"
 #include "IController.h"
+#include "WebClient.h"
 #include <map>
 #include <optional>
 
@@ -15,6 +16,7 @@ using namespace std;
 class Controller : public IController {
 private:
     map<string, Event> Events;
+    WebClient wc;
 
     static Controller *instance;
     Controller(); // Private constructor for singleton pattern
