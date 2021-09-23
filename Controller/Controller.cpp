@@ -72,14 +72,21 @@ Controller::Controller() : wc("dav.fruux.com", "b3297398995", "dap2zg5z54tu", 44
              c = icalcomponent_get_next_component(evento, ICAL_VEVENT_COMPONENT)) {
             //IcalHandler::find_properties(c); //Chiamata alla funzione per aggiungere in Event.cpp
             Event ev = IcalHandler::event_from_ical_component(c);
-            addEvent(ev);
+           /* addEvent(ev);
+            * BISOGNA DIFFERENZIARE TRA LA AddEvent che avevamo fatto inizialmente che caricava in locale i dati presenti sul calendario e quella che
+            * carica sul calendario e in locale nuovi eventi
+            */
         }
     }
+
+    /*  codice per provare la addEvent  tengo qui per comodità, da togliere in futuro */
+    /*
     Event ev2 = Events.find("0d84aa00-bb6c-436b-af79-e1c79f0fb87f")->second;
     cout<<"EVENTO 2!!"<<endl<<"descrizione" << ev2.getDescription()<<endl;
     ev2.setDescription("MICHELE NON PUZZA!!, JACOPO PUZZA");
     cout<<"EVENTO 2!!"<<endl<<"descrizione" << ev2.getDescription()<<endl;
     addEvent(ev2);
+     */
 };
 
 const map<string, Event>& Controller::getEvents() {
@@ -123,7 +130,7 @@ bool Controller::addEvent(Event ev) {
     startT = streamStartT.str();
     endT = streamEndT.str();
     creationT = streamCreationT.str();
-    cout<<startT<<" questo è il startT!"<<endl;
+
     /* ESEMPIO DI PAYLOAD DA CREARE
    string committami = "BEGIN:VCALENDAR\n"
                        "VERSION:2.0\n"
@@ -142,9 +149,10 @@ bool Controller::addEvent(Event ev) {
                        "END:VCALENDAR";
     */
     string payloadIntermedio = "DTSTART:"+startT+"\n"+"UID:"+ev.getUid()+"\n"+"CREATED:"+creationT+"\n"+"DTSTAMP:"+creationT+"\n"+
-                        "DTEND"+endT+"\n"+"SUMMARY:"+ev.getName();
+                        "DTEND:"+endT+"\n"+"SUMMARY:"+ev.getName()+"\n";
 
     string payloadCompleto = payloadIniziale + payloadIntermedio + payloadFinale;
+
 
     if(!wc.put_event("/calendars/a3298160768/51759490-6b14-4c41-88ae-1a94106fe0b6/",payloadCompleto)){
         /* la richiesta di caricamento dell'evento ha avuto risultato positivo */
