@@ -8,6 +8,7 @@
 #include "../Model/Event.h"
 #include "../View/IView.h"
 #include "IController.h"
+#include "WebClient.h"
 #include <map>
 #include <optional>
 
@@ -17,6 +18,7 @@ class Controller : public IController {
 private:
     IView *view;
     map<string, Event> Events;
+    WebClient wc;
 public:
     Controller();
 
