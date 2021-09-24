@@ -24,7 +24,7 @@ map<string,string> IcalHandler::find_properties(icalcomponent* comp)
     map<string,string> eventProp;
 
 
-    cout<<icalcomponent_as_ical_string(comp)<<endl;
+    //cout<<icalcomponent_as_ical_string(comp)<<endl;
 
     for(p = icalcomponent_get_first_property(comp, ICAL_ANY_PROPERTY); p != 0 ; p = icalcomponent_get_next_property(comp, ICAL_ANY_PROPERTY)){
         //string st = icalproperty_get_property_name(p);

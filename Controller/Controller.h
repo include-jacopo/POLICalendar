@@ -20,6 +20,7 @@ private:
 
     static Controller *instance;
     Controller(); // Private constructor for singleton pattern
+    int insertLocalEvent(Event ev);
 
 public:
     static Controller* getInstance();

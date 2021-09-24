@@ -73,9 +73,12 @@ Controller::Controller() : wc("dav.fruux.com", "b3297398995", "dap2zg5z54tu", 44
             //IcalHandler::find_properties(c); //Chiamata alla funzione per aggiungere in Event.cpp
             Event ev = IcalHandler::event_from_ical_component(c);
            /* addEvent(ev);
+
             * BISOGNA DIFFERENZIARE TRA LA AddEvent che avevamo fatto inizialmente che caricava in locale i dati presenti sul calendario e quella che
             * carica sul calendario e in locale nuovi eventi
             */
+            insertLocalEvent(ev);
+            cout<<"uid: "<<ev.getUid()<<" name: "<<ev.getName()<<endl;
         }
     }
 
@@ -91,6 +94,11 @@ Controller::Controller() : wc("dav.fruux.com", "b3297398995", "dap2zg5z54tu", 44
 
 const map<string, Event>& Controller::getEvents() {
     return Events;
+}
+
+int Controller::insertLocalEvent(Event ev){
+    Events.insert({ev.getUid(), ev});
+    return 1;
 }
 
 bool Controller::updateEvents() {
