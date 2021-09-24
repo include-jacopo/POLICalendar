@@ -20,6 +20,7 @@ class WebClient {
 public:
     WebClient(const string url, const string user, const string pass, const unsigned port);
     ~WebClient();
+    string propfind_calendar(string uri, string url);
     string report_calendar(const string uri);
     string report_todo(const string uri);
     int put_event(const string uri, const string evento);

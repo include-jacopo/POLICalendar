@@ -12,6 +12,7 @@
 using namespace std;
 
 list<icalcomponent*> readXML(string str);
+string readCtag(string str);
 
 #endif //POLICALENDAR_XMLREADER_H
 
