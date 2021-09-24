@@ -34,6 +34,42 @@ WebClient::~WebClient(){
     ne_sock_exit();
 }
 
+string WebClient::propfind_calendar(string uri, string url) {
+    string response;
+    string propfind = "<d:propfind xmlns:d=\"DAV:\" xmlns:cs=\"http://calendarserver.org/ns/\">"
+                      "  <d:prop>\n"
+                      "     <d:displayname />\n"
+                      "     <cs:getctag />\n"
+                      "  </d:prop>\n"
+                      "</d:propfind>";
+
+    ne_request *req = ne_request_create(sess, "PROPFIND", (uri).c_str());
+    ne_add_request_header(req, "Authorization", ("Basic "+base64_auth).c_str());
+
+    ne_set_request_body_buffer(req, propfind.c_str(), propfind.size());
+    ne_add_response_body_reader(req, ne_accept_always, httpResponseReader, &response);
+
+    ne_request_dispatch(req);
+    int result = ne_request_dispatch(req);
+    int status = ne_get_status(req)->code;
+
+    switch (result) {
+        case NE_OK:
+            break;
+        case NE_CONNECT:
+            throw invalid_argument("ne_connect error");
+        case NE_TIMEOUT:
+            throw invalid_argument("ne_timeout error");
+        case NE_AUTH:
+            throw invalid_argument("ne_auth error");
+        default:
+            throw invalid_argument("ne_generic error");
+    }
+
+    ne_request_destroy(req);
+    return response;
+}
+
 string WebClient::report_calendar(string uri) {
     string response;
     string report = "<c:calendar-query xmlns:d=\"DAV:\" xmlns:c=\"urn:ietf:params:xml:ns:caldav\">\n"
@@ -54,7 +90,6 @@ string WebClient::report_calendar(string uri) {
     ne_add_response_body_reader(req, ne_accept_always, httpResponseReader, &response);
 
     int result = ne_request_dispatch(req);
-    int status = ne_get_status(req)->code; //aggiungere un controllo su questi return?
 
     switch (result) {
         case NE_OK:
@@ -68,6 +103,7 @@ string WebClient::report_calendar(string uri) {
         default:
             throw invalid_argument("ne_generic error");
     }
+
     ne_request_destroy(req);
     return move(response);
 }

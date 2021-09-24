@@ -11,6 +11,24 @@
 
 using namespace std;
 
+string readCtag(string str) {
+    pugi::xml_document doc;
+    stringstream ss;
+
+    ss << str;
+    pugi::xml_parse_result result = doc.load(ss, pugi::parse_default | pugi::parse_declaration);
+
+    if (!result) { // check of the correct loading of the xml
+        std::cout << "Parse error: " << result.description() << ", character pos= " << result.offset;
+    }
+
+    auto node3 = doc.child("d.multistratus").child("d:propstat").child("d:prop").child("cs:getctag");
+    //cout << icalparser_parse_string(node3.text().as_string()) << endl;
+    cout << node3.text().as_string() << endl;
+
+    return node3.text().as_string();
+}
+
 list<icalcomponent*> readXML(string str) {
     pugi::xml_document doc;
     stringstream ss;
