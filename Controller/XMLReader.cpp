@@ -22,11 +22,10 @@ string readCtag(string str) {
         std::cout << "Parse error: " << result.description() << ", character pos= " << result.offset;
     }
 
-    auto node3 = doc.child("d.multistratus").child("d:propstat").child("d:prop").child("cs:getctag");
-    //cout << icalparser_parse_string(node3.text().as_string()) << endl;
-    cout << node3.text().as_string() << endl;
+    auto node = doc.child("d:multistatus").first_child();
+    auto node2 = node.child("d:propstat").child("d:prop").child("cs:getctag");
 
-    return node3.text().as_string();
+    return node2.text().as_string();
 }
 
 list<icalcomponent*> readXML(string str) {

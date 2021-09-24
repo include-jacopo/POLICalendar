@@ -53,10 +53,11 @@ Controller::Controller() : wc("dav.fruux.com", "b3297398995", "dap2zg5z54tu", 44
                         "END:VEVENT\n"
                         "END:VCALENDAR";
 
-
-
     xml_cal = wc.report_calendar(uri_calendar);
     xml_todo = wc.report_todo(uri_todo);
+
+    string ctagXML = wc.propfind_calendar(uri_calendar, host);
+    readCtag(ctagXML);
 
     //ESEMPIO DI AGGIUNTA DI UN EVENTO
     //int prova = cal.put_event(uri_calendar, committami);
@@ -90,10 +91,6 @@ Controller::Controller() : wc("dav.fruux.com", "b3297398995", "dap2zg5z54tu", 44
     cout<<"EVENTO 2!!"<<endl<<"descrizione" << ev2.getDescription()<<endl;
     addEvent(ev2);
      */
-
-    string ctagXML = wc.propfind_calendar(uri_calendar, host);
-    readCtag(ctagXML);
-
 };
 
 const map<string, Event>& Controller::getEvents() {
