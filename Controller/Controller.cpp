@@ -175,6 +175,10 @@ bool Controller::addEvent(Event ev) {
     }
 }
 
+bool Controller::editEvent(Event ev) {
+    return false;
+}
+
 bool Controller::deleteEvent(string uid) {
 
     auto it = Events.find(uid);

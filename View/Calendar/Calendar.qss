@@ -21,12 +21,16 @@ CalendarEvent {
 }
 
 QCalendarWidget QWidget#qt_calendar_navigationbar {
-    background-color: #FFEFD3;
+    background-color: #FFC49B;
 }
 
 QCalendarWidget QToolButton {
     color: #3F334D;
-    background-color: #FFEFD3;
+    background-color: #FFC49B;
+}
+
+QCalendarWidget QTableView {
+    alternate-background-color: #FFEFD3;
 }
 
 HourVBar {

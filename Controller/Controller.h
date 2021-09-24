@@ -29,8 +29,9 @@ public:
 
     const map<string, Event>& getEvents() override;
     bool updateEvents() override;
-    bool addEvent(Event ev) override;
     optional<Event> findEvent(string uid) override;
+    bool addEvent(Event ev) override;
+    bool editEvent(Event ev) override;
     bool deleteEvent(string uid) override;
     void displayEvents();
 };

@@ -18,15 +18,20 @@ QPushButton {
     padding: 6px 20px;
     font-size: 14px;
     border: 1px solid #086375;
-    border-radius: 16px;
+    border-radius: 14px;
     min-width: 50px;
     text-transform: uppercase;
 }
 
-QPushButton:hover {
+QPushButton:hover, QPushButton:focus {
     background-color: #3F334D;
 }
 
-QPushButton:focus {
-    background-color: #3F334D;
+QPushButton#deleteButton {
+    background-color: red;
+    border: 1px solid darkred;
+}
+
+QPushButton#deleteButton:hover, QPushButton#deleteButton:focus {
+    background-color: darkred;
 }

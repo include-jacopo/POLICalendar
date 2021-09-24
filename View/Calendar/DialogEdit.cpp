@@ -4,13 +4,17 @@
 
 DialogEdit::DialogEdit(QWidget *parent) : QDialog(parent), ui(new Ui::DialogEdit) {
     ui->setupUi(this);
+    mode = DialogMode::New;
+    // Hide delete button if new event dialog
+    ui->deleteButton->hide();
+
     controller = Controller::getInstance();
     setDateStart(QDateTime::currentDateTime());
     setDateEnd(QDateTime::currentDateTime());
-    mode = DialogMode::New;
 }
 
 DialogEdit::DialogEdit(const Event& event, QWidget *parent) : DialogEdit(parent) {
+    mode = DialogMode::Edit;
     this->event = event;
     setName(QString::fromStdString(event.getName()));
     setDateStart(QDateTime::fromSecsSinceEpoch(
@@ -21,7 +25,8 @@ DialogEdit::DialogEdit(const Event& event, QWidget *parent) : DialogEdit(parent)
     ));
     setLocation(QString::fromStdString(event.getLocation()));
     setDescription(QString::fromStdString(event.getDescription()));
-    mode = DialogMode::Edit;
+    // Show delete button
+    ui->deleteButton->show();
 }
 
 DialogEdit::~DialogEdit() {
@@ -93,6 +98,10 @@ void DialogEdit::accept() {
     }
 }
 
+void DialogEdit::deleteEvent() {
+    controller->deleteEvent(event.getUid());
+}
+
 Event DialogEdit::getEvent() {
     event.setName(getName().toStdString());
     event.setLocation(getLocation().toStdString());
@@ -103,5 +112,3 @@ Event DialogEdit::getEvent() {
             std::chrono::seconds(getDateEnd().toSecsSinceEpoch())));
     return event;
 }
-
-

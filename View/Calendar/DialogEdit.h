@@ -17,8 +17,11 @@ public:
     explicit DialogEdit(const Event& event, QWidget* parent = nullptr);
     ~DialogEdit() override;
 
-    void accept() override;
     Event getEvent();
+
+public slots:
+    void accept() override;
+    void deleteEvent();
 
 private:
     Ui::DialogEdit *ui;
