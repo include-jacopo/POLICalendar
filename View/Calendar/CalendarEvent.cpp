@@ -75,8 +75,9 @@ void CalendarEvent::mousePressEvent(QMouseEvent *event) {
     QFrame::mousePressEvent(event);
     if (event->button() == Qt::LeftButton) {
         auto dialog = new DialogEdit(calEvent, this);
-        connect(dialog, SIGNAL(eventEdited(Event)), handler, SLOT(editEvent(Event)));
-        connect(dialog, SIGNAL(eventDeleted(Event)), handler, SLOT(removeEvent(Event)));
+        auto objHandler = dynamic_cast<QObject*>(handler);
+        connect(dialog, SIGNAL(eventEdited(Event)), objHandler, SLOT(editEvent(Event)));
+        connect(dialog, SIGNAL(eventDeleted(Event)), objHandler, SLOT(removeEvent(Event)));
         dialog->exec();
     }
 }

@@ -20,9 +20,12 @@ void CalendarEvents::addEvent(const Event &event) {
     events.push_back(calEv);
 }
 
-bool CalendarEvents::removeEvent(const Event &event) {
-    qsizetype i = events.indexOf(event);
-    if (i != -1) {
+void CalendarEvents::removeEvent(const Event &event) {
+    auto it = std::find_if(events.constBegin(), events.constEnd(), [&event](CalendarEvent *ce) {
+        return ce->getEventUid() == QString::fromStdString(event.getUid());
+    });
+    if (it != events.constEnd()) {
+        qsizetype i = it - events.constBegin();
         delete events[i];
         events.remove(i);
     }

@@ -96,7 +96,11 @@ void DialogEdit::accept() {
         } else if (mode == DialogMode::Edit) {
             // Send the updated event to the controller and update the UI
             statusOk = controller->editEvent(getEvent());
-            if (statusOk) emit eventEdited(getEvent());
+            if (statusOk) {
+                // Detach parent... or else segmentation fault!
+                this->setParent(nullptr);
+                emit eventEdited(getEvent());
+            }
         }
         QDialog::accept();
     }
@@ -104,7 +108,11 @@ void DialogEdit::accept() {
 
 void DialogEdit::deleteEvent() {
     bool statusOk = controller->deleteEvent(event.getUid());
-    if (statusOk) emit eventDeleted(getEvent());
+    if (statusOk) {
+        // Detach parent... or else segmentation fault!
+        this->setParent(nullptr);
+        emit eventDeleted(getEvent());
+    }
     done(2);
 }
 

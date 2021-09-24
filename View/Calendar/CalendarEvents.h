@@ -28,7 +28,7 @@ public:
     explicit CalendarEvents(QDate date, ICalendarGUIEventsHandler *handler, QWidget *widget = nullptr);
     void setDate(const QDate &date);
     void addEvent(const Event &event);
-    bool removeEvent(const Event &event);
+    void removeEvent(const Event &event);
     void clearEvents();
 
 protected:
