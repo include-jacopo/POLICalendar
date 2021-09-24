@@ -4,8 +4,10 @@
 
 DialogEdit::DialogEdit(QWidget *parent) : QDialog(parent), ui(new Ui::DialogEdit) {
     ui->setupUi(this);
+    controller = Controller::getInstance();
     setDateStart(QDateTime::currentDateTime());
     setDateEnd(QDateTime::currentDateTime());
+    mode = DialogMode::New;
 }
 
 DialogEdit::DialogEdit(const Event& event, QWidget *parent) : DialogEdit(parent) {
@@ -19,6 +21,7 @@ DialogEdit::DialogEdit(const Event& event, QWidget *parent) : DialogEdit(parent)
     ));
     setLocation(QString::fromStdString(event.getLocation()));
     setDescription(QString::fromStdString(event.getDescription()));
+    mode = DialogMode::Edit;
 }
 
 DialogEdit::~DialogEdit() {
@@ -80,6 +83,12 @@ void DialogEdit::accept() {
         }
         QMessageBox::warning(this, "Errore", strErr);
     } else {
+        if (mode == DialogMode::New) {
+            // Create a new event and send it to the controller
+            controller->addEvent(getEvent());
+        } else if (mode == DialogMode::Edit) {
+            controller->editEvent(getEvent());
+        }
         QDialog::accept();
     }
 }

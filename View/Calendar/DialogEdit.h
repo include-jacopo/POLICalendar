@@ -3,6 +3,7 @@
 
 #include <QDialog>
 #include "../../Model/Event.h"
+#include "../../Controller/Controller.h"
 
 namespace Ui {
 class DialogEdit;
@@ -23,6 +24,9 @@ private:
     Ui::DialogEdit *ui;
 
     Event event;
+    Controller *controller;
+    enum DialogMode {New, Edit};
+    DialogMode mode;
 
     QString getName();
     QString getLocation();

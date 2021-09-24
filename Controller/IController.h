@@ -22,16 +22,22 @@ public:
     virtual bool updateEvents() = 0;
 
     /*
+     * Search for an event based on its unique uid.
+     * @return optional<Event>
+     */
+    virtual optional<Event> findEvent(string uid) = 0;
+
+    /*
      * Add an event to the calendar.
      * @return true if event added, false if fail
      */
     virtual bool addEvent(Event ev) = 0;
 
     /*
-     * Search for an event based on its unique uid.
-     * @return optional<Event>
+     * Edit an event present in the calendar.
+     * @return true if event edited, false if fail
      */
-    virtual optional<Event> findEvent(string uid) = 0;
+    virtual bool editEvent(Event ev) = 0;
 
     /*
      * Delete an event.
