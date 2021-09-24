@@ -10,6 +10,7 @@
 #include <iomanip>
 #include "CalendarEvent.h"
 #include "DialogEdit.h"
+#include <sstream>
 
 CalendarEvent::CalendarEvent(const Event& event, QWidget *parent) : QFrame(parent) {
     calEvent = event;
