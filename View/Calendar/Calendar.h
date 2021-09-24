@@ -29,7 +29,7 @@ protected:
     void resizeEvent(QResizeEvent *event) override;
 
 public slots:
-    bool createNewEvent();
+    void createNewEvent();
 };
 
 

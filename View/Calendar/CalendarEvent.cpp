@@ -12,8 +12,9 @@
 #include "DialogEdit.h"
 #include <sstream>
 
-CalendarEvent::CalendarEvent(const Event& event, QWidget *parent) : QFrame(parent) {
+CalendarEvent::CalendarEvent(const Event &event, ICalendarGUIEventsHandler *handler, QWidget *parent) : QFrame(parent) {
     calEvent = event;
+    this->handler = handler;
 
     std::stringstream startTime, endTime;
     auto st = std::chrono::system_clock::to_time_t(event.getStartTime());
@@ -74,6 +75,8 @@ void CalendarEvent::mousePressEvent(QMouseEvent *event) {
     QFrame::mousePressEvent(event);
     if (event->button() == Qt::LeftButton) {
         auto dialog = new DialogEdit(calEvent, this);
+        connect(dialog, SIGNAL(eventEdited(Event)), handler, SLOT(editEvent(Event)));
+        connect(dialog, SIGNAL(eventDeleted(Event)), handler, SLOT(removeEvent(Event)));
         dialog->exec();
     }
 }

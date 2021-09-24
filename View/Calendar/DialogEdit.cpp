@@ -88,18 +88,24 @@ void DialogEdit::accept() {
         }
         QMessageBox::warning(this, "Errore", strErr);
     } else {
+        bool statusOk;
         if (mode == DialogMode::New) {
-            // Create a new event and send it to the controller
-            controller->addEvent(getEvent());
+            // Create a new event and send it to the controller, then update UI
+            statusOk = controller->addEvent(getEvent());
+            if (statusOk) emit eventCreated(getEvent());
         } else if (mode == DialogMode::Edit) {
-            controller->editEvent(getEvent());
+            // Send the updated event to the controller and update the UI
+            statusOk = controller->editEvent(getEvent());
+            if (statusOk) emit eventEdited(getEvent());
         }
         QDialog::accept();
     }
 }
 
 void DialogEdit::deleteEvent() {
-    controller->deleteEvent(event.getUid());
+    bool statusOk = controller->deleteEvent(event.getUid());
+    if (statusOk) emit eventDeleted(getEvent());
+    done(2);
 }
 
 Event DialogEdit::getEvent() {

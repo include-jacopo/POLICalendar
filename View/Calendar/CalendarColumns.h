@@ -13,8 +13,9 @@
 #include <QDate>
 #include "CalendarDate.h"
 #include "CalendarEvents.h"
+#include "ICalendarGUIEventsHandler.h"
 
-class CalendarColumns : public QFrame {
+class CalendarColumns : public QFrame, public ICalendarGUIEventsHandler {
     Q_OBJECT
 
 private:
@@ -24,6 +25,7 @@ private:
     int colsOnScreen = 0;
 
     void updateEvents();
+    static bool checkIfEventInDay(const Event& e, const QDate& date);
 
 public:
     explicit CalendarColumns(QWidget *parent = nullptr);
@@ -33,6 +35,9 @@ protected:
 
 public slots:
     void dateChanged(QDate date);
+    void addEvent(const Event &event) override;
+    void editEvent(const Event &event) override;
+    void removeEvent(const Event &event) override;
 };
 
 

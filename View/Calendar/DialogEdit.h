@@ -23,6 +23,11 @@ public slots:
     void accept() override;
     void deleteEvent();
 
+signals:
+    void eventCreated(const Event& evCreated);
+    void eventEdited(const Event& evUpdated);
+    void eventDeleted(const Event& evDeleted);
+
 private:
     Ui::DialogEdit *ui;
 

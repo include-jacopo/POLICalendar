@@ -23,7 +23,7 @@ CalendarColumns::CalendarColumns(QWidget *parent) : QFrame(parent) {
     for (int i = 0; i < NCOLS; ++i) {
         auto date = firstColDate.addDays(i);
         auto calDate = new CalendarDate(date);
-        auto calEvents = new CalendarEvents(date);
+        auto calEvents = new CalendarEvents(date, this);
         calDate->layout()->setContentsMargins(0, 0, 0, 10);
 
         columns.push_back(std::make_pair(calDate, calEvents));
@@ -74,31 +74,76 @@ void CalendarColumns::dateChanged(QDate date) {
 }
 
 void CalendarColumns::updateEvents() {
-    // Clear current displayed events
+    /*
+     * This implementation clears all the events and reloads them.
+     * More efficient solutions can be implemented in case of dates
+     * already displayed on screen.
+     */
     for (int i = 0; i < NCOLS; ++i) {
         columns[i].second->clearEvents();
     }
 
     auto controller = Controller::getInstance();
     auto mapEvents = controller->getEvents();
-    for (const auto& mapEventIter : mapEvents) {
+    for (const auto &mapEventIter: mapEvents) {
         auto event = mapEventIter.second;
-        QDateTime start, end;
-        start = QDateTime::fromSecsSinceEpoch(
-                std::chrono::duration_cast<std::chrono::seconds>(event.getStartTime().time_since_epoch()).count());
-        end = QDateTime::fromSecsSinceEpoch(
-                std::chrono::duration_cast<std::chrono::seconds>(event.getStartTime().time_since_epoch()).count());
-
-        auto firstColDateTime = QDateTime(firstColDate, QTime(0, 0, 0));
         for (int i = 0; i < NCOLS; ++i) {
             auto col = columns[i].second;
-
             // Add events that happen in the column date
-            if (start >= firstColDateTime.addDays(i) && start < firstColDateTime.addDays(i + 1) ||
-                (end >= firstColDateTime.addDays(i) && end < firstColDateTime.addDays(i + 1))) {
+            if (checkIfEventInDay(event, firstColDate.addDays(i))) {
                 col->addEvent(event);
             }
         }
     }
 }
 
+bool CalendarColumns::checkIfEventInDay(const Event &e, const QDate &date) {
+    QDateTime start, end;
+    start = QDateTime::fromSecsSinceEpoch(
+            std::chrono::duration_cast<std::chrono::seconds>(e.getStartTime().time_since_epoch()).count());
+    end = QDateTime::fromSecsSinceEpoch(
+            std::chrono::duration_cast<std::chrono::seconds>(e.getStartTime().time_since_epoch()).count());
+    auto dateTime = QDateTime(date, QTime(0, 0, 0));
+    if ((start >= dateTime && start < dateTime.addDays(1)) || (end >= dateTime && end < dateTime.addDays(1))) {
+        return true;
+    }
+    return false;
+}
+
+void CalendarColumns::addEvent(const Event &event) {
+    for (int i = 0; i < NCOLS; ++i) {
+        auto col = columns[i].second;
+        /*
+         * Add the event if it takes place during the column date.
+         * Note that an event can span two or more columns.
+         */
+        if (checkIfEventInDay(event, firstColDate.addDays(i))) {
+            col->addEvent(event);
+        }
+    }
+}
+
+void CalendarColumns::editEvent(const Event &event) {
+    for (int i = 0; i < NCOLS; ++i) {
+        auto col = columns[i].second;
+        /*
+         * Remove the event and then create a new one.
+         * This is correct even if an event has its date changed.
+         * More efficient solutions can be implemented.
+         */
+        col->removeEvent(event);
+        if (checkIfEventInDay(event, firstColDate.addDays(i))) {
+            col->addEvent(event);
+        }
+    }
+}
+
+void CalendarColumns::removeEvent(const Event &event) {
+    for (int i = 0; i < NCOLS; ++i) {
+        auto col = columns[i].second;
+        // Check if the event is in the current column, then delete
+        if (checkIfEventInDay(event, firstColDate.addDays(i))) {
+            col->removeEvent(event);
+        }
+    }
+}

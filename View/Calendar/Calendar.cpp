@@ -58,12 +58,10 @@ QSize Calendar::sizeHint() const {
     return QSize(1280, 720);
 }
 
-bool Calendar::createNewEvent() {
+void Calendar::createNewEvent() {
     auto dialog = new DialogEdit(this);
+    connect(dialog, SIGNAL(eventCreated(Event)), calendarColumns, SLOT(addEvent(Event)));
     dialog->setWindowTitle("Nuovo evento");
     dialog->exec();
-    dialog->getEvent();
-
-    // TODO Call controller real function, return success status
-    return false;
 }
+

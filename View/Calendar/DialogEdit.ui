@@ -163,5 +163,24 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>deleteButton</sender>
+   <signal>clicked()</signal>
+   <receiver>DialogEdit</receiver>
+   <slot>deleteEvent()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>79</x>
+     <y>277</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>100</x>
+     <y>296</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
+ <slots>
+  <slot>deleteEvent()</slot>
+ </slots>
 </ui>

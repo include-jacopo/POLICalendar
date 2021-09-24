@@ -12,6 +12,7 @@
 #include <QDate>
 #include "../../Model/Event.h"
 #include "CalendarEvent.h"
+#include "ICalendarGUIEventsHandler.h"
 
 class CalendarEvents : public QFrame {
     Q_OBJECT
@@ -19,11 +20,12 @@ class CalendarEvents : public QFrame {
 private:
     QList<CalendarEvent*> events;
     QDate date;
+    ICalendarGUIEventsHandler *handler;
 
     void setGeometryEvent(CalendarEvent *e);
 
 public:
-    explicit CalendarEvents(QDate date, QWidget *widget = nullptr);
+    explicit CalendarEvents(QDate date, ICalendarGUIEventsHandler *handler, QWidget *widget = nullptr);
     void setDate(const QDate &date);
     void addEvent(const Event &event);
     bool removeEvent(const Event &event);

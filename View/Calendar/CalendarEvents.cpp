@@ -4,8 +4,9 @@
 
 #include "CalendarEvents.h"
 
-CalendarEvents::CalendarEvents(QDate date, QWidget *widget) : QFrame(widget) {
+CalendarEvents::CalendarEvents(QDate date, ICalendarGUIEventsHandler *handler, QWidget *widget) : QFrame(widget) {
     CalendarEvents::date = date;
+    this->handler = handler;
 }
 
 void CalendarEvents::setDate(const QDate &date) {
@@ -13,19 +14,22 @@ void CalendarEvents::setDate(const QDate &date) {
 }
 
 void CalendarEvents::addEvent(const Event &event) {
-    auto calEv = new CalendarEvent(event, this);
+    auto calEv = new CalendarEvent(event, handler, this);
     setGeometryEvent(calEv);
     calEv->show();
     events.push_back(calEv);
 }
 
 bool CalendarEvents::removeEvent(const Event &event) {
-    return events.removeIf(
-            [&event](CalendarEvent *c) {return c->getEventUid() == QString::fromStdString(event.getUid());});
+    qsizetype i = events.indexOf(event);
+    if (i != -1) {
+        delete events[i];
+        events.remove(i);
+    }
 }
 
 void CalendarEvents::clearEvents() {
-    for (auto calEv : events) {
+    for (auto calEv: events) {
         delete calEv;
     }
     events.clear();
