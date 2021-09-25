@@ -5,10 +5,12 @@
 #ifndef POLICALENDAR_ICALENDARGUIEVENTSHANDLER_H
 #define POLICALENDAR_ICALENDARGUIEVENTSHANDLER_H
 
-#include <QObject>
-
 class ICalendarGUIEventsHandler {
 public:
+    virtual void createEventDialog() = 0;
+    virtual void editEventDialog(const Event &event) = 0;
+
+protected:
     virtual void addEvent(const Event &event) = 0;
     virtual void editEvent(const Event &event) = 0;
     virtual void removeEvent(const Event &event) = 0;

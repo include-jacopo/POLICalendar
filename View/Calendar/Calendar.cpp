@@ -22,6 +22,7 @@ Calendar::Calendar(QWidget *parent) : QFrame(parent) {
     calendarColumns = new CalendarColumns();
     layout->addWidget(calendarColumns, 0, 0, 3, 1);
     layout->setColumnStretch(0, 1);
+    handler = calendarColumns;
 
     // Calendar widget
     calendarWidget = new QCalendarWidget();
@@ -44,8 +45,9 @@ Calendar::Calendar(QWidget *parent) : QFrame(parent) {
     // Connect signal from calendar widget to dateChanged slot
     connect(calendarWidget, &QCalendarWidget::selectionChanged,
             calendarColumns, [this]() {calendarColumns->dateChanged(calendarWidget->selectedDate());});
-    // Connect buttons to dialog
-    connect(newEvent, SIGNAL(clicked(bool)), this, SLOT(createNewEvent()));
+    // Connect new event button to dialog
+    auto objHandler = dynamic_cast<QObject*>(handler);
+    connect(newEvent, SIGNAL(clicked(bool)), objHandler, SLOT(createEventDialog()));
 }
 
 void Calendar::resizeEvent(QResizeEvent *event) {
@@ -56,12 +58,5 @@ void Calendar::resizeEvent(QResizeEvent *event) {
 
 QSize Calendar::sizeHint() const {
     return QSize(1280, 720);
-}
-
-void Calendar::createNewEvent() {
-    auto dialog = new DialogEdit(this);
-    connect(dialog, SIGNAL(eventCreated(Event)), calendarColumns, SLOT(addEvent(Event)));
-    dialog->setWindowTitle("Nuovo evento");
-    dialog->exec();
 }
 

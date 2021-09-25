@@ -6,11 +6,11 @@
 #include <QVBoxLayout>
 #include <QLabel>
 #include <QScrollArea>
+#include <sstream>
 #include <chrono>
 #include <iomanip>
 #include "CalendarEvent.h"
 #include "DialogEdit.h"
-#include <sstream>
 
 CalendarEvent::CalendarEvent(const Event &event, ICalendarGUIEventsHandler *handler, QWidget *parent) : QFrame(parent) {
     calEvent = event;
@@ -74,10 +74,6 @@ QString CalendarEvent::getEventUid() {
 void CalendarEvent::mousePressEvent(QMouseEvent *event) {
     QFrame::mousePressEvent(event);
     if (event->button() == Qt::LeftButton) {
-        auto dialog = new DialogEdit(calEvent, this);
-        auto objHandler = dynamic_cast<QObject*>(handler);
-        connect(dialog, SIGNAL(eventEdited(Event)), objHandler, SLOT(editEvent(Event)));
-        connect(dialog, SIGNAL(eventDeleted(Event)), objHandler, SLOT(removeEvent(Event)));
-        dialog->exec();
+        handler->editEventDialog(calEvent);
     }
 }

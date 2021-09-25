@@ -35,6 +35,10 @@ protected:
 
 public slots:
     void dateChanged(QDate date);
+    void createEventDialog() override;
+    void editEventDialog(const Event &event) override;
+
+protected slots:
     void addEvent(const Event &event) override;
     void editEvent(const Event &event) override;
     void removeEvent(const Event &event) override;

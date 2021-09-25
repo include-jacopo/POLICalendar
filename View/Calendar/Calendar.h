@@ -20,6 +20,7 @@ private:
     QCalendarWidget *calendarWidget;
     CalendarColumns *calendarColumns;
     QGridLayout *layout;
+    ICalendarGUIEventsHandler *handler;
 
 public:
     explicit Calendar(QWidget *parent = nullptr);
@@ -27,9 +28,6 @@ public:
 
 protected:
     void resizeEvent(QResizeEvent *event) override;
-
-public slots:
-    void createNewEvent();
 };
 
 
