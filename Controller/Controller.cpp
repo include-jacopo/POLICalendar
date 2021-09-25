@@ -249,3 +249,22 @@ void Controller::displayEvents() {
     }
     cout << "***********************************************" << endl;
 }
+
+const map<std::string, Task> &Controller::getTasks() {
+    return Tasks;
+}
+
+bool Controller::addTask(Task task) {
+    // TODO
+    return false;
+}
+
+bool Controller::editTask(Task task) {
+    // TODO
+    return false;
+}
+
+bool Controller::deleteTask(string uid) {
+    // TODO
+    return false;
+}

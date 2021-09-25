@@ -4,11 +4,15 @@
 
 #include "Task.h"
 
-Task::Task(string uid, string name, string description, int priority, chrono::time_point<std::chrono::system_clock> date):
-            uidS(uid), name(name), description(description), priority(priority), date(date),flagDate(true){};
+Task::Task() : priority(1), completed(false), flagDate(false) {};
 
-Task::Task(string uid, string name, string description, int priority):
-            uidS(uid), name(name), description(description), priority(priority),flagDate(false){};
+Task::Task(string uid, string name, string description, string location, int priority, bool completed):
+            uidS(uid), name(name), description(description), location(location), priority(priority),
+            completed(completed), flagDate(false) {};
+Task::Task(string uid, string name, string description, string location, int priority, bool completed,
+           chrono::time_point<std::chrono::system_clock> date):
+        uidS(uid), name(name), description(description), location(location), priority(priority), completed(completed),
+        date(date), flagDate(true) {};
 
 const string &Task::getUid() const {
     return uidS;
@@ -42,6 +46,14 @@ void Task::setPriority(int priority) {
     Task::priority = priority;
 }
 
+const string &Task::getLocation() const {
+    return location;
+}
+
+void Task::setLocation(const string &location) {
+    Task::location = location;
+}
+
 const chrono::time_point<std::chrono::system_clock> &Task::getDate() const {
     return date;
 }
@@ -56,4 +68,12 @@ bool Task::isFlagDate() const {
 
 void Task::setFlagDate(bool flagDate) {
     Task::flagDate = flagDate;
+}
+
+bool Task::isCompleted() const {
+    return completed;
+}
+
+void Task::setCompleted(bool completed) {
+    Task::completed = completed;
 };

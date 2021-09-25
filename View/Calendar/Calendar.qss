@@ -50,13 +50,13 @@ Tasklist > QLabel {
     margin-bottom: 10px;
 }
 
-Task {
+TaskGUI {
     background-color: #FFC49B;
     border-top: 1px solid #086375;
     padding: 5px 0;
 }
 
-Task[isLast="true"] {
+TaskGUI[isLast="true"] {
     border-bottom: 1px solid #086375;
 }
 

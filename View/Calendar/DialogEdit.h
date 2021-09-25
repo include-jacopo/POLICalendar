@@ -1,7 +1,10 @@
 #ifndef DIALOGEDIT_H
 #define DIALOGEDIT_H
 
+#include <QWidget>
 #include <QDialog>
+#include <QString>
+#include <QDateTime>
 #include "../../Model/Event.h"
 #include "../../Controller/Controller.h"
 
