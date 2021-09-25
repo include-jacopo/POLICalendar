@@ -61,8 +61,12 @@ void CalendarEvents::resizeEvent(QResizeEvent *event) {
 }
 
 void CalendarEvents::setGeometryEvent(CalendarEvent *e) {
-    auto sm = e->getStartMinute();
-    auto dur = e->getDurationInMinutes();
+    auto dtStart = std::max(e->getDateTimeStart(), date.startOfDay());
+    auto dtEnd = std::min(e->getDateTimeEnd(), date.endOfDay());
+    int sm, dur;
+    sm = (int) (date.startOfDay().secsTo(dtStart) / 60);
+    dur = (int) (dtStart.secsTo(dtEnd) / 60);
+
     auto tl = QPoint(5, (int) (this->height() / 24.0 * sm / 60));
     auto br = QPoint(this->width() - 5, (int) (this->height() / 24.0 * (sm + dur) / 60));
     e->setGeometry(QRect(tl, br));

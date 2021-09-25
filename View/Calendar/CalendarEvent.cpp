@@ -2,36 +2,24 @@
 // Created by Riccardo Mengoli on 10/09/2021 19:26.
 //
 
-#include <QFrame>
 #include <QVBoxLayout>
 #include <QLabel>
 #include <QScrollArea>
-#include <sstream>
 #include <chrono>
-#include <iomanip>
 #include "CalendarEvent.h"
-#include "DialogEdit.h"
 
 CalendarEvent::CalendarEvent(const Event &event, ICalendarGUIEventsHandler *handler, QWidget *parent) : QFrame(parent) {
     calEvent = event;
     this->handler = handler;
 
-    std::stringstream startTime, endTime;
-    auto st = std::chrono::system_clock::to_time_t(event.getStartTime());
-    auto end = std::chrono::system_clock::to_time_t(event.getEndTime());
-    auto lt = std::localtime(&st);
+    startT = QDateTime::fromSecsSinceEpoch(
+            std::chrono::duration_cast<std::chrono::seconds>(event.getStartTime().time_since_epoch()).count());
+    endT = QDateTime::fromSecsSinceEpoch(
+            std::chrono::duration_cast<std::chrono::seconds>(event.getEndTime().time_since_epoch()).count());
 
-    // Calculate start minute and create string
-    this->startMinute = lt->tm_hour * 60 + lt->tm_min;
-    startTime << std::put_time(lt, "%H:%M");
-
-    // Create string end event
-    lt = std::localtime(&end);
-    endTime << std::put_time(lt, "%H:%M");
-
-    // Calculate event duration
-    this->durationInMinutes = std::chrono::duration_cast<std::chrono::minutes>
-            (event.getEndTime() - event.getStartTime()).count();
+    QString startTime, endTime;
+    startTime = startT.toString("hh:mm");
+    endTime = endT.toString("hh:mm");
 
     // Layout
     auto layout = new QVBoxLayout(this);
@@ -55,16 +43,16 @@ CalendarEvent::CalendarEvent(const Event &event, ICalendarGUIEventsHandler *hand
     layout2->setContentsMargins(0, 0, 0, 0);
     layout2->setAlignment(Qt::AlignTop | Qt::AlignLeft);
     layout2->addWidget(new QLabel(QString::fromStdString(event.getName())));
-    layout2->addWidget(new QLabel(QString::fromStdString(startTime.str() + " - " + endTime.str())));
+    layout2->addWidget(new QLabel(startTime + " - " + endTime));
     layout2->addWidget(new QLabel(QString::fromStdString(event.getLocation())));
 }
 
-unsigned int CalendarEvent::getStartMinute() const {
-    return startMinute;
+QDateTime CalendarEvent::getDateTimeStart() {
+    return startT;
 }
 
-unsigned int CalendarEvent::getDurationInMinutes() const {
-    return durationInMinutes;
+QDateTime CalendarEvent::getDateTimeEnd() {
+    return endT;
 }
 
 QString CalendarEvent::getEventUid() {

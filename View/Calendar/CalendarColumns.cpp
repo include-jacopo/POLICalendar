@@ -103,9 +103,13 @@ bool CalendarColumns::checkIfEventInDay(const Event &e, const QDate &date) {
     start = QDateTime::fromSecsSinceEpoch(
             std::chrono::duration_cast<std::chrono::seconds>(e.getStartTime().time_since_epoch()).count());
     end = QDateTime::fromSecsSinceEpoch(
-            std::chrono::duration_cast<std::chrono::seconds>(e.getStartTime().time_since_epoch()).count());
-    auto dateTime = QDateTime(date, QTime(0, 0, 0));
-    if ((start >= dateTime && start < dateTime.addDays(1)) || (end >= dateTime && end < dateTime.addDays(1))) {
+            std::chrono::duration_cast<std::chrono::seconds>(e.getEndTime().time_since_epoch()).count());
+    auto dayStart = date.startOfDay();
+    auto dayEnd = date.endOfDay();
+    bool c1 = (start >= dayStart && start <= dayEnd);
+    bool c2 = (end >= dayStart && end <= dayEnd);
+    bool c3 = (start < dayStart && end > dayEnd);
+    if (c1 || c2 || c3) {
         return true;
     }
     return false;

@@ -7,6 +7,9 @@
 
 
 #include <QWidget>
+#include <QFrame>
+#include <QDateTime>
+#include <QString>
 #include <QMouseEvent>
 #include "../../Model/Event.h"
 #include "ICalendarGUIEventsHandler.h"
@@ -17,14 +20,13 @@ class CalendarEvent : public QFrame {
 private:
     Event calEvent;
     ICalendarGUIEventsHandler *handler;
-    unsigned int startMinute;
-    unsigned int durationInMinutes;
+    QDateTime startT, endT;
 
 public:
     explicit CalendarEvent(const Event& event, ICalendarGUIEventsHandler *handler, QWidget *parent = nullptr);
 
-    [[nodiscard]] unsigned int getStartMinute() const;
-    [[nodiscard]] unsigned int getDurationInMinutes() const;
+    QDateTime getDateTimeStart();
+    QDateTime getDateTimeEnd();
     QString getEventUid();
 
 protected:
