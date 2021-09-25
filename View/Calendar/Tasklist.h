@@ -11,13 +11,13 @@
 #include <QScrollArea>
 #include <QVBoxLayout>
 #include <QLabel>
-#include "Task.h"
+#include "TaskGUI.h"
 
 class Tasklist : public QFrame {
     Q_OBJECT
 
 private:
-    QList<Task*> listOfTasks;
+    QList<TaskGUI*> listOfTasks;
 
 public:
     explicit Tasklist(QWidget *parent = nullptr);

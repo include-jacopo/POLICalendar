@@ -31,7 +31,7 @@ Tasklist::Tasklist(QWidget *parent) : QFrame(parent) {
     w->setLayout(layout2);
 
     for (int i = 0; i < 14; ++i) {
-        auto task = new Task();
+        auto task = new TaskGUI();
         layout2->addWidget(task);
         task->setProperty("isLast", i==13);
         listOfTasks.push_back(task);
