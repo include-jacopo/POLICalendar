@@ -6,6 +6,7 @@
 #define POLICALENDAR_CONTROLLER_H
 
 #include "../Model/Event.h"
+#include "../Model/Task.h"
 #include "IController.h"
 #include "WebClient.h"
 #include <map>
@@ -30,11 +31,13 @@ public:
 
 private:
     map<string, Event> Events;
+    map<string, Task> Tasks;
     WebClient wc;
 
     static Controller *instance;
     Controller(); // Private constructor for singleton pattern
     int insertLocalEvent(Event ev);
+    int insertLocalTask(Task t);
 };
 
 #endif //POLICALENDAR_CONTROLLER_H

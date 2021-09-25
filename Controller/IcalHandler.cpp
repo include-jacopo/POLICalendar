@@ -153,6 +153,90 @@ Event IcalHandler::event_from_ical_component(icalcomponent* comp){
 
 }
 
+Task IcalHandler::task_creator(map<string,string> taskProp) {
+
+    /*
+   std::time_t tt1, tt2, tt3;
+   tt1 = chrono::system_clock::to_time_t ( tp_start );
+   tt2 = chrono::system_clock::to_time_t ( tp_end );
+   tt3 = chrono::system_clock::to_time_t ( tp_creation );
+   std::cout << "STart Time: "<< std::put_time(std::localtime(&tt1), "%b %d %Y %H:%M:%S" ) <<endl<<
+               "End Time: "<< std::put_time(std::localtime(&tt2), "%b %d %Y %H:%M:%S" ) <<endl<<
+             "Creation Time: "<< std::put_time(std::localtime(&tt3), "%b %d %Y %H:%M:%S" ) <<endl;
+
+     */
+
+    /*creo l'evento */
+
+    string description;
+    bool flagData;                                                   /* flag che segnala la presenza della data */
+    std::chrono::time_point<std::chrono::system_clock> tp_due;       /* variabile che salva la data del task *(
+
+    /* converto la priorità da string a int */
+    int priority_int = 2;
+    //int priority_int = stoi(taskProp["PRIORITY"]);
+
+    /* se non ho la proprietà due date => il task non avrà una data, altrimenti salvo la data e segnalo col flag la presenza della data */
+    if (taskProp.find("DUE") != taskProp.end()) {
+        tm tm_due = {};
+        /* eseguo il parsing della stringa contenente la data */
+        strptime(taskProp["DUE"].c_str(), "%Y%m%dT%H%M%SZ", &tm_due);
+        /* creo gli oggetti di tipo system_clock */
+        tp_due = std::chrono::system_clock::from_time_t(std::mktime(&tm_due));
+        flagData = true;
+
+
+    } else {
+        cout<<"non ho trovato la data!"<<endl;
+        flagData = false;
+    }
+
+    /* non ho la proprietà description, quindi passo una stringa vuota al costruttore */
+    if (taskProp.find("DESCRIPTION") == taskProp.end()) {
+        description = "";
+    } else {
+        cout<<"non ho trovato description"<<endl;
+        description = taskProp["DESCRIPTION"];
+    }
+    cout<<"flag data vale: "<<flagData<<endl;
+
+    if (flagData == true) {
+        /* chiamo il costruttore con data */
+        cout<<"uid : "<<taskProp["UID"]<<endl;
+        cout<<"summary:" <<taskProp["SUMMARY"]<<endl;
+        cout<<"description: "<<description<<endl;
+        cout<<"priority int: "<<endl;
+
+
+        Task t(taskProp["UID"], taskProp["SUMMARY"], "ciao", priority_int, tp_due);
+        return t;
+    } else {
+        cout<<"costruttore senza data"<<endl;
+        cout<<"uid : "<<taskProp["UID"]<<endl;
+        cout<<"summary:" <<taskProp["SUMMARY"]<<endl;
+        cout<<"description: "<<description<<endl;
+        cout<<"priority int: "<<priority_int<<endl;
+        /* chiamo il costruttore senza data */
+        Task t(taskProp["UID"], taskProp["SUMMARY"], "ciao", priority_int);
+        cout<<"nome di t: "<<t.getName()<<endl;
+        return t;
+
+    }
+}
+
+Task IcalHandler::task_from_ical_component(icalcomponent* comp){
+    map<string, string> taskProps;           /* mappa con il nome della proprietà come key e il valore della proprietà come value */
+    taskProps = find_properties(comp);      /* estraggo le proprietà dal componente */
+
+    for(auto i: taskProps){
+        cout<<"key: "<<i.first<<" value: "<<i.second<<endl;
+    }
+
+    Task t = task_creator(taskProps);   /* creo il nuovo evento passando le proprietà */
+    cout<<"uid di t:"<<t.getUid()<<endl;
+    return t;
+}
+
 //ESEMPIO DI EVENTO PIU' COMPLETO
 /* BEGIN:VCALENDAR
 VERSION:2.0

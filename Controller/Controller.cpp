@@ -50,8 +50,14 @@ bool Controller::downloadEvents(){
         string xml_cal = wc.report_calendar(wc.getUriCalendar()); //Lettura dell'XML del calendario dal server
         string xml_todo = wc.report_todo(wc.getUriTodo()); //Lettura dell'XML dei to-do dal server
 
+
+
         list<icalcomponent *> eventi_calendario = readXML(xml_cal);
         list<icalcomponent *> todo_calendario = readXML(xml_todo);
+
+
+
+
 
         //Scorro ogni evento e i suoi sottoeventi per riempire Event.cpp
         for (auto evento: eventi_calendario) {
@@ -64,6 +70,25 @@ bool Controller::downloadEvents(){
                         cout<<"uid: "<<ev.getUid()<<" name: "<<ev.getName()<<endl;
             }
         }
+        /* scorro la lista di componenti per creare gli oggetti task */
+        /*
+        cout<<"************ TASKS*****************"<<endl;
+        for (auto todo: todo_calendario) {
+            icalcomponent *c;
+            for (c = icalcomponent_get_first_component(todo, ICAL_VTODO_COMPONENT);
+                 c != 0;
+                 c = icalcomponent_get_next_component(todo, ICAL_VTODO_COMPONENT)) {
+                cout<<"componente che mando alla funzione !"<<endl;
+                cout<<icalcomponent_as_ical_string(c)<<endl;
+                cout<<"fine componente che mando alla funzione"<<endl;
+                Task t = IcalHandler::task_from_ical_component(c);
+                //out<<"ciao"<<endl;
+               // insertLocalTask(t);
+                //cout<<"uid: "<<t.getUid()<<" name: "<<t.getName()<<endl;
+            }
+        }
+         */
+
         return true;
 
     } else {
@@ -77,6 +102,10 @@ const map<string, Event>& Controller::getEvents() {
 
 int Controller::insertLocalEvent(Event ev){
     Events.insert({ev.getUid(), ev});
+    return 1;
+}
+int Controller::insertLocalTask(Task t){
+    Tasks.insert({t.getUid(), t});
     return 1;
 }
 
