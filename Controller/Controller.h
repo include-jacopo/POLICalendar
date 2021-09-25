@@ -14,6 +14,20 @@
 using namespace std;
 
 class Controller : public IController {
+
+public:
+    void createSession (string url, string usr, string pw, int port);
+    static Controller* getInstance();
+    Controller(const Controller&) = delete;
+    void operator=(const Controller&) = delete;
+    bool downloadEvents();
+    const map<string, Event>& getEvents() override;
+    bool updateEvents() override;
+    bool addEvent(Event ev) override;
+    optional<Event> findEvent(string uid) override;
+    bool deleteEvent(string uid) override;
+    void displayEvents();
+
 private:
     map<string, Event> Events;
     WebClient wc;
@@ -21,18 +35,6 @@ private:
     static Controller *instance;
     Controller(); // Private constructor for singleton pattern
     int insertLocalEvent(Event ev);
-
-public:
-    static Controller* getInstance();
-    Controller(const Controller&) = delete;
-    void operator=(const Controller&) = delete;
-
-    const map<string, Event>& getEvents() override;
-    bool updateEvents() override;
-    bool addEvent(Event ev) override;
-    optional<Event> findEvent(string uid) override;
-    bool deleteEvent(string uid) override;
-    void displayEvents();
 };
 
 #endif //POLICALENDAR_CONTROLLER_H

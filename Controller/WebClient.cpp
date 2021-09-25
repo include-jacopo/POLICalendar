@@ -22,11 +22,7 @@ int httpResponseReader(void *userdata, const char *buf, size_t len)
     return 0;
 }
 
-WebClient::WebClient(const string url, const string user, const string pass, const unsigned port){
-    base64_auth = Base64::Encode(user+":"+pass); //base 64 encoding di username e password
-    ne_sock_init();
-    sess = ne_session_create("https", url.c_str(), port);
-    ne_ssl_trust_default_ca(sess);
+WebClient::WebClient() {
 }
 
 WebClient::~WebClient(){
@@ -34,7 +30,48 @@ WebClient::~WebClient(){
     ne_sock_exit();
 }
 
-string WebClient::propfind_calendar(string uri, string url) {
+string WebClient::getUrl(){
+    return this->url;
+};
+int WebClient::getPort(){
+    return this->port;
+};
+
+void WebClient::setClient(const string url, const string user, const string pass, int port) {
+    this->port = port;
+    this->url = url;
+    base64_auth = Base64::Encode(user + ":" + pass); //base 64 encoding di username e password
+    ne_sock_init();
+    sess = ne_session_create("https", url.c_str(), port);
+    ne_ssl_trust_default_ca(sess);
+}
+
+void WebClient::setUri() {
+    //DA AGGIORNARE CON I METODI GIUSTI
+    const string uri_calendar("/calendars/a3298160768/51759490-6b14-4c41-88ae-1a94106fe0b6/");
+    const string uri_todo("/calendars/a3298160768/4e84299f-0505-4cbb-8007-c29808fe25b6/");
+
+    this->uri_calendar = uri_calendar;
+    this->uri_todo = "/calendars/a3298160768/4e84299f-0505-4cbb-8007-c29808fe25b6/";
+}
+
+string WebClient::getUriCalendar(){
+    return this->uri_calendar;
+}
+
+string WebClient::getUriTodo(){
+    return this->uri_todo;
+}
+
+void WebClient::setCtag(string ctag) {
+    this->ctag = ctag;
+}
+
+string WebClient::getCtag() {
+    return this->ctag;
+}
+
+string WebClient::propfind_calendar(string uri) {
     string response;
     string propfind = "<d:propfind xmlns:d=\"DAV:\" xmlns:cs=\"http://calendarserver.org/ns/\">"
                       "  <d:prop>\n"
