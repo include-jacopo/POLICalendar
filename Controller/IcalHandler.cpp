@@ -208,7 +208,8 @@ Task IcalHandler::task_creator(map<string,string> taskProp) {
         cout<<"priority int: "<<endl;
 
 
-        Task t(taskProp["UID"], taskProp["SUMMARY"], "ciao", priority_int, tp_due);
+        // TEMP Task t(taskProp["UID"], taskProp["SUMMARY"], "ciao", priority_int, tp_due);
+        Task t{};
         return t;
     } else {
         cout<<"costruttore senza data"<<endl;
@@ -217,7 +218,8 @@ Task IcalHandler::task_creator(map<string,string> taskProp) {
         cout<<"description: "<<description<<endl;
         cout<<"priority int: "<<priority_int<<endl;
         /* chiamo il costruttore senza data */
-        Task t(taskProp["UID"], taskProp["SUMMARY"], "ciao", priority_int);
+        // TEMP Task t(taskProp["UID"], taskProp["SUMMARY"], "ciao", priority_int);
+        Task t{};
         cout<<"nome di t: "<<t.getName()<<endl;
         return t;
 
