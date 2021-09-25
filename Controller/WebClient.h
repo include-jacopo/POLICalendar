@@ -21,8 +21,9 @@ public:
     WebClient();
     ~WebClient();
     void setClient(const string url, const string user, const string pass, int port);
-    string propfind_calendar(string uri);
-    void setUri();
+    string propfindCtag(string uri);
+    void propfindUri();
+    void setUri(string strCalendar, string strTodo);
     string getUriCalendar();
     string getUriTodo();
     string report_calendar(const string uri);

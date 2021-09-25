@@ -34,13 +34,14 @@ Controller::Controller() : wc() {
 
 void Controller::createSession (string url, string usr, string pw, int port){
     wc.setClient(url, usr, pw, port); //Autenticazione con il server
-    wc.setUri(); //Riceve dal server gli url specifici per to-do e calendario
+    wc.propfindUri(); //Riceve dal server gli url specifici per to-do e calendario
     wc.setCtag("PrimaLettura"); //Setto un ctag fittizio per la prima lettura
+
     downloadEvents(); //Riempio il calendario con gli eventi che già possiede
 }
 
 bool Controller::downloadEvents(){
-    string ctagXML = wc.propfind_calendar(wc.getUriCalendar()); //stringa ottenuta dalla PROPFIND
+    string ctagXML = wc.propfindCtag(wc.getUriCalendar()); //stringa ottenuta dalla PROPFIND
     string ctag = readCtag(ctagXML); //Estrazione del CTAG dalla stringa PROPFIND
 
     if(ctag != wc.getCtag() || ctag == "PrimaLettura") {
@@ -58,12 +59,11 @@ bool Controller::downloadEvents(){
             for (c = icalcomponent_get_first_component(evento, ICAL_VEVENT_COMPONENT);
                  c != 0;
                  c = icalcomponent_get_next_component(evento, ICAL_VEVENT_COMPONENT)) {
-                Event ev = IcalHandler::event_from_ical_component(c);
-                insertLocalEvent(ev);
-                cout<<"uid: "<<ev.getUid()<<" name: "<<ev.getName()<<endl;
+                        Event ev = IcalHandler::event_from_ical_component(c);
+                        insertLocalEvent(ev);
+                        cout<<"uid: "<<ev.getUid()<<" name: "<<ev.getName()<<endl;
             }
         }
-
         return true;
 
     } else {

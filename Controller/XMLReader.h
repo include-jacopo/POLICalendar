@@ -13,6 +13,10 @@ using namespace std;
 
 list<icalcomponent*> readXML(string str);
 string readCtag(string str);
+string readLinkUser (string str);
+string readCalendarCollection (string str);
+string readUriCalendar (string str);
+string readUriTodo (string str);
 
 #endif //POLICALENDAR_XMLREADER_H
 
