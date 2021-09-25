@@ -28,6 +28,7 @@ add_executable(POLICalendar main.cpp
         View/Calendar/Task.cpp View/Calendar/Task.h
         View/Calendar/DialogEdit.cpp View/Calendar/DialogEdit.h
         Model/Event.cpp Model/Event.h
+        Model/Task.cpp Model/Task.h
         Controller/Controller.cpp Controller/Controller.h
         Controller/WebClient.cpp Controller/WebClient.h
         Controller/Base64.h

@@ -18,17 +18,30 @@ using namespace std;
 
 class WebClient {
 public:
-    WebClient(const string url, const string user, const string pass, const unsigned port);
+    WebClient();
     ~WebClient();
-    string propfind_calendar(string uri, string url);
+    void setClient(const string url, const string user, const string pass, int port);
+    string propfindCtag(string uri);
+    void propfindUri();
+    void setUri(string strCalendar, string strTodo);
+    string getUriCalendar();
+    string getUriTodo();
     string report_calendar(const string uri);
     string report_todo(const string uri);
     int put_event(const string uri, const string evento);
+    string getUrl();
+    int getPort();
+    void setCtag(string ctag);
+    string getCtag();
 
 private:
     ne_session *sess;
     string base64_auth;
-
+    string url;
+    string uri_calendar;
+    string uri_todo;
+    int port;
+    string ctag;
 };
 
 

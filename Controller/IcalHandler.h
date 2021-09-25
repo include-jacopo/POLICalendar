@@ -9,6 +9,7 @@
 #include <map>
 #include <string>
 #include "../Model/Event.h"
+#include "../Model/Task.h"
 
 using namespace std;
 
@@ -17,6 +18,8 @@ public:
     static map<string,string> find_properties(icalcomponent* comp);
     static Event event_creator(map<string,string> eventProp);
     static Event event_from_ical_component(icalcomponent* comp);
+    static Task task_creator(map<string,string> taskProp);
+    static Task task_from_ical_component(icalcomponent* comp);
 
 };
 

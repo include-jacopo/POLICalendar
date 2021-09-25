@@ -27,71 +27,74 @@ Controller *Controller::getInstance() {
     return instance;
 }
 
-Controller::Controller() : wc("dav.fruux.com", "b3297398995", "dap2zg5z54tu", 443) {
-    const string host("dav.fruux.com");
-    const string user("b3297398995");
-    const string pass("dap2zg5z54tu");
-    const string uri_calendar("/calendars/a3298160768/51759490-6b14-4c41-88ae-1a94106fe0b6/");
-    const string uri_todo("/calendars/a3298160768/4e84299f-0505-4cbb-8007-c29808fe25b6/");
-    const unsigned port = 443; //443
-    string xml_cal;
-    string xml_todo;
+Controller::Controller() : wc() {
+    //DA SVUOTARE, QUESTO METODO LO DOVRÀ CHIAMARE RICCARDO
+    createSession("dav.fruux.com", "b3297398995", "dap2zg5z54tu", 443);
+}
 
-    string committami = "BEGIN:VCALENDAR\n"
-                        "VERSION:2.0\n"
-                        "PRODID:-//fruux//CalendarApp//EN\n"
-                        "CALSCALE:GREGORIAN\n"
-                        "X-WR-CALNAME:Calendar\n"
-                        "X-APPLE-CALENDAR-COLOR:#B90E28\n"
-                        "BEGIN:VEVENT\n"
-                        "DTSTART:20210930T150000Z\n"
-                        "UID:ec137329-0a8b-41d4-9ec8-0b886b8df13a\n"
-                        "CREATED:20210917T142720Z\n"
-                        "DTSTAMP:20210917T142734Z\n"
-                        "DTEND:20210930T170000Z\n"
-                        "SUMMARY:STUPIRE RICCARDO\n"
-                        "END:VEVENT\n"
-                        "END:VCALENDAR";
+void Controller::createSession (string url, string usr, string pw, int port){
+    wc.setClient(url, usr, pw, port); //Autenticazione con il server
+    wc.propfindUri(); //Riceve dal server gli url specifici per to-do e calendario
+    wc.setCtag("PrimaLettura"); //Setto un ctag fittizio per la prima lettura
 
-    xml_cal = wc.report_calendar(uri_calendar);
-    xml_todo = wc.report_todo(uri_todo);
+    downloadEvents(); //Riempio il calendario con gli eventi che già possiede
+}
 
-    string ctagXML = wc.propfind_calendar(uri_calendar, host);
-    readCtag(ctagXML);
+bool Controller::downloadEvents(){
+    string ctagXML = wc.propfindCtag(wc.getUriCalendar()); //stringa ottenuta dalla PROPFIND
+    string ctag = readCtag(ctagXML); //Estrazione del CTAG dalla stringa PROPFIND
 
-    //ESEMPIO DI AGGIUNTA DI UN EVENTO
-    //int prova = cal.put_event(uri_calendar, committami);
+    if(ctag != wc.getCtag() || ctag == "PrimaLettura") {
+        wc.setCtag(ctag); //salvo nel wc il ctag corrispondente
 
-    list<icalcomponent *> eventi_calendario = readXML(xml_cal);
-    list<icalcomponent *> todo_calendario = readXML(xml_todo);
+        string xml_cal = wc.report_calendar(wc.getUriCalendar()); //Lettura dell'XML del calendario dal server
+        string xml_todo = wc.report_todo(wc.getUriTodo()); //Lettura dell'XML dei to-do dal server
 
-    //Scorro ogni evento e i suoi sottoeventi per riempire Event.cpp
-    for (auto evento: eventi_calendario) {
-        icalcomponent *c;
-        for (c = icalcomponent_get_first_component(evento, ICAL_VEVENT_COMPONENT);
-             c != 0;
-             c = icalcomponent_get_next_component(evento, ICAL_VEVENT_COMPONENT)) {
-            //IcalHandler::find_properties(c); //Chiamata alla funzione per aggiungere in Event.cpp
-            Event ev = IcalHandler::event_from_ical_component(c);
-           /* addEvent(ev);
 
-            * BISOGNA DIFFERENZIARE TRA LA AddEvent che avevamo fatto inizialmente che caricava in locale i dati presenti sul calendario e quella che
-            * carica sul calendario e in locale nuovi eventi
-            */
-            insertLocalEvent(ev);
-            cout<<"uid: "<<ev.getUid()<<" name: "<<ev.getName()<<endl;
+
+        list<icalcomponent *> eventi_calendario = readXML(xml_cal);
+        list<icalcomponent *> todo_calendario = readXML(xml_todo);
+
+
+
+
+
+        //Scorro ogni evento e i suoi sottoeventi per riempire Event.cpp
+        for (auto evento: eventi_calendario) {
+            icalcomponent *c;
+            for (c = icalcomponent_get_first_component(evento, ICAL_VEVENT_COMPONENT);
+                 c != 0;
+                 c = icalcomponent_get_next_component(evento, ICAL_VEVENT_COMPONENT)) {
+                        Event ev = IcalHandler::event_from_ical_component(c);
+                        insertLocalEvent(ev);
+                        cout<<"uid: "<<ev.getUid()<<" name: "<<ev.getName()<<endl;
+            }
         }
-    }
+        /* scorro la lista di componenti per creare gli oggetti task */
+        /*
+        cout<<"************ TASKS*****************"<<endl;
+        for (auto todo: todo_calendario) {
+            icalcomponent *c;
+            for (c = icalcomponent_get_first_component(todo, ICAL_VTODO_COMPONENT);
+                 c != 0;
+                 c = icalcomponent_get_next_component(todo, ICAL_VTODO_COMPONENT)) {
+                cout<<"componente che mando alla funzione !"<<endl;
+                cout<<icalcomponent_as_ical_string(c)<<endl;
+                cout<<"fine componente che mando alla funzione"<<endl;
+                Task t = IcalHandler::task_from_ical_component(c);
+                //out<<"ciao"<<endl;
+               // insertLocalTask(t);
+                //cout<<"uid: "<<t.getUid()<<" name: "<<t.getName()<<endl;
+            }
+        }
+         */
 
-    /*  codice per provare la addEvent  tengo qui per comodità, da togliere in futuro */
-    /*
-    Event ev2 = Events.find("0d84aa00-bb6c-436b-af79-e1c79f0fb87f")->second;
-    cout<<"EVENTO 2!!"<<endl<<"descrizione" << ev2.getDescription()<<endl;
-    ev2.setDescription("MICHELE NON PUZZA!!, JACOPO PUZZA");
-    cout<<"EVENTO 2!!"<<endl<<"descrizione" << ev2.getDescription()<<endl;
-    addEvent(ev2);
-     */
-};
+        return true;
+
+    } else {
+        return false;
+    }
+}
 
 const map<string, Event>& Controller::getEvents() {
     return Events;
@@ -99,6 +102,10 @@ const map<string, Event>& Controller::getEvents() {
 
 int Controller::insertLocalEvent(Event ev){
     Events.insert({ev.getUid(), ev});
+    return 1;
+}
+int Controller::insertLocalTask(Task t){
+    Tasks.insert({t.getUid(), t});
     return 1;
 }
 
@@ -111,14 +118,14 @@ bool Controller::addEvent(Event ev) {
     /* creo la stringa da passare alla funzione che manda la richiesta HTTP */
 
     string payloadIniziale = "BEGIN:VCALENDAR\n"
-                     "VERSION:2.0\n"
-                     "PRODID:-//fruux//CalendarApp//EN\n"
-                     "CALSCALE:GREGORIAN\n"
-                     "X-WR-CALNAME:Calendar\n"
-                     "X-APPLE-CALENDAR-COLOR:#B90E28\n"
-                     "BEGIN:VEVENT\n";
-    string  payloadFinale = "END:VEVENT\n"
-                            "END:VCALENDAR";
+                             "VERSION:2.0\n"
+                             "PRODID:-//fruux//CalendarApp//EN\n"
+                             "CALSCALE:GREGORIAN\n"
+                             "X-WR-CALNAME:Calendar\n"
+                             "X-APPLE-CALENDAR-COLOR:#B90E28\n"
+                             "BEGIN:VEVENT\n";
+    string  payloadFinale =  "END:VEVENT\n"
+                             "END:VCALENDAR";
 
     std::time_t tt1, tt2, tt3;
     /* ottengo degli oggetti time_t partendo dai campi chrono::system::clock dell'evento */
