@@ -39,6 +39,7 @@ public:
     void setFlagDate(bool flagDate);
     bool isCompleted() const;
     void setCompleted(bool completed);
+
     void printTask();
 };
 

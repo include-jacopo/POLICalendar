@@ -247,6 +247,7 @@ Task IcalHandler::task_creator(map<string,string> taskProp) {
 
 Task IcalHandler::task_from_ical_component(icalcomponent* comp){
     map<string, string> taskProps;           /* mappa con il nome della proprietà come key e il valore della proprietà come value */
+
     taskProps = find_properties(comp);      /* estraggo le proprietà dal componente */
 
     /*

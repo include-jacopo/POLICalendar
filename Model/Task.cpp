@@ -82,6 +82,7 @@ void Task::setCompleted(bool completed) {
 
 void Task::printTask() {
     std::cout << "Evento:\n";
+
     std::cout << "UID: " << uidS <<endl<< "NAME: " << name<< endl<< "DESCRIPTION: " << description <<endl << "LOCATION: " << location<<endl;
     auto tt = std::chrono::system_clock::to_time_t( date);
     auto lt = std::localtime(&tt);

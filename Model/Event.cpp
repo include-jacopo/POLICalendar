@@ -108,6 +108,7 @@ void Event::setEndTime(const std::chrono::time_point<std::chrono::system_clock> 
 }
 
 void Event::printEvent() {
+
     std::cout << "Evento:\n";
     std::cout << "UID: " << uidS << " NAME: " << nameS << "\nDESCRIPTION: " << descr << "\nLOCATION: " << loc << "\nURL: "
               << url << "\n";

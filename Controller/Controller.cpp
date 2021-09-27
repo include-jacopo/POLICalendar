@@ -98,6 +98,7 @@ bool Controller::downloadEvents(){
         return true;
 
     } else {
+
         return false;
     }
 }
