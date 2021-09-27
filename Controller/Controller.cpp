@@ -65,23 +65,22 @@ bool Controller::downloadEvents(){
             }
         }
         /* scorro la lista di componenti per creare gli oggetti task */
-        /*
+
         cout<<"************ TASKS*****************"<<endl;
         for (auto todo: todo_calendario) {
             icalcomponent *c;
             for (c = icalcomponent_get_first_component(todo, ICAL_VTODO_COMPONENT);
                  c != 0;
                  c = icalcomponent_get_next_component(todo, ICAL_VTODO_COMPONENT)) {
-                cout<<"componente che mando alla funzione !"<<endl;
-                cout<<icalcomponent_as_ical_string(c)<<endl;
-                cout<<"fine componente che mando alla funzione"<<endl;
+                /* creo un nuovo task partendo dalle proprietà */
                 Task t = IcalHandler::task_from_ical_component(c);
-                //out<<"ciao"<<endl;
-               // insertLocalTask(t);
-                //cout<<"uid: "<<t.getUid()<<" name: "<<t.getName()<<endl;
+                /* inserisco il task nella mappa locale */
+                insertLocalTask(t);
             }
         }
-         */
+
+        //displayTasks();
+
 
         //CANCELLA DA QUI
         /*
@@ -94,11 +93,19 @@ bool Controller::downloadEvents(){
             cout << "uid = " << i.first << " nome = " << i.second.getName() << endl;
         }
          */
+        //Task prova2 = getTasks().begin()->second;
+        //prova2.setName("PROVA DI INSERIMENTO");
+        //prova2.setUidS("0d84aa00-bb6c-436b-af79-e1c79f0yt87f");
+        //addTask(prova2);
+
+        displayTasks();
+
         //CANCELLA FINO A QUI
 
         return true;
 
     } else {
+
         return false;
     }
 }
@@ -209,11 +216,78 @@ void Controller::displayEvents() {
     cout << "***********************************************" << endl;
 }
 
+void Controller::displayTasks() {
+    cout << "**TASK ATTUALMENTE PRESENTI NEL CONTENITORE**" << endl;
+    for (auto i: Tasks) {
+        i.second.printTask();
+    }
+    cout << "***********************************************" << endl;
+}
+
 const map<std::string, Task> &Controller::getTasks() {
     return Tasks;
 }
 
 bool Controller::addTask(Task task) {
+    // Add event prima inserisce in remoto e poi successivamente in caso di inserzione con successo inserisce in locale
+    // creo la stringa da passare alla funzione che manda la richiesta HTTP
+
+    string payloadIniziale = "BEGIN:VCALENDAR\n"
+                             "VERSION:2.0\n"
+                             "PRODID:-//fruux//CalendarApp//EN\n"
+                             "CALSCALE:GREGORIAN\n"
+                             "X-WR-CALNAME:Calendar\n"
+                             "X-APPLE-CALENDAR-COLOR:#B90E28\n"
+                             "BEGIN:VTODO\n";
+
+    string  payloadFinale =  "END:VTODO\n"
+                             "END:VCALENDAR";
+
+    std::time_t tt1, tt2;
+    /* ottengo degli oggetti time_t partendo dai campi chrono::system::clock dell'evento */
+    tt1 = chrono::system_clock::to_time_t ( task.getDate());      /* data task */
+    tt2 = chrono::system_clock::to_time_t ( task.getDateS());     /* data creazione task */
+
+
+    string startT, dateT;
+    stringstream streamStartT, streamDateT;
+
+    /*inserisco l'output in uno stream di stringhe */
+    streamDateT << std::put_time(std::localtime(&tt2), "%Y%m%dT%H%M%SZ" );
+
+
+    /* salvo lo stream di stringhe all'interno di una singola stringa */
+
+    dateT = streamDateT.str();
+
+    /* aggiungo i campi obbligatori */
+    string payloadIntermedio = "DTSTART:"+startT+"\n"+"UID:"+task.getUid()+"\n"+"DTSTAMP:"+dateT+"\n"+"\n"+"SUMMARY:"+task.getName()+"\n";
+    /* aggiungo i campi opzionali */
+    if(task.getDescription()!=""){
+        payloadIntermedio = payloadIntermedio + "DESCRIPTION:"+task.getDescription()+"\n";
+    }
+    if(task.getLocation()!=""){
+        payloadIntermedio = payloadIntermedio + "LOCATION:"+task.getLocation()+"\n";
+    }
+    if(task.isFlagDate()){
+        tt1 = chrono::system_clock::to_time_t ( task.getDate());      /* data task */
+        streamStartT << std::put_time(std::localtime(&tt1), "%Y%m%dT%H%M%SZ" );
+        startT = streamStartT.str();
+        payloadIntermedio = payloadIntermedio+"DTSTART:"+startT;
+    }
+
+    string payloadCompleto = payloadIniziale + payloadIntermedio + payloadFinale;
+
+    if(!wc.put_event(wc.getUriTodo()+task.getUid(),payloadCompleto)){
+        //La richiesta di caricamento dell'evento ha avuto risultato positivo, inserisco l'evento in locale
+        Tasks.insert({task.getUid(), task});
+        cout<<"HO INSERITO il task CORRETTAMENTe"<<endl;
+        return  true;
+    }
+    else{
+        cout<<"INSERIMENTO FALLITO"<<endl;
+        return false;
+    }
     // TODO
     return false;
 }
