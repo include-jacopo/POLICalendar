@@ -41,7 +41,15 @@ void Controller::createSession (string url, string usr, string pw, int port){
 }
 
 bool Controller::downloadEvents(){
-    string ctagXML = wc.propfindCtag(wc.getUriCalendar()); //stringa ottenuta dalla PROPFIND
+
+    string ctagXML;
+    try {
+        ctagXML = wc.propfindCtag(wc.getUriCalendar());
+    } catch(invalid_argument ie) {
+        cout << ie.what() << endl;
+        return false;
+    }
+
     string ctag = readCtag(ctagXML); //Estrazione del CTAG dalla stringa PROPFIND
 
     if(ctag != wc.getCtag() || ctag == "PrimaLettura") {
@@ -89,26 +97,12 @@ bool Controller::downloadEvents(){
         prova.setName("PROVA DI INSERIMENTO");
         prova.setUid("0d84aa00-bb6c-436b-af79-e1c79f0yt87f");
         //prova.setUid("0d84aa00bb6c436baf79e1c79f0yt87f");
-        addEvent(prova); */
+        addEvent(prova);
         for (auto i : Events){
             cout << "uid = " << i.first << " nome = " << i.second.getName() << endl;
         }
-         cout << "NUOVI EVENTI" << endl;
-        //Event prova = getEvents().at("7fe9b5cf-676f-4f77-8fa6-cc66b61ce4b3");
+         */
 
-        deleteEvent("f6d63b21-a273-43d8-8bfa-a4ca26c9adab");
-
-        auto it = Events.find("d38039f3-bb28-4ddb-a39d-f2211c7663c6");
-        Event prova = it->second;
-        prova.setName("Comprare lo smalto di Fedez");
-
-        cout << prova.getUid() << endl;
-
-        editEvent(prova);
-
-        for (auto i : Events){
-            cout << "uid = " << i.first << " nome = " << i.second.getName() << endl;
-        }
         //CANCELLA FINO A QUI
 
         return true;
@@ -195,15 +189,14 @@ bool Controller::addEvent(Event ev) {
 }
 
 bool Controller::deleteEvent(string uid) {
-    if(wc.deleteCalendar(uid)){ //se l'eliminazione online dell'evento è andata a buon fine
+    if (wc.deleteCalendar(uid)) { //se l'eliminazione online dell'evento è andata a buon fine
         auto it = Events.find(uid);
         if (it != Events.end()) {
             Events.erase(it); //rimuovo l'evento anche in locale
             return true;
         }
-    } else {
-        return false;
     }
+    return false;
 }
 
 optional<Event> Controller::findEvent(string uid) {
