@@ -33,6 +33,7 @@ public:
     int getPort();
     void setCtag(string ctag);
     string getCtag();
+    bool deleteCalendar(const string uid);
 
 private:
     ne_session *sess;

@@ -272,3 +272,23 @@ int WebClient::put_event(string uri, string evento_xml) {
     ne_request_destroy(req);
     return 0;
 }
+
+bool WebClient::deleteCalendar(const string uid) {
+    string response;
+
+    ne_request *req = ne_request_create(sess, "DELETE", (this->uri_calendar+uid+".ics").c_str());
+    ne_add_request_header(req, "Authorization", ("Basic "+base64_auth).c_str());
+
+    ne_add_response_body_reader(req, ne_accept_always, httpResponseReader, &response);
+
+    cout << response << endl;
+    int result = ne_request_dispatch(req);
+    ne_request_destroy(req);
+
+    switch (result) {
+        case NE_OK:
+            return true;
+        default:
+            return false;
+    }
+}

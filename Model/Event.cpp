@@ -37,18 +37,16 @@ Event::Event(const std::string &uid, const std::string &name, const std::string 
              const std::chrono::time_point<std::chrono::system_clock> &creationTime,
              const std::chrono::time_point<std::chrono::system_clock> &startTime,
              const std::chrono::time_point<std::chrono::system_clock> &endTime) :
-        uidS(uid), nameS(name), descr(description), loc(location), url(url),
-        creationT(creationTime), startT(startTime), endT(endTime) {
-
+             uidS(uid), nameS(name), descr(description), loc(location), url(url),
+             creationT(creationTime), startT(startTime), endT(endTime) {
 }
 
 const std::string &Event::getUid() const {
-    return uidS;
+    return this->uidS;
 }
 
 void Event::setUid(const std::string &uid) {
     this->uidS = uid;
-
 }
 
 const std::string &Event::getName() const {

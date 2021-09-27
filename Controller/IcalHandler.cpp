@@ -16,39 +16,16 @@
 
 using namespace std;
 
-map<string,string> IcalHandler::find_properties(icalcomponent* comp)
-{
+map<string,string> IcalHandler::find_properties(icalcomponent* comp){
     icalproperty* p;
 
-    vector<string> eventProperties;                 /* vector che ospita le varie proprietà dell'evento */
+    vector<string> eventProperties; // vector che ospita le varie proprietà dell'evento
     map<string,string> eventProp;
 
-
-    //cout<<icalcomponent_as_ical_string(comp)<<endl;
-
     for(p = icalcomponent_get_first_property(comp, ICAL_ANY_PROPERTY); p != 0 ; p = icalcomponent_get_next_property(comp, ICAL_ANY_PROPERTY)){
-        //string st = icalproperty_get_property_name(p);
         eventProp.insert({icalproperty_get_property_name(p),icalproperty_get_value_as_string(p)});
-        //eventProperties.push_back(icalproperty_get_value_as_string(p));
-
     }
-
-    //event_creator(eventProp);
-
     return eventProp;
-    /*
-    if((p = icalcomponent_get_first_property(comp, ICAL_SUMMARY_PROPERTY))) {
-        cout << icalproperty_get_value_as_string(p) << endl;
-        //qui avviene l'aggiunta in Event.cpp per il summary
-    }
-
-    if((p = icalcomponent_get_first_property(comp, ICAL_LOCATION_PROPERTY))) {
-        cout << icalproperty_get_value_as_string(p) << endl;
-    }
-     */
-
-    //AGGIUNGERE TUTTI GLI IF NECESSARI A PESCARE TUTTI I DATI DI NOSTRO INTERESSE
-
 }
 
 
@@ -77,18 +54,18 @@ Event IcalHandler::event_creator(map<string,string> eventProp){
     stringstream ss_start(eventProp["DTSTART"].c_str());
 
 
-     /* print per capire se ho diviso bene le date */
+    /* print per capire se ho diviso bene le date */
 
-     /*
-    std::time_t tt1, tt2, tt3;
-    tt1 = chrono::system_clock::to_time_t ( tp_start );
-    tt2 = chrono::system_clock::to_time_t ( tp_end );
-    tt3 = chrono::system_clock::to_time_t ( tp_creation );
-    std::cout << "STart Time: "<< std::put_time(std::localtime(&tt1), "%b %d %Y %H:%M:%S" ) <<endl<<
-                "End Time: "<< std::put_time(std::localtime(&tt2), "%b %d %Y %H:%M:%S" ) <<endl<<
-              "Creation Time: "<< std::put_time(std::localtime(&tt3), "%b %d %Y %H:%M:%S" ) <<endl;
+    /*
+   std::time_t tt1, tt2, tt3;
+   tt1 = chrono::system_clock::to_time_t ( tp_start );
+   tt2 = chrono::system_clock::to_time_t ( tp_end );
+   tt3 = chrono::system_clock::to_time_t ( tp_creation );
+   std::cout << "STart Time: "<< std::put_time(std::localtime(&tt1), "%b %d %Y %H:%M:%S" ) <<endl<<
+               "End Time: "<< std::put_time(std::localtime(&tt2), "%b %d %Y %H:%M:%S" ) <<endl<<
+             "Creation Time: "<< std::put_time(std::localtime(&tt3), "%b %d %Y %H:%M:%S" ) <<endl;
 
-      */
+     */
 
     /*creo l'evento */
     string location, description, url;
@@ -133,10 +110,6 @@ Event IcalHandler::event_creator(map<string,string> eventProp){
         return ev;
     } */
 
-
-
-
-    /* evento con tutti i campi quindi chiamo il costruttore senza cercare il campo mancante */
 
     return ev1;
 
