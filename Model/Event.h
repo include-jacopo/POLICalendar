@@ -11,9 +11,8 @@
 class Event {
 private:
     std::string uidS, nameS, descr, loc, url;
-    std::chrono::time_point<std::chrono::system_clock> creationT;
-    std::chrono::time_point<std::chrono::system_clock> startT;
-    std::chrono::time_point<std::chrono::system_clock> endT;
+    /** Datetimes are always UTC Time */
+    std::chrono::time_point<std::chrono::system_clock> creationT, startT, endT;
 
     std::string gen_random(std::string s, int len);
 
@@ -38,9 +37,21 @@ public:
     void setUrl(const std::string &url);
     const std::chrono::time_point<std::chrono::system_clock> &getCreationTime() const;
     void setCreationTime(const std::chrono::time_point<std::chrono::system_clock> &creationTime);
+    /** Gets the Event start datetime
+     * @return Start datetime UTC time
+     */
     const std::chrono::time_point<std::chrono::system_clock> &getStartTime() const;
+    /** Sets the Event start datetime
+     * @param startTime Start datetime UTC time
+     */
     void setStartTime(const std::chrono::time_point<std::chrono::system_clock> &startTime);
+    /** Gets the Event end datetime
+     * @return End datetime UTC time
+     */
     const std::chrono::time_point<std::chrono::system_clock> &getEndTime() const;
+    /** Sets the Event end datetime
+     * @param endTime End datetime UTC time
+     */
     void setEndTime(const std::chrono::time_point<std::chrono::system_clock> &endTime);
     void printEvent();
 };

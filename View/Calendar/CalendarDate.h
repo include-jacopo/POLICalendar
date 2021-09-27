@@ -8,8 +8,6 @@
 #include <QWidget>
 #include <QFrame>
 #include <QLabel>
-#include <QString>
-#include <QVBoxLayout>
 #include <QDate>
 
 class CalendarDate : public QFrame {

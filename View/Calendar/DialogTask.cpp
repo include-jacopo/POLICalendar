@@ -9,7 +9,7 @@ DialogTask::DialogTask(QWidget *parent) : QDialog(parent), ui(new Ui::DialogTask
     ui->deleteButton->hide();
 
     controller = Controller::getInstance();
-    setDueDate(QDateTime::currentDateTime());
+    setDueDate(QDateTime::currentDateTimeUtc());
 
     // Connect checkbox to dueDate field (enable/disable)
     connect(ui->enableDueDate, SIGNAL(stateChanged(int)), this, SLOT(setDueDateEnabled(int)));
@@ -53,7 +53,7 @@ bool DialogTask::getDueDateEnabled() {
 }
 
 QDateTime DialogTask::getDueDate() {
-    return ui->fieldDueDate->dateTime();
+    return ui->fieldDueDate->dateTime().toUTC();
 }
 
 int DialogTask::getPriority() {
@@ -81,7 +81,7 @@ void DialogTask::setDueDateEnabled(int val) {
 }
 
 void DialogTask::setDueDate(const QDateTime &dueDate) {
-    ui->fieldDueDate->setDateTime(dueDate);
+    ui->fieldDueDate->setDateTime(dueDate.toLocalTime());
 }
 
 void DialogTask::setPriority(int priority) {
@@ -124,4 +124,5 @@ Task DialogTask::getTask() {
             std::chrono::seconds(getDueDate().toSecsSinceEpoch())));
     task.setPriority(getPriority());
     task.setCompleted(getCompleted());
+    return task;
 }

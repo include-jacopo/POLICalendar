@@ -2,8 +2,8 @@
 // Created by michele on 9/25/21.
 //
 
-#ifndef POLICALENDAR_MODELTASK_H
-#define POLICALENDAR_MODELTASK_H
+#ifndef POLICALENDAR_TASK_H
+#define POLICALENDAR_TASK_H
 
 #include <string>
 #include <chrono>
@@ -15,8 +15,11 @@ private:
     string uidS, name, description, location;
     int priority;
     chrono::time_point<std::chrono::system_clock> date, dateS;
+    /** Datetimes are always UTC Time */
+    chrono::time_point<std::chrono::system_clock> date;
     bool completed;
-    bool flagDate;                                         /* flag che quando settato a true segnala la presenza della data opzionale */
+    /** Flag che quando settato a true segnala la presenza della data opzionale */
+    bool flagDate;
 public:
     Task();
     Task(string uid, string name, string description, string location, int priority, bool completed, chrono::time_point<std::chrono::system_clock> date); /* costruttore per i task senza data */
@@ -33,7 +36,13 @@ public:
     void setLocation(const string &location);
     int getPriority() const;
     void setPriority(int priority);
+    /** Gets the Task due datetime
+     * @return Due datetime UTC time
+     */
     const chrono::time_point<std::chrono::system_clock> &getDate() const;
+    /** Sets the Task due datetime
+     * @param date Due datetime UTC time
+     */
     void setDate(const chrono::time_point<std::chrono::system_clock> &date);
     const std::chrono::time_point<std::chrono::system_clock> &getDateS() const;
     void setDateS(const chrono::time_point<std::chrono::system_clock> &date);
@@ -46,4 +55,4 @@ public:
 };
 
 
-#endif //POLICALENDAR_MODELTASK_H
+#endif //POLICALENDAR_TASK_H
