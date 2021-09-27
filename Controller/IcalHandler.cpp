@@ -32,6 +32,7 @@ map<string,string> IcalHandler::find_properties(icalcomponent* comp){
 Event IcalHandler::event_creator(map<string,string> eventProp){
     Event ev1;
 
+
     tm tm_start = {};
     tm tm_end = {};
     tm tm_creation = {};
@@ -180,10 +181,9 @@ Task IcalHandler::task_creator(map<string,string> taskProp) {
     if (taskProp.find("DTSTAMP") != taskProp.end()) {
         tm tm_stamp = {};
         /* eseguo il parsing della stringa contenente la data */
-        strptime(taskProp["DUE"].c_str(), "%Y%m%dT%H%M%SZ", &tm_stamp);
+        strptime(taskProp["DTSTAMP"].c_str(), "%Y%m%dT%H%M%SZ", &tm_stamp);
         /* creo gli oggetti di tipo system_clock */
-        tp_due = std::chrono::system_clock::from_time_t(timegm(&tm_stamp));
-
+        tp_stamp = std::chrono::system_clock::from_time_t(timegm(&tm_stamp));
     } else {
 
     }
@@ -196,7 +196,7 @@ Task IcalHandler::task_creator(map<string,string> taskProp) {
     }
 
     if (taskProp.find("LOCATION") == taskProp.end()) {
-        description = "";
+        location = "";
     } else {
         location = taskProp["LOCATION"];
     }
@@ -204,11 +204,7 @@ Task IcalHandler::task_creator(map<string,string> taskProp) {
 
     if (flagData == true) {
         /* chiamo il costruttore con data */
-
-
-
-        // TEMP Task t(taskProp["UID"], taskProp["SUMMARY"], "ciao", priority_int, tp_due);
-        Task t(taskProp["UID"],taskProp["SUMMARY"],description,location, priority,0,tp_due,tp_stamp);
+        Task t(taskProp["UID"],taskProp["SUMMARY"],description,location, priority,0,tp_stamp,tp_due);
         //Task t{};
         return t;
     } else {

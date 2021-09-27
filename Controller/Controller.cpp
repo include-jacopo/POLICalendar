@@ -72,23 +72,29 @@ bool Controller::downloadEvents(){
             }
         }
         /* scorro la lista di componenti per creare gli oggetti task */
-        /*
+
         cout<<"************ TASKS*****************"<<endl;
         for (auto todo: todo_calendario) {
             icalcomponent *c;
             for (c = icalcomponent_get_first_component(todo, ICAL_VTODO_COMPONENT);
                  c != 0;
                  c = icalcomponent_get_next_component(todo, ICAL_VTODO_COMPONENT)) {
-                cout<<"componente che mando alla funzione !"<<endl;
-                cout<<icalcomponent_as_ical_string(c)<<endl;
-                cout<<"fine componente che mando alla funzione"<<endl;
+
                 Task t = IcalHandler::task_from_ical_component(c);
-                //out<<"ciao"<<endl;
-               // insertLocalTask(t);
-                //cout<<"uid: "<<t.getUid()<<" name: "<<t.getName()<<endl;
+
+               insertLocalTask(t);
             }
         }
-         */
+
+        for(auto i: Tasks){
+            cout<<""<<endl;
+            i.second.printTask();
+            cout<<""<<endl;
+        }
+
+
+
+
 
         //CANCELLA DA QUI
 
@@ -248,7 +254,7 @@ bool Controller::addTask(Task task) {
     string startT, dateT;
     stringstream streamStartT, streamDateT;
 
-    /*inserisco l'output in uno stream di stringhe */
+    /* inserisco l'output in uno stream di stringhe */
     streamDateT << std::put_time(std::gmtime(&tt2), "%Y%m%dT%H%M%SZ" );
 
 
@@ -287,11 +293,24 @@ bool Controller::addTask(Task task) {
 }
 
 bool Controller::editTask(Task task) {
-    // TODO
+    if(deleteTask(task.getUid())){ //elimino prima l'evento vecchio
+        if(addTask(task)){ //poi aggiungo l'evento modificato
+            return true;
+        }
+    }
     return false;
 }
 
+
+
 bool Controller::deleteTask(string uid) {
-    // TODO
+    if (wc.deleteTask(uid)) { //se l'eliminazione online dell'evento è andata a buon fine
+        auto it = Tasks.find(uid);
+        if (it != Tasks.end()) {
+            Tasks.erase(it); //rimuovo l'evento anche in locale
+            cout<<"ho rimosso con successo il task"<<endl;
+            return true;
+        }
+    }
     return false;
 }

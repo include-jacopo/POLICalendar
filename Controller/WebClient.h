@@ -34,6 +34,7 @@ public:
     void setCtag(string ctag);
     string getCtag();
     bool deleteCalendar(const string uid);
+    bool deleteTask(const string uid);
 
 private:
     ne_session *sess;
