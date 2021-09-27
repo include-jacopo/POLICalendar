@@ -124,4 +124,5 @@ Task DialogTask::getTask() {
             std::chrono::seconds(getDueDate().toSecsSinceEpoch())));
     task.setPriority(getPriority());
     task.setCompleted(getCompleted());
+    return task;
 }
