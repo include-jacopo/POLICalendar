@@ -2,6 +2,8 @@
 // Created by Riccardo Mengoli on 08/09/2021 17:34.
 //
 
+#include <QString>
+#include <QVBoxLayout>
 #include "CalendarDate.h"
 
 CalendarDate::CalendarDate(QDate date, QWidget *parent) : QFrame(parent) {

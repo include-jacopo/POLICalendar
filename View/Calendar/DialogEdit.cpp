@@ -9,8 +9,8 @@ DialogEdit::DialogEdit(QWidget *parent) : QDialog(parent), ui(new Ui::DialogEdit
     ui->deleteButton->hide();
 
     controller = Controller::getInstance();
-    setDateStart(QDateTime::currentDateTime());
-    setDateEnd(QDateTime::currentDateTime());
+    setDateStart(QDateTime::currentDateTimeUtc());
+    setDateEnd(QDateTime::currentDateTimeUtc());
 }
 
 DialogEdit::DialogEdit(const Event& event, QWidget *parent) : DialogEdit(parent) {
@@ -44,10 +44,10 @@ QString DialogEdit::getDescription() {
     return ui->fieldDescription->toPlainText();
 }
 QDateTime DialogEdit::getDateStart() {
-    return ui->fieldDateStart->dateTime();
+    return ui->fieldDateStart->dateTime().toUTC();
 }
 QDateTime DialogEdit::getDateEnd() {
-    return ui->fieldDateEnd->dateTime();
+    return ui->fieldDateEnd->dateTime().toUTC();
 }
 
 void DialogEdit::setName(const QString& eventName) {
@@ -63,11 +63,11 @@ void DialogEdit::setDescription(const QString& description) {
 }
 
 void DialogEdit::setDateStart(const QDateTime& dateStart) {
-    ui->fieldDateStart->setDateTime(dateStart);
+    ui->fieldDateStart->setDateTime(dateStart.toLocalTime());
 }
 
 void DialogEdit::setDateEnd(const QDateTime& dateEnd) {
-    ui->fieldDateEnd->setDateTime(dateEnd);
+    ui->fieldDateEnd->setDateTime(dateEnd.toLocalTime());
 }
 
 void DialogEdit::accept() {

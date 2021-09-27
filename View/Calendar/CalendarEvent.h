@@ -20,6 +20,7 @@ class CalendarEvent : public QFrame {
 private:
     Event calEvent;
     ICalendarGUIEventsHandler *handler;
+    /* Datetimes as local time */
     QDateTime startT, endT;
 
 public:
