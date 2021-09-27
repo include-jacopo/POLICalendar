@@ -61,7 +61,6 @@ bool Controller::downloadEvents(){
                  c = icalcomponent_get_next_component(evento, ICAL_VEVENT_COMPONENT)) {
                         Event ev = IcalHandler::event_from_ical_component(c);
                         insertLocalEvent(ev);
-                        cout<<"uid: "<<ev.getUid()<<" name: "<<ev.getName()<<endl;
             }
         }
         /* scorro la lista di componenti per creare gli oggetti task */
@@ -84,16 +83,32 @@ bool Controller::downloadEvents(){
          */
 
         //CANCELLA DA QUI
+
         /*
         Event prova = getEvents().begin()->second;
         prova.setName("PROVA DI INSERIMENTO");
         prova.setUid("0d84aa00-bb6c-436b-af79-e1c79f0yt87f");
         //prova.setUid("0d84aa00bb6c436baf79e1c79f0yt87f");
-        addEvent(prova);
+        addEvent(prova); */
         for (auto i : Events){
             cout << "uid = " << i.first << " nome = " << i.second.getName() << endl;
         }
-         */
+         cout << "NUOVI EVENTI" << endl;
+        //Event prova = getEvents().at("7fe9b5cf-676f-4f77-8fa6-cc66b61ce4b3");
+
+        deleteEvent("f6d63b21-a273-43d8-8bfa-a4ca26c9adab");
+
+        auto it = Events.find("d38039f3-bb28-4ddb-a39d-f2211c7663c6");
+        Event prova = it->second;
+        prova.setName("Comprare lo smalto di Fedez");
+
+        cout << prova.getUid() << endl;
+
+        editEvent(prova);
+
+        for (auto i : Events){
+            cout << "uid = " << i.first << " nome = " << i.second.getName() << endl;
+        }
         //CANCELLA FINO A QUI
 
         return true;
@@ -116,12 +131,17 @@ int Controller::insertLocalTask(Task t){
     return 1;
 }
 
-bool Controller::updateEvents() { //aggiornamento in locale e online degli eventi
+bool Controller::updateEvents() {
     //DA IMPLEMENTARE
     return false;
 }
 
-bool Controller::editEvent(Event ev) { //aggiornamento in locale degli eventi
+bool Controller::editEvent(Event ev) {
+    if(deleteEvent(ev.getUid())){ //elimino prima l'evento vecchio
+        if(addEvent(ev)){ //poi aggiungo l'evento modificato
+            return true;
+        }
+    }
     return false;
 }
 
@@ -167,25 +187,23 @@ bool Controller::addEvent(Event ev) {
     if(!wc.put_event(wc.getUriCalendar()+ev.getUid(),payloadCompleto)){
         //La richiesta di caricamento dell'evento ha avuto risultato positivo, inserisco l'evento in locale
         Events.insert({ev.getUid(), ev});
-        cout<<"HO INSERITO GLI EVENTI CORRETTAMENTI"<<endl;
         return  true;
     }
     else{
-        cout<<"INSERIMENTO FALLITO"<<endl;
         return false;
     }
 }
 
 bool Controller::deleteEvent(string uid) {
-
-    auto it = Events.find(uid);
-
-    if (it != Events.end()) {
-        /* ho trovato l'evento da rimuovere */
-        Events.erase(it);
-        return true;
+    if(wc.deleteCalendar(uid)){ //se l'eliminazione online dell'evento è andata a buon fine
+        auto it = Events.find(uid);
+        if (it != Events.end()) {
+            Events.erase(it); //rimuovo l'evento anche in locale
+            return true;
+        }
+    } else {
+        return false;
     }
-    return false;
 }
 
 optional<Event> Controller::findEvent(string uid) {
