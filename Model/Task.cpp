@@ -3,14 +3,16 @@
 //
 
 #include "Task.h"
+#include <iostream>
+#include <iomanip>
 
 Task::Task() : priority(1), completed(false), flagDate(false) {};
 
-Task::Task(string uid, string name, string description, string location, int priority, bool completed):
+Task::Task(string uid, string name, string description, string location, int priority, bool completed,chrono::time_point<std::chrono::system_clock> dateS):
             uidS(uid), name(name), description(description), location(location), priority(priority),
             completed(completed), flagDate(false) {};
 Task::Task(string uid, string name, string description, string location, int priority, bool completed,
-           chrono::time_point<std::chrono::system_clock> date):
+           chrono::time_point<std::chrono::system_clock> date, chrono::time_point<std::chrono::system_clock> dateS):
         uidS(uid), name(name), description(description), location(location), priority(priority), completed(completed),
         date(date), flagDate(true) {};
 
@@ -77,3 +79,23 @@ bool Task::isCompleted() const {
 void Task::setCompleted(bool completed) {
     Task::completed = completed;
 };
+
+const std::chrono::time_point<std::chrono::system_clock> &Task::getDateS() const{
+    return dateS;
+
+};
+void Task::setDateS(const chrono::time_point<std::chrono::system_clock> &date){
+    Task::dateS = date;
+}
+
+void Task::printTask() {
+    std::cout << "TASK::\n";
+
+    std::cout << "UID: " << uidS <<endl<< "NAME: " << name<< endl<< "DESCRIPTION: " << description <<endl << "LOCATION: " << location<<endl;
+    auto tt = std::chrono::system_clock::to_time_t( date);
+    auto lt = std::localtime(&tt);
+    std::cout << "TASK TIME: " << std::put_time(lt, "%d/%m/%Y %H:%M:%S") << "\n";
+    tt = std::chrono::system_clock::to_time_t(dateS);
+    lt = std::localtime(&tt);
+    std::cout << "CREATION TIME: " << std::put_time(lt, "%d/%m/%Y %H:%M:%S") << "\n\n";
+}
