@@ -14,14 +14,14 @@ class Task {
 private:
     string uidS, name, description, location;
     int priority;
-    chrono::time_point<std::chrono::system_clock> date;
+    chrono::time_point<std::chrono::system_clock> date, dateS;
     bool completed;
     bool flagDate;                                         /* flag che quando settato a true segnala la presenza della data opzionale */
 public:
     Task();
-    Task(string uid, string name, string description, string location, int priority, bool completed); /* costruttore per i task senza data */
+    Task(string uid, string name, string description, string location, int priority, bool completed, chrono::time_point<std::chrono::system_clock> date); /* costruttore per i task senza data */
     Task(string uid, string name, string description, string location, int priority, bool completed,
-         chrono::time_point<std::chrono::system_clock> date);
+         chrono::time_point<std::chrono::system_clock> date, chrono::time_point<std::chrono::system_clock> dateS);
 
     const string &getUid() const;
     void setUidS(const string &uidS);
@@ -39,6 +39,7 @@ public:
     void setFlagDate(bool flagDate);
     bool isCompleted() const;
     void setCompleted(bool completed);
+    void printTask();
 };
 
 

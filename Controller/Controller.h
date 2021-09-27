@@ -31,6 +31,7 @@ public:
     bool editEvent(Event ev) override;
     bool deleteEvent(string uid) override;
     void displayEvents();
+    void displayTasks();
 
     /* Tasks methods */
     const map<std::string, Task> &getTasks() override;

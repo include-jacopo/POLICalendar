@@ -65,23 +65,22 @@ bool Controller::downloadEvents(){
             }
         }
         /* scorro la lista di componenti per creare gli oggetti task */
-        /*
+
         cout<<"************ TASKS*****************"<<endl;
         for (auto todo: todo_calendario) {
             icalcomponent *c;
             for (c = icalcomponent_get_first_component(todo, ICAL_VTODO_COMPONENT);
                  c != 0;
                  c = icalcomponent_get_next_component(todo, ICAL_VTODO_COMPONENT)) {
-                cout<<"componente che mando alla funzione !"<<endl;
-                cout<<icalcomponent_as_ical_string(c)<<endl;
-                cout<<"fine componente che mando alla funzione"<<endl;
+                /* creo un nuovo task partendo dalle proprietà */
                 Task t = IcalHandler::task_from_ical_component(c);
-                //out<<"ciao"<<endl;
-               // insertLocalTask(t);
-                //cout<<"uid: "<<t.getUid()<<" name: "<<t.getName()<<endl;
+                /* inserisco il task nella mappa locale */
+                insertLocalTask(t);
             }
         }
-         */
+
+        displayTasks();
+
 
         //CANCELLA DA QUI
         /*
@@ -205,6 +204,14 @@ void Controller::displayEvents() {
     cout << "**EVENTI ATTUALMENTE PRESENTI NEL CONTENITORE**" << endl;
     for (auto i: Events) {
         i.second.printEvent();
+    }
+    cout << "***********************************************" << endl;
+}
+
+void Controller::displayTasks() {
+    cout << "**TASK ATTUALMENTE PRESENTI NEL CONTENITORE**" << endl;
+    for (auto i: Tasks) {
+        i.second.printTask();
     }
     cout << "***********************************************" << endl;
 }
