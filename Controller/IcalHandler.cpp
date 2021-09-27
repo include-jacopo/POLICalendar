@@ -32,7 +32,6 @@ map<string,string> IcalHandler::find_properties(icalcomponent* comp){
 Event IcalHandler::event_creator(map<string,string> eventProp){
     Event ev1;
 
-
     tm tm_start = {};
     tm tm_end = {};
     tm tm_creation = {};
@@ -44,10 +43,30 @@ Event IcalHandler::event_creator(map<string,string> eventProp){
     strptime(   eventProp["DTEND"].c_str(), "%Y%m%dT%H%M%SZ", &tm_end);
     strptime(   eventProp["CREATED"].c_str(), "%Y%m%dT%H%M%SZ", &tm_creation);
 
+
+    /**
+     * Sostituito std::mktime con timegm.
+     * std::mktime rileva la timezone e la data non risulta UTC come dovrebbe.
+     *
+     * timegm è non standard, per Windows è necessario utilizzare _mkgmtime.
+     *
+     * Alternativamente è possibile impostare temporaneamente la variabile TZ (timezone) dell'environment
+     * a "UTC", ma anche questa istruzione potrebbe avere problemi di interoperabilità.
+     *
+     * See:
+     * https://stackoverflow.com/questions/283166/easy-way-to-convert-a-struct-tm-expressed-in-utc-to-time-t-type/
+     * https://stackoverflow.com/questions/530519/stdmktime-and-timezone-info
+     * https://stackoverflow.com/questions/6467844/is-c-mktime-different-on-windows-and-gnu-linux
+     * https://stackoverflow.com/questions/16647819/timegm-cross-platform
+     *
+     * Altre soluzioni riguardano l'uso di boost o C++20.
+     * La std::chrono di C++20 tuttavia non è ancora completamente supportata da tutti i compilatori,
+     * tra cui mingw su Windows (al 27/09/2021).
+     */
     /* creo gli oggetti di tipo system_clock */
-    auto tp_start = std::chrono::system_clock::from_time_t(std::mktime(&tm_start));
-    auto tp_end = std::chrono::system_clock::from_time_t(std::mktime(&tm_end));
-    auto tp_creation = std::chrono::system_clock::from_time_t(std::mktime(&tm_creation));
+    auto tp_start = std::chrono::system_clock::from_time_t(timegm(&tm_start));
+    auto tp_end = std::chrono::system_clock::from_time_t(timegm(&tm_end));
+    auto tp_creation = std::chrono::system_clock::from_time_t(timegm(&tm_creation));
 
 
     tm tm_start1, tm_end1, tm_creation1;
@@ -61,9 +80,9 @@ Event IcalHandler::event_creator(map<string,string> eventProp){
    tt1 = chrono::system_clock::to_time_t ( tp_start );
    tt2 = chrono::system_clock::to_time_t ( tp_end );
    tt3 = chrono::system_clock::to_time_t ( tp_creation );
-   std::cout << "STart Time: "<< std::put_time(std::localtime(&tt1), "%b %d %Y %H:%M:%S" ) <<endl<<
-               "End Time: "<< std::put_time(std::localtime(&tt2), "%b %d %Y %H:%M:%S" ) <<endl<<
-             "Creation Time: "<< std::put_time(std::localtime(&tt3), "%b %d %Y %H:%M:%S" ) <<endl;
+   std::cout << "STart Time: "<< std::put_time(std::gmtime(&tt1), "%b %d %Y %H:%M:%S" ) <<endl<<
+               "End Time: "<< std::put_time(std::gmtime(&tt2), "%b %d %Y %H:%M:%S" ) <<endl<<
+             "Creation Time: "<< std::put_time(std::gmtime(&tt3), "%b %d %Y %H:%M:%S" ) <<endl;
 
      */
 
@@ -127,19 +146,7 @@ Event IcalHandler::event_from_ical_component(icalcomponent* comp){
 }
 
 Task IcalHandler::task_creator(map<string,string> taskProp) {
-
-    /*
-   std::time_t tt1, tt2, tt3;
-   tt1 = chrono::system_clock::to_time_t ( tp_start );
-   tt2 = chrono::system_clock::to_time_t ( tp_end );
-   tt3 = chrono::system_clock::to_time_t ( tp_creation );
-   std::cout << "STart Time: "<< std::put_time(std::localtime(&tt1), "%b %d %Y %H:%M:%S" ) <<endl<<
-               "End Time: "<< std::put_time(std::localtime(&tt2), "%b %d %Y %H:%M:%S" ) <<endl<<
-             "Creation Time: "<< std::put_time(std::localtime(&tt3), "%b %d %Y %H:%M:%S" ) <<endl;
-
-     */
-
-    /*creo l'evento */
+    /*creo il task */
 
     string description, location;
     bool flagData;                                                   /* flag che segnala la presenza della data */
@@ -161,7 +168,7 @@ Task IcalHandler::task_creator(map<string,string> taskProp) {
         /* eseguo il parsing della stringa contenente la data */
         strptime(taskProp["DUE"].c_str(), "%Y%m%dT%H%M%SZ", &tm_due);
         /* creo gli oggetti di tipo system_clock */
-        tp_due = std::chrono::system_clock::from_time_t(std::mktime(&tm_due));
+        tp_due = std::chrono::system_clock::from_time_t(timegm(&tm_due));
         flagData = true;
 
 
@@ -175,7 +182,7 @@ Task IcalHandler::task_creator(map<string,string> taskProp) {
         /* eseguo il parsing della stringa contenente la data */
         strptime(taskProp["DUE"].c_str(), "%Y%m%dT%H%M%SZ", &tm_stamp);
         /* creo gli oggetti di tipo system_clock */
-        tp_due = std::chrono::system_clock::from_time_t(std::mktime(&tm_stamp));
+        tp_due = std::chrono::system_clock::from_time_t(timegm(&tm_stamp));
 
     } else {
 

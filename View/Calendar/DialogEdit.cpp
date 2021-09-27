@@ -9,8 +9,8 @@ DialogEdit::DialogEdit(QWidget *parent) : QDialog(parent), ui(new Ui::DialogEdit
     ui->deleteButton->hide();
 
     controller = Controller::getInstance();
-    setDateStart(QDateTime::currentDateTimeUtc());
-    setDateEnd(QDateTime::currentDateTimeUtc());
+    setDateStart(QDateTime::currentDateTime());
+    setDateEnd(QDateTime::currentDateTime());
 }
 
 DialogEdit::DialogEdit(const Event& event, QWidget *parent) : DialogEdit(parent) {
@@ -44,10 +44,10 @@ QString DialogEdit::getDescription() {
     return ui->fieldDescription->toPlainText();
 }
 QDateTime DialogEdit::getDateStart() {
-    return ui->fieldDateStart->dateTime().toUTC();
+    return ui->fieldDateStart->dateTime();
 }
 QDateTime DialogEdit::getDateEnd() {
-    return ui->fieldDateEnd->dateTime().toUTC();
+    return ui->fieldDateEnd->dateTime();
 }
 
 void DialogEdit::setName(const QString& eventName) {
@@ -63,11 +63,11 @@ void DialogEdit::setDescription(const QString& description) {
 }
 
 void DialogEdit::setDateStart(const QDateTime& dateStart) {
-    ui->fieldDateStart->setDateTime(dateStart.toLocalTime());
+    ui->fieldDateStart->setDateTime(dateStart);
 }
 
 void DialogEdit::setDateEnd(const QDateTime& dateEnd) {
-    ui->fieldDateEnd->setDateTime(dateEnd.toLocalTime());
+    ui->fieldDateEnd->setDateTime(dateEnd);
 }
 
 void DialogEdit::accept() {
@@ -113,8 +113,8 @@ Event DialogEdit::getEvent() {
     event.setLocation(getLocation().toStdString());
     event.setDescription(getDescription().toStdString());
     event.setStartTime(std::chrono::time_point<std::chrono::system_clock>(
-            std::chrono::seconds(getDateStart().toSecsSinceEpoch())));
+            std::chrono::seconds(getDateStart().toUTC().toSecsSinceEpoch())));
     event.setEndTime(std::chrono::time_point<std::chrono::system_clock>(
-            std::chrono::seconds(getDateEnd().toSecsSinceEpoch())));
+            std::chrono::seconds(getDateEnd().toUTC().toSecsSinceEpoch())));
     return event;
 }

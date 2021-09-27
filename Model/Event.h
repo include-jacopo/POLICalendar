@@ -53,7 +53,7 @@ public:
      * @param endTime End datetime UTC time
      */
     void setEndTime(const std::chrono::time_point<std::chrono::system_clock> &endTime);
-    void printEvent();
+    void printEvent() const;
 };
 
 #endif //POLICALENDAR_EVENT_H

@@ -102,10 +102,10 @@ bool CalendarColumns::checkIfEventInDay(const Event &e, const QDate &date) {
     QDateTime start, end;
     /* Local time start date */
     start = QDateTime::fromSecsSinceEpoch(
-            std::chrono::duration_cast<std::chrono::seconds>(e.getStartTime().time_since_epoch()).count()).toLocalTime();
+            std::chrono::duration_cast<std::chrono::seconds>(e.getStartTime().time_since_epoch()).count());
     /* Local time end date */
     end = QDateTime::fromSecsSinceEpoch(
-            std::chrono::duration_cast<std::chrono::seconds>(e.getEndTime().time_since_epoch()).count()).toLocalTime();
+            std::chrono::duration_cast<std::chrono::seconds>(e.getEndTime().time_since_epoch()).count());
     auto dayStart = date.startOfDay();
     auto dayEnd = date.endOfDay();
     bool c1 = (start >= dayStart && start <= dayEnd);

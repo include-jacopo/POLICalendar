@@ -14,10 +14,10 @@ CalendarEvent::CalendarEvent(const Event &event, ICalendarGUIEventsHandler *hand
 
     /* Local time start date */
     startT = QDateTime::fromSecsSinceEpoch(
-            std::chrono::duration_cast<std::chrono::seconds>(event.getStartTime().time_since_epoch()).count()).toLocalTime();
+            std::chrono::duration_cast<std::chrono::seconds>(event.getStartTime().time_since_epoch()).count());
     /* Local time end date */
     endT = QDateTime::fromSecsSinceEpoch(
-            std::chrono::duration_cast<std::chrono::seconds>(event.getEndTime().time_since_epoch()).count()).toLocalTime();
+            std::chrono::duration_cast<std::chrono::seconds>(event.getEndTime().time_since_epoch()).count());
 
     QString startTime, endTime;
     startTime = startT.toString("hh:mm");

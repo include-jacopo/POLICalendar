@@ -164,9 +164,9 @@ bool Controller::addEvent(Event ev) {
     stringstream streamStartT, streamEndT, streamCreationT;
 
     /*inserisco l'output in uno stream di stringhe */
-    streamStartT << std::put_time(std::localtime(&tt1), "%Y%m%dT%H%M%SZ" );
-    streamEndT << std::put_time(std::localtime(&tt2), "%Y%m%dT%H%M%SZ" );
-    streamCreationT << std::put_time(std::localtime(&tt3), "%Y%m%dT%H%M%SZ" );
+    streamStartT << std::put_time(std::gmtime(&tt1), "%Y%m%dT%H%M%SZ" );
+    streamEndT << std::put_time(std::gmtime(&tt2), "%Y%m%dT%H%M%SZ" );
+    streamCreationT << std::put_time(std::gmtime(&tt3), "%Y%m%dT%H%M%SZ" );
 
     /* salvo lo stream di stringhe all'interno di una singola stringa */
     startT = streamStartT.str();
@@ -249,7 +249,7 @@ bool Controller::addTask(Task task) {
     stringstream streamStartT, streamDateT;
 
     /*inserisco l'output in uno stream di stringhe */
-    streamDateT << std::put_time(std::localtime(&tt2), "%Y%m%dT%H%M%SZ" );
+    streamDateT << std::put_time(std::gmtime(&tt2), "%Y%m%dT%H%M%SZ" );
 
 
     /* salvo lo stream di stringhe all'interno di una singola stringa */
@@ -267,7 +267,7 @@ bool Controller::addTask(Task task) {
     }
     if(task.isFlagDate()){
         tt1 = chrono::system_clock::to_time_t ( task.getDate());      /* data task */
-        streamStartT << std::put_time(std::localtime(&tt1), "%Y%m%dT%H%M%SZ" );
+        streamStartT << std::put_time(std::gmtime(&tt1), "%Y%m%dT%H%M%SZ" );
         startT = streamStartT.str();
         payloadIntermedio = payloadIntermedio+"DTSTART:"+startT;
     }
