@@ -6,8 +6,7 @@
 #include <iomanip>
 #include "Event.h"
 
-Event::Event() {
-    /*compongo un uid random */
+const std::string Event::createUid() {
     std::string s1("aaaaaaaa");
     std::string s2("aaaa");
     std::string s3("aaaa");
@@ -26,8 +25,11 @@ Event::Event() {
     /* le unisco */
     std::string s = ss1 + "-" + ss2 + "-" + ss3 + "-" + ss4 + "-" + ss5;
 
-    /* inserisco il nuovo uid */
-    this->uidS = s;
+    return s;
+}
+
+Event::Event() {
+    this->uidS = createUid();
 }
 
 Event::Event(const std::string &uid, const std::string &name, const std::string &description,

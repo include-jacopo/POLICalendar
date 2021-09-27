@@ -252,18 +252,13 @@ string WebClient::report_todo(string uri) {
     return move(response);
 }
 
-int WebClient::put_event(string uri, string evento) {
+int WebClient::put_event(string uri, string evento_xml) {
     string response;
 
-    std::random_device rd; // obtain a random number from hardware
-    std::mt19937 gen(rd()); // seed the generator
-    uniform_int_distribution<long> random(100000000000000, 199999999999999);
-    string random_number = to_string(random(gen));
-
-    ne_request *req = ne_request_create(sess, "PUT", (uri+random_number+".ics").c_str());
+    ne_request *req = ne_request_create(sess, "PUT", (uri+".ics").c_str());
     ne_add_request_header(req, "Authorization", ("Basic "+base64_auth).c_str());
 
-    ne_set_request_body_buffer(req, evento.c_str(), evento.size());
+    ne_set_request_body_buffer(req, evento_xml.c_str(), evento_xml.size());
     ne_add_response_body_reader(req, ne_accept_always, httpResponseReader, &response);
 
     ne_request_dispatch(req);

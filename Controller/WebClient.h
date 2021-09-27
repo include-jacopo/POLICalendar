@@ -28,7 +28,7 @@ public:
     string getUriTodo();
     string report_calendar(const string uri);
     string report_todo(const string uri);
-    int put_event(const string uri, const string evento);
+    int put_event(const string uri, const string evento_xml);
     string getUrl();
     int getPort();
     void setCtag(string ctag);

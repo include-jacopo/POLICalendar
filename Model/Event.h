@@ -25,6 +25,7 @@ public:
           const std::chrono::time_point<std::chrono::system_clock> &startTime,
           const std::chrono::time_point<std::chrono::system_clock> &endTime);
 
+    const std::string createUid();
     const std::string &getUid() const;
     void setUid(const std::string &uid);
     const std::string &getName() const;

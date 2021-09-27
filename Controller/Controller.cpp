@@ -50,14 +50,8 @@ bool Controller::downloadEvents(){
         string xml_cal = wc.report_calendar(wc.getUriCalendar()); //Lettura dell'XML del calendario dal server
         string xml_todo = wc.report_todo(wc.getUriTodo()); //Lettura dell'XML dei to-do dal server
 
-
-
         list<icalcomponent *> eventi_calendario = readXML(xml_cal);
         list<icalcomponent *> todo_calendario = readXML(xml_todo);
-
-
-
-
 
         //Scorro ogni evento e i suoi sottoeventi per riempire Event.cpp
         for (auto evento: eventi_calendario) {
@@ -89,6 +83,19 @@ bool Controller::downloadEvents(){
         }
          */
 
+        //CANCELLA DA QUI
+        /*
+        Event prova = getEvents().begin()->second;
+        prova.setName("PROVA DI INSERIMENTO");
+        prova.setUid("0d84aa00-bb6c-436b-af79-e1c79f0yt87f");
+        //prova.setUid("0d84aa00bb6c436baf79e1c79f0yt87f");
+        addEvent(prova);
+        for (auto i : Events){
+            cout << "uid = " << i.first << " nome = " << i.second.getName() << endl;
+        }
+         */
+        //CANCELLA FINO A QUI
+
         return true;
 
     } else {
@@ -109,13 +116,18 @@ int Controller::insertLocalTask(Task t){
     return 1;
 }
 
-bool Controller::updateEvents() {
+bool Controller::updateEvents() { //aggiornamento in locale e online degli eventi
+    //DA IMPLEMENTARE
+    return false;
+}
+
+bool Controller::editEvent(Event ev) { //aggiornamento in locale degli eventi
     return false;
 }
 
 bool Controller::addEvent(Event ev) {
-    /*add event prima inserisce in remoto e poi successivamente in caso di inserzione con successo inserisce in locale */
-    /* creo la stringa da passare alla funzione che manda la richiesta HTTP */
+    // Add event prima inserisce in remoto e poi successivamente in caso di inserzione con successo inserisce in locale
+    // creo la stringa da passare alla funzione che manda la richiesta HTTP
 
     string payloadIniziale = "BEGIN:VCALENDAR\n"
                              "VERSION:2.0\n"
@@ -124,6 +136,7 @@ bool Controller::addEvent(Event ev) {
                              "X-WR-CALNAME:Calendar\n"
                              "X-APPLE-CALENDAR-COLOR:#B90E28\n"
                              "BEGIN:VEVENT\n";
+
     string  payloadFinale =  "END:VEVENT\n"
                              "END:VCALENDAR";
 
@@ -132,7 +145,6 @@ bool Controller::addEvent(Event ev) {
     tt1 = chrono::system_clock::to_time_t ( ev.getStartTime() );
     tt2 = chrono::system_clock::to_time_t ( ev.getEndTime() );
     tt3 = chrono::system_clock::to_time_t ( ev.getCreationTime() );
-
 
     string startT, endT, creationT;
     stringstream streamStartT, streamEndT, streamCreationT;
@@ -147,32 +159,13 @@ bool Controller::addEvent(Event ev) {
     endT = streamEndT.str();
     creationT = streamCreationT.str();
 
-    /* ESEMPIO DI PAYLOAD DA CREARE
-   string committami = "BEGIN:VCALENDAR\n"
-                       "VERSION:2.0\n"
-                       "PRODID:-//fruux//CalendarApp//EN\n"
-                       "CALSCALE:GREGORIAN\n"
-                       "X-WR-CALNAME:Calendar\n"
-                       "X-APPLE-CALENDAR-COLOR:#B90E28\n"
-                       "BEGIN:VEVENT\n"
-                       "DTSTART:20210930T150000Z\n"
-                       "UID:ec137329-0a8b-41d4-9ec8-0b886b8df13a\n"
-                       "CREATED:20210917T142720Z\n"
-                       "DTSTAMP:20210917T142734Z\n"
-                       "DTEND:20210930T170000Z\n"
-                       "SUMMARY:STUPIRE RICCARDO\n"
-                       "END:VEVENT\n"
-                       "END:VCALENDAR";
-    */
     string payloadIntermedio = "DTSTART:"+startT+"\n"+"UID:"+ev.getUid()+"\n"+"CREATED:"+creationT+"\n"+"DTSTAMP:"+creationT+"\n"+
                         "DTEND:"+endT+"\n"+"SUMMARY:"+ev.getName()+"\n";
 
     string payloadCompleto = payloadIniziale + payloadIntermedio + payloadFinale;
 
-
-    if(!wc.put_event("/calendars/a3298160768/51759490-6b14-4c41-88ae-1a94106fe0b6/",payloadCompleto)){
-        /* la richiesta di caricamento dell'evento ha avuto risultato positivo */
-        /* inserisco l'evento in locale */
+    if(!wc.put_event(wc.getUriCalendar()+ev.getUid(),payloadCompleto)){
+        //La richiesta di caricamento dell'evento ha avuto risultato positivo, inserisco l'evento in locale
         Events.insert({ev.getUid(), ev});
         cout<<"HO INSERITO GLI EVENTI CORRETTAMENTI"<<endl;
         return  true;
@@ -181,10 +174,6 @@ bool Controller::addEvent(Event ev) {
         cout<<"INSERIMENTO FALLITO"<<endl;
         return false;
     }
-}
-
-bool Controller::editEvent(Event ev) {
-    return false;
 }
 
 bool Controller::deleteEvent(string uid) {
@@ -197,21 +186,6 @@ bool Controller::deleteEvent(string uid) {
         return true;
     }
     return false;
-
-    /*
-     * vecchia implementazione con il vector
-    vector<Event>::iterator it;
-    Event removed;
-    it = remove_if(Events.begin(), Events.end(),[uid, &removed](Event ev){
-                                if(ev.getUid()==uid) {
-                                    removed = ev;
-                                    return 1;
-                                }
-                                else
-                                    return 0;} );
-    if( it!= Events.end())
-        return removed;
-    */
 }
 
 optional<Event> Controller::findEvent(string uid) {
@@ -219,27 +193,12 @@ optional<Event> Controller::findEvent(string uid) {
     auto it = Events.find(uid);
 
     if (it != Events.end()) {
-        /* ho trovato l'evento e lo ritorno */
+        //Ho trovato l'evento e lo ritorno
         return it->second;
     }
 
     return {};
 
-    /*
-     *  vecchia implementazione con vector
-
-    vector<Event>::iterator it;
-    Event found;
-    it = find(Events.begin(), Events.end(),[uid, &found](Event ev){
-        if(ev.getUid()==uid) {
-            found = ev;
-            return 1;
-        }
-        else
-            return 0;} );
-    if( it!= Events.end())
-        return removed;
-    */
 }
 
 void Controller::displayEvents() {
