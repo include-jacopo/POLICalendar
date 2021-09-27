@@ -80,8 +80,16 @@ void Task::setCompleted(bool completed) {
     Task::completed = completed;
 };
 
+const std::chrono::time_point<std::chrono::system_clock> &Task::getDateS() const{
+    return dateS;
+
+};
+void Task::setDateS(const chrono::time_point<std::chrono::system_clock> &date){
+    Task::dateS = date;
+}
+
 void Task::printTask() {
-    std::cout << "Evento:\n";
+    std::cout << "TASK::\n";
 
     std::cout << "UID: " << uidS <<endl<< "NAME: " << name<< endl<< "DESCRIPTION: " << description <<endl << "LOCATION: " << location<<endl;
     auto tt = std::chrono::system_clock::to_time_t( date);

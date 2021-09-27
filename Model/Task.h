@@ -35,6 +35,8 @@ public:
     void setPriority(int priority);
     const chrono::time_point<std::chrono::system_clock> &getDate() const;
     void setDate(const chrono::time_point<std::chrono::system_clock> &date);
+    const std::chrono::time_point<std::chrono::system_clock> &getDateS() const;
+    void setDateS(const chrono::time_point<std::chrono::system_clock> &date);
     bool isFlagDate() const;
     void setFlagDate(bool flagDate);
     bool isCompleted() const;

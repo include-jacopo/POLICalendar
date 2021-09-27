@@ -193,7 +193,7 @@ Task IcalHandler::task_creator(map<string,string> taskProp) {
 
 
     } else {
-        cout<<"non ho trovato la data!"<<endl;
+
         flagData = false;
     }
 
@@ -205,21 +205,19 @@ Task IcalHandler::task_creator(map<string,string> taskProp) {
         tp_due = std::chrono::system_clock::from_time_t(std::mktime(&tm_stamp));
 
     } else {
-        cout<<"non ho trovato la data DTSTAMP!"<<endl;
+
     }
 
     /* non ho la proprietà description, quindi passo una stringa vuota al costruttore */
     if (taskProp.find("DESCRIPTION") == taskProp.end()) {
         description = "";
     } else {
-        cout<<"non ho trovato description"<<endl;
         description = taskProp["DESCRIPTION"];
     }
 
     if (taskProp.find("LOCATION") == taskProp.end()) {
         description = "";
     } else {
-        cout<<"non ho trovato location"<<endl;
         location = taskProp["LOCATION"];
     }
 
@@ -239,7 +237,7 @@ Task IcalHandler::task_creator(map<string,string> taskProp) {
         // TEMP Task t(taskProp["UID"], taskProp["SUMMARY"], "ciao", priority_int);
         Task t(taskProp["UID"],taskProp["SUMMARY"],description,location, priority,0,tp_stamp);
         //Task t{};
-        cout<<"nome di t: "<<t.getName()<<endl;
+
         return t;
 
     }
