@@ -14,9 +14,8 @@ class Task {
 private:
     string uidS, name, description, location;
     int priority;
-    chrono::time_point<std::chrono::system_clock> date, dateS;
     /** Datetimes are always UTC Time */
-    chrono::time_point<std::chrono::system_clock> date;
+    chrono::time_point<std::chrono::system_clock> date, dateS;
     bool completed;
     /** Flag che quando settato a true segnala la presenza della data opzionale */
     bool flagDate;
