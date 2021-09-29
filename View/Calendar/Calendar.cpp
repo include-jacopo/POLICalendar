@@ -29,7 +29,8 @@ Calendar::Calendar(QWidget *parent) : QFrame(parent) {
     layout->addWidget(calendarWidget, 0, 1);
 
     // Tasklist widget
-    layout->addWidget(new Tasklist(), 1, 1);
+    auto tasklist = new Tasklist();
+    layout->addWidget(tasklist, 1, 1);
     layout->setRowStretch(1, 1);
 
     // Add event and task buttons
@@ -47,7 +48,9 @@ Calendar::Calendar(QWidget *parent) : QFrame(parent) {
             calendarColumns, [this]() {calendarColumns->dateChanged(calendarWidget->selectedDate());});
     // Connect new event button to dialog
     auto objHandler = dynamic_cast<QObject*>(handler);
-    connect(newEvent, SIGNAL(clicked(bool)), objHandler, SLOT(createEventDialog()));
+    connect(newEvent, SIGNAL(clicked()), objHandler, SLOT(createEventDialog()));
+    // Connect new task button to dialog
+    connect(newTask, SIGNAL(clicked()), tasklist, SLOT(createTaskDialog()));
 }
 
 void Calendar::resizeEvent(QResizeEvent *event) {

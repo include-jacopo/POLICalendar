@@ -4,7 +4,7 @@
 
 #include "CalendarEvents.h"
 
-CalendarEvents::CalendarEvents(QDate date, ICalendarGUIEventsHandler *handler, QWidget *widget) : QFrame(widget) {
+CalendarEvents::CalendarEvents(QDate date, ICalendarGUIEventsHandler *handler, QWidget *parent) : QFrame(parent) {
     CalendarEvents::date = date;
     this->handler = handler;
 }

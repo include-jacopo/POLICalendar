@@ -8,19 +8,29 @@
 
 #include <QWidget>
 #include <QFrame>
-#include <QScrollArea>
 #include <QVBoxLayout>
-#include <QLabel>
 #include "TaskGUI.h"
+#include "ICalendarGUITaskHandler.h"
+#include "../../Model/Task.h"
 
-class Tasklist : public QFrame {
+class Tasklist : public QFrame, public ICalendarGUITaskHandler {
     Q_OBJECT
 
 private:
-    QList<TaskGUI*> listOfTasks;
+    QList<TaskGUI*> tasks;
+    QVBoxLayout *tasksLayout;
 
 public:
     explicit Tasklist(QWidget *parent = nullptr);
+
+public slots:
+    void createTaskDialog() override;
+    void editTaskDialog(const Task &task) override;
+
+protected slots:
+    void addTask(const Task &task) override;
+    void removeTask(const Task &tasks) override;
+    void editTask(const Task &task) override;
 };
 
 
