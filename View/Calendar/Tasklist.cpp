@@ -29,7 +29,7 @@ Tasklist::Tasklist(QWidget *parent) : QFrame(parent) {
     scrollarea->setWidget(w);
 
     // Internal layout
-    auto tasksLayout = new QVBoxLayout();
+    tasksLayout = new QVBoxLayout();
     tasksLayout->setSpacing(0);
     tasksLayout->setContentsMargins(0, 0, 0, 0);
     w->setLayout(tasksLayout);
@@ -54,7 +54,7 @@ Tasklist::Tasklist(QWidget *parent) : QFrame(parent) {
         tasks.push_back(taskgui);
         tasksLayout->addWidget(taskgui);
     }
-    tasks.last()->setProperty("isLast", true);
+    if (!tasks.empty()) tasks.last()->setProperty("isLast", true);
 
     // Fill empty space at the end
     tasksLayout->insertStretch(-1, 1);
