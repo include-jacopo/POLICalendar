@@ -8,6 +8,7 @@
 
 #include <QWidget>
 #include <QFrame>
+#include <QVBoxLayout>
 #include "TaskGUI.h"
 #include "ICalendarGUITaskHandler.h"
 #include "../../Model/Task.h"
@@ -17,6 +18,7 @@ class Tasklist : public QFrame, public ICalendarGUITaskHandler {
 
 private:
     QList<TaskGUI*> tasks;
+    QVBoxLayout *tasksLayout;
 
 public:
     explicit Tasklist(QWidget *parent = nullptr);
@@ -27,7 +29,7 @@ public slots:
 
 protected slots:
     void addTask(const Task &task) override;
-    void removeTask(const Task &task) override;
+    void removeTask(const Task &tasks) override;
     void editTask(const Task &task) override;
 };
 

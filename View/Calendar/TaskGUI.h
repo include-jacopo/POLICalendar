@@ -8,6 +8,7 @@
 #include <QWidget>
 #include <QFrame>
 #include <QMouseEvent>
+#include <QString>
 #include "../../Model/Task.h"
 #include "ICalendarGUITaskHandler.h"
 
@@ -18,8 +19,12 @@ private:
     Task task;
     ICalendarGUITaskHandler *handler;
 
+    void updateFields();
+
 public:
     TaskGUI(const Task &task, ICalendarGUITaskHandler *handler, QWidget *parent = nullptr);
+    QString getTaskUid();
+    void updateTask(const Task& task);
 
 protected:
     void mousePressEvent(QMouseEvent *event);

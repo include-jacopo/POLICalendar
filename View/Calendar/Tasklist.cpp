@@ -3,7 +3,6 @@
 //
 
 #include <QScrollArea>
-#include <QVBoxLayout>
 #include <QLabel>
 #include "Tasklist.h"
 #include "../../Controller/Controller.h"
@@ -30,16 +29,17 @@ Tasklist::Tasklist(QWidget *parent) : QFrame(parent) {
     scrollarea->setWidget(w);
 
     // Internal layout
-    auto layout2 = new QVBoxLayout();
-    layout2->setSpacing(0);
-    layout2->setContentsMargins(0, 0, 0, 0);
-    w->setLayout(layout2);
+    auto tasksLayout = new QVBoxLayout();
+    tasksLayout->setSpacing(0);
+    tasksLayout->setContentsMargins(0, 0, 0, 0);
+    w->setLayout(tasksLayout);
 
     /*for (int i = 0; i < 14; ++i) {
         auto task = new TaskGUI(task, this, this);
         layout2->addWidget(task);
         task->setProperty("isLast", i==13);
         tasks.push_back(task);
+
     }
     */
 
@@ -48,11 +48,16 @@ Tasklist::Tasklist(QWidget *parent) : QFrame(parent) {
     auto mapTasks = controller->getTasks();
     for (const auto &mapTaskIter: mapTasks) {
         auto task = mapTaskIter.second;
-        addTask(task);
+        auto taskgui = new TaskGUI(task, this, this);
+        taskgui->setProperty("isLast", false);
+        taskgui->show();
+        tasks.push_back(taskgui);
+        tasksLayout->addWidget(taskgui);
     }
+    tasks.last()->setProperty("isLast", true);
 
     // Fill empty space at the end
-    layout2->insertStretch(-1, 1);
+    tasksLayout->insertStretch(-1, 1);
 }
 
 void Tasklist::addTask(const Task &task) {
@@ -61,14 +66,29 @@ void Tasklist::addTask(const Task &task) {
     taskgui->show();
     tasks.last()->setProperty("isLast", false);
     tasks.push_back(taskgui);
+    tasksLayout->addWidget(taskgui);
 }
 
 void Tasklist::removeTask(const Task &task) {
-    //TODO
+    auto it = std::find_if(tasks.constBegin(), tasks.constEnd(), [&task](TaskGUI *t) {
+        return t->getTaskUid() == QString::fromStdString(task.getUid());
+    });
+    if (it != tasks.constEnd()) {
+        qsizetype i = it - tasks.constBegin();
+        tasksLayout->removeWidget(tasks[i]);
+        delete tasks[i];
+        tasks.remove(i);
+    }
 }
 
 void Tasklist::editTask(const Task &task) {
-    //TODO
+    auto it = std::find_if(tasks.constBegin(), tasks.constEnd(), [&task](TaskGUI *t) {
+        return t->getTaskUid() == QString::fromStdString(task.getUid());
+    });
+    if (it != tasks.constEnd()) {
+        qsizetype i = it - tasks.constBegin();
+        tasks[i]->updateTask(task);
+    }
 }
 
 void Tasklist::createTaskDialog() {
