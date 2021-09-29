@@ -48,6 +48,8 @@ Calendar::Calendar(QWidget *parent) : QFrame(parent) {
     // Connect new event button to dialog
     auto objHandler = dynamic_cast<QObject*>(handler);
     connect(newEvent, SIGNAL(clicked(bool)), objHandler, SLOT(createEventDialog()));
+    // Connect new task button to dialog
+    // TODO
 }
 
 void Calendar::resizeEvent(QResizeEvent *event) {

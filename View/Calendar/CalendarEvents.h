@@ -25,7 +25,7 @@ private:
     void setGeometryEvent(CalendarEvent *e);
 
 public:
-    explicit CalendarEvents(QDate date, ICalendarGUIEventsHandler *handler, QWidget *widget = nullptr);
+    explicit CalendarEvents(QDate date, ICalendarGUIEventsHandler *handler, QWidget *parent = nullptr);
     void setDate(const QDate &date);
     void addEvent(const Event &event);
     void removeEvent(const Event &event);

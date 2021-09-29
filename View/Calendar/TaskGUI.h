@@ -5,17 +5,24 @@
 #ifndef POLICALENDAR_TASKGUI_H
 #define POLICALENDAR_TASKGUI_H
 
-
+#include <QWidget>
 #include <QFrame>
-#include <QVBoxLayout>
-#include <QLabel>
-#include <QFile>
+#include <QMouseEvent>
+#include "../../Model/Task.h"
+#include "ICalendarGUITaskHandler.h"
 
 class TaskGUI : public QFrame {
     Q_OBJECT
 
+private:
+    Task task;
+    ICalendarGUITaskHandler *handler;
+
 public:
-    TaskGUI(QWidget *parent = nullptr);
+    TaskGUI(const Task &task, ICalendarGUITaskHandler *handler, QWidget *parent = nullptr);
+
+protected:
+    void mousePressEvent(QMouseEvent *event);
 };
 
 

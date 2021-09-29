@@ -36,7 +36,8 @@ add_executable(POLICalendar main.cpp
         Controller/XMLReader.cpp Controller/XMLReader.h
         Controller/IcalHandler.cpp Controller/IcalHandler.h
         View/IView.h Controller/IController.h
-        View/Calendar/ICalendarGUIEventsHandler.h)
+        View/Calendar/ICalendarGUIEventsHandler.h
+        View/Calendar/ICalendarGUITaskHandler.h)
 
 target_link_libraries(POLICalendar
         Qt::Core
