@@ -22,7 +22,8 @@ private:
     QDate date;
     ICalendarGUIEventsHandler *handler;
 
-    void setGeometryEvent(CalendarEvent *e);
+    enum GeometryEventType {Resize, AddElement, RemoveElement};
+    void setGeometryEvent(CalendarEvent *e, GeometryEventType type);
 
 public:
     explicit CalendarEvents(QDate date, ICalendarGUIEventsHandler *handler, QWidget *parent = nullptr);

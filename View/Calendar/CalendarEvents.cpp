@@ -2,6 +2,8 @@
 // Created by Riccardo Mengoli on 14/09/2021 17:50.
 //
 
+#include <QDir>
+#include <QFile>
 #include "CalendarEvents.h"
 
 CalendarEvents::CalendarEvents(QDate date, ICalendarGUIEventsHandler *handler, QWidget *parent) : QFrame(parent) {
@@ -15,7 +17,7 @@ void CalendarEvents::setDate(const QDate &date) {
 
 void CalendarEvents::addEvent(const Event &event) {
     auto calEv = new CalendarEvent(event, handler, this);
-    setGeometryEvent(calEv);
+    setGeometryEvent(calEv, CalendarEvents::AddElement);
     calEv->show();
     events.push_back(calEv);
 }
@@ -26,6 +28,10 @@ void CalendarEvents::removeEvent(const Event &event) {
     });
     if (it != events.constEnd()) {
         qsizetype i = it - events.constBegin();
+
+        // Update geometry levels
+        setGeometryEvent(events[i], CalendarEvents::RemoveElement);
+
         delete events[i];
         events.remove(i);
     }
@@ -56,18 +62,83 @@ void CalendarEvents::paintEvent(QPaintEvent *event) {
 
 void CalendarEvents::resizeEvent(QResizeEvent *event) {
     for (auto calendarEvent: events) {
-        setGeometryEvent(calendarEvent);
+        setGeometryEvent(calendarEvent, CalendarEvents::Resize);
     }
 }
 
-void CalendarEvents::setGeometryEvent(CalendarEvent *e) {
+void CalendarEvents::setGeometryEvent(CalendarEvent *e, GeometryEventType type) {
     auto dtStart = std::max(e->getDateTimeStart(), date.startOfDay());
     auto dtEnd = std::min(e->getDateTimeEnd(), date.endOfDay());
     int sm, dur;
     sm = (int) (date.startOfDay().secsTo(dtStart) / 60);
     dur = (int) (dtStart.secsTo(dtEnd) / 60);
 
-    auto tl = QPoint(5, (int) (this->height() / 24.0 * sm / 60));
+    auto tl = QPoint(e->geometry().x(), (int) (this->height() / 24.0 * sm / 60));
     auto br = QPoint(this->width() - 5, (int) (this->height() / 24.0 * (sm + dur) / 60));
-    e->setGeometry(QRect(tl, br));
+    auto geometry = QRect(tl, br);
+    QFile fileS;
+
+    // Handle overlapping events
+    switch (type) {
+        case Resize:
+            e->setGeometry(QRect(tl, br));
+            break;
+        case AddElement:
+            tl.setX(5);
+            e->setProperty("zIndex", 0);
+            for (auto ev: events) {
+                if (geometry.intersects(ev->geometry())) {
+                    if (geometry.contains(ev->geometry())) {
+                        // Modify the other one
+                        auto otherGeom = ev->geometry();
+                        int maxX = std::min(otherGeom.x() + 30, this->width() - 40);
+                        otherGeom.setX(maxX);
+                        ev->setGeometry(otherGeom);
+
+                        // Raise zIndex to top
+                        //TODO Fix layer problems
+                        ev->raise();
+
+                        // Update zIndex for colors
+                        auto zIndex = ev->property("zIndex").toInt();
+                        ev->setProperty("zIndex", zIndex + 1);
+
+                    } else {
+                        // Modify myself
+                        int maxX = std::min(tl.x() + 30, this->width() - 40);
+                        tl.setX(maxX);
+
+                        // Update zIndex for colors
+                        auto zIndex = e->property("zIndex").toInt();
+                        e->setProperty("zIndex", zIndex + 1);
+                    }
+                }
+            }
+            // Reapply stylesheet
+            fileS.setFileName(QDir::current().filePath("../View/Calendar/EventColors.qss"));
+            fileS.open(QFile::ReadOnly);
+            setStyleSheet(fileS.readAll());
+
+            e->setGeometry(QRect(tl, br));
+            break;
+        case RemoveElement:
+            for (auto ev: events) {
+                if (geometry.contains(ev->geometry())) {
+                    // Modify the other one
+                    auto otherGeom = ev->geometry();
+                    int minX = std::max(otherGeom.x() - 30, 5);
+                    otherGeom.setX(minX);
+                    ev->setGeometry(otherGeom);
+
+                    // Update zIndex for colors
+                    auto zIndex = ev->property("zIndex");
+                    ev->setProperty("zIndex", zIndex.toInt() - 1);
+                }
+            }
+            // Reapply stylesheet
+            fileS.setFileName(QDir::current().filePath("../View/Calendar/EventColors.qss"));
+            fileS.open(QFile::ReadOnly);
+            setStyleSheet(fileS.readAll());
+            break;
+    }
 }
