@@ -125,8 +125,15 @@ int Controller::insertLocalTask(Task t){
 }
 
 bool Controller::updateEvents() {
+    string old_ctag = wc.getCtag();
+
+    if(!updateCtag() || old_ctag == wc.getCtag()){
+        //Se qualcosa è andato storto nell'aggiornamento del ctag o il ctag non è cambiato
+        return false;
+    }
+
     //DA IMPLEMENTARE
-    return false;
+    return true;
 }
 
 bool Controller::editEvent(Event ev) {
