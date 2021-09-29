@@ -132,7 +132,7 @@ Event IcalHandler::event_from_ical_component(icalcomponent* comp, string etag){
 
 }
 
-Task IcalHandler::task_creator(map<string,string> taskProp) {
+Task IcalHandler::task_creator(map<string,string> taskProp, string etag) {
     string description, location;
     bool flagData;                                                   /* flag che segnala la presenza della data */
     int priority;
@@ -188,14 +188,14 @@ Task IcalHandler::task_creator(map<string,string> taskProp) {
 
     if (flagData == true) {
         /* chiamo il costruttore con data */
-        Task t(taskProp["UID"],taskProp["SUMMARY"],description,location, priority,0,tp_stamp,tp_due);
+        Task t(taskProp["UID"],taskProp["SUMMARY"],description,location, etag, priority,0,tp_stamp,tp_due);
         //Task t{};
         return t;
     } else {
 
         /* chiamo il costruttore senza data */
         // TEMP Task t(taskProp["UID"], taskProp["SUMMARY"], "ciao", priority_int);
-        Task t(taskProp["UID"],taskProp["SUMMARY"],description,location, priority,0,tp_stamp);
+        Task t(taskProp["UID"],taskProp["SUMMARY"],description,location, etag, priority,0,tp_stamp);
         //Task t{};
 
         return t;
@@ -203,7 +203,7 @@ Task IcalHandler::task_creator(map<string,string> taskProp) {
     }
 }
 
-Task IcalHandler::task_from_ical_component(icalcomponent* comp){
+Task IcalHandler::task_from_ical_component(icalcomponent* comp, string etag){
     map<string, string> taskProps;           /* mappa con il nome della proprietà come key e il valore della proprietà come value */
 
     taskProps = find_properties(comp);      /* estraggo le proprietà dal componente */
@@ -214,7 +214,7 @@ Task IcalHandler::task_from_ical_component(icalcomponent* comp){
     }
      */
 
-    Task t = task_creator(taskProps);   /* creo il nuovo evento passando le proprietà */
+    Task t = task_creator(taskProps, etag);   /* creo il nuovo evento passando le proprietà */
     
     return t;
 }

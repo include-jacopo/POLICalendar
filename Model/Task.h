@@ -12,7 +12,7 @@ using namespace std;
 
 class Task {
 private:
-    string uidS, name, description, location;
+    string uidS, name, description, location, etag;
     int priority;
     /** Datetimes are always UTC Time */
     chrono::time_point<std::chrono::system_clock> date, dateS;
@@ -21,8 +21,8 @@ private:
     bool flagDate;
 public:
     Task();
-    Task(string uid, string name, string description, string location, int priority, bool completed, chrono::time_point<std::chrono::system_clock> date); /* costruttore per i task senza data */
-    Task(string uid, string name, string description, string location, int priority, bool completed,
+    Task(string uid, string name, string description, string location, string etag, int priority, bool completed, chrono::time_point<std::chrono::system_clock> date); /* costruttore per i task senza data */
+    Task(string uid, string name, string description, string location, string etag, int priority, bool completed,
          chrono::time_point<std::chrono::system_clock> date, chrono::time_point<std::chrono::system_clock> dateS);
 
     const string &getUid() const;
@@ -35,6 +35,9 @@ public:
     void setLocation(const string &location);
     int getPriority() const;
     void setPriority(int priority);
+    const string &getEtag() const;
+    void setEtag(const string &etag);
+
     /** Gets the Task due datetime
      * @return Due datetime UTC time
      */

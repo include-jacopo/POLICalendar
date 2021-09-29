@@ -103,11 +103,20 @@ void Event::setEndTime(const std::chrono::time_point<std::chrono::system_clock> 
     this->endT = endTime;
 }
 
+const std::string &Event::getEtag() const {
+    return this->etag;
+}
+
+void Event::setEtag(const std::string &etag) {
+    this->etag = etag;
+}
+
 void Event::printEvent() const {
 
     std::cout << "Evento:\n";
     std::cout << "UID: " << uidS << "\nNAME: " << nameS << "\nDESCRIPTION: " << descr << "\nLOCATION: " << loc << "\nURL: "
               << url << "\n";
+
     std::cout<<"ETAG: "<<etag<<std::endl;
     auto tt = std::chrono::system_clock::to_time_t(startT);
     auto lt = std::localtime(&tt);
@@ -117,13 +126,6 @@ void Event::printEvent() const {
     std::cout << "END TIME: " << std::put_time(lt, "%d/%m/%Y %H:%M:%S") << "\n\n";
 }
 
-const std::string &Event::getEtag() const {
-    return this->etag;
-}
-
-void Event::setEtag(const std::string &etag) {
-    this->etag = etag;
-}
 
 std::string Event::gen_random(std::string s, int len) {
     static const char alphanum[] =

@@ -88,9 +88,10 @@ bool Controller::downloadEvents(){
                  c != 0;
                  c = icalcomponent_get_next_component(todo.second, ICAL_VTODO_COMPONENT)) {
 
-                Task t = IcalHandler::task_from_ical_component(c);
+                Task t = IcalHandler::task_from_ical_component(c, todo.first);
 
                insertLocalTask(t);
+
             }
         }
 
