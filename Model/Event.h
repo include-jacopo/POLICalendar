@@ -10,7 +10,7 @@
 
 class Event {
 private:
-    std::string uidS, nameS, descr, loc, url;
+    std::string uidS, nameS, descr, loc, url, etag;
     /** Datetimes are always UTC Time */
     std::chrono::time_point<std::chrono::system_clock> creationT, startT, endT;
 
@@ -20,6 +20,7 @@ private:
 public:
     Event();
     Event(const std::string &uid, const std::string &name, const std::string &description, const std::string &location, const std::string &url,
+          const std::string &etag,
           const std::chrono::time_point<std::chrono::system_clock> &creationTime,
           const std::chrono::time_point<std::chrono::system_clock> &startTime,
           const std::chrono::time_point<std::chrono::system_clock> &endTime);
@@ -35,6 +36,8 @@ public:
     void setLocation(const std::string &location);
     const std::string &getUrl() const;
     void setUrl(const std::string &url);
+    const std::string &getEtag() const;
+    void setEtag(const std::string &etag);
     const std::chrono::time_point<std::chrono::system_clock> &getCreationTime() const;
     void setCreationTime(const std::chrono::time_point<std::chrono::system_clock> &creationTime);
     /** Gets the Event start datetime

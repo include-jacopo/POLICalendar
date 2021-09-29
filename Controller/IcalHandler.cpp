@@ -29,7 +29,7 @@ map<string,string> IcalHandler::find_properties(icalcomponent* comp){
 }
 
 
-Event IcalHandler::event_creator(map<string,string> eventProp){
+Event IcalHandler::event_creator(map<string,string> eventProp, string etag){
     Event ev1;
 
     tm tm_start = {};
@@ -42,7 +42,6 @@ Event IcalHandler::event_creator(map<string,string> eventProp){
     strptime(   eventProp["DTSTART"].c_str(), "%Y%m%dT%H%M%SZ", &tm_start);
     strptime(   eventProp["DTEND"].c_str(), "%Y%m%dT%H%M%SZ", &tm_end);
     strptime(   eventProp["CREATED"].c_str(), "%Y%m%dT%H%M%SZ", &tm_creation);
-
 
     /**
      * Sostituito std::mktime con timegm.
@@ -109,45 +108,31 @@ Event IcalHandler::event_creator(map<string,string> eventProp){
     else{
         url = eventProp["URL"];
     }
+    /* non ho la proprietà description, quindi passo una stringa vuota al costruttore */
+    //if(eventProp.find("ETAG")==eventProp.end()){
+     //   etag= "";
+    //}
+    //else{
+   //     etag = eventProp["ETAG"];
+    //}
 
-    Event ev = Event(eventProp["UID"], eventProp["SUMMARY"],description,location,url,tp_creation, tp_start,tp_end);
+    Event ev = Event(eventProp["UID"], eventProp["SUMMARY"],description,location,url,etag,tp_creation, tp_start,tp_end);
 
     return ev;
 
-
-
-    /*
-    if(eventProp.size()>6){
-        cout<<"l'evento ha 7 campi!"<<endl;
-        Event ev = Event(eventProp["UID"], eventProp["SUMMARY"],eventProp["DESCRIPTION"],eventProp["LOCATION"],tp_creation, tp_start,tp_end);
-        cout<<"UID: "<<ev.getUid()<<" NAME: "<<ev.getName()<<endl;
-        return ev;
-    }
-    if(eventProp.find("LOCATION")==eventProp.end()){
-        /* non ho la proprietà location, quindi passo una stringa vuota al costruttore
-        Event ev = Event(eventProp["UID"], eventProp["SUMMARY"],eventProp["DESCRIPTION"],"",tp_creation, tp_start,tp_end);
-        return ev;
-    } */
-
-
-    return ev1;
-
-    // }
 };
 
-Event IcalHandler::event_from_ical_component(icalcomponent* comp){
+Event IcalHandler::event_from_ical_component(icalcomponent* comp, string etag){
     map<string,string> eventProps;           /* mappa con il nome della proprietà come key e il valore della proprietà come value */
     eventProps = find_properties(comp);      /* estraggo le proprietà dal componente */
 
-    Event ev = event_creator(eventProps);   /* creo il nuovo evento passando le proprietà */
+    Event ev = event_creator(eventProps, etag);   /* creo il nuovo evento passando le proprietà */
 
     return ev;
 
 }
 
-Task IcalHandler::task_creator(map<string,string> taskProp) {
-    /*creo il task */
-
+Task IcalHandler::task_creator(map<string,string> taskProp, string etag) {
     string description, location;
     bool flagData;                                                   /* flag che segnala la presenza della data */
     int priority;
@@ -180,10 +165,9 @@ Task IcalHandler::task_creator(map<string,string> taskProp) {
     if (taskProp.find("DTSTAMP") != taskProp.end()) {
         tm tm_stamp = {};
         /* eseguo il parsing della stringa contenente la data */
-        strptime(taskProp["DUE"].c_str(), "%Y%m%dT%H%M%SZ", &tm_stamp);
+        strptime(taskProp["DTSTAMP"].c_str(), "%Y%m%dT%H%M%SZ", &tm_stamp);
         /* creo gli oggetti di tipo system_clock */
-        tp_due = std::chrono::system_clock::from_time_t(timegm(&tm_stamp));
-
+        tp_stamp = std::chrono::system_clock::from_time_t(timegm(&tm_stamp));
     } else {
 
     }
@@ -196,7 +180,7 @@ Task IcalHandler::task_creator(map<string,string> taskProp) {
     }
 
     if (taskProp.find("LOCATION") == taskProp.end()) {
-        description = "";
+        location = "";
     } else {
         location = taskProp["LOCATION"];
     }
@@ -204,18 +188,14 @@ Task IcalHandler::task_creator(map<string,string> taskProp) {
 
     if (flagData == true) {
         /* chiamo il costruttore con data */
-
-
-
-        // TEMP Task t(taskProp["UID"], taskProp["SUMMARY"], "ciao", priority_int, tp_due);
-        Task t(taskProp["UID"],taskProp["SUMMARY"],description,location, priority,0,tp_due,tp_stamp);
+        Task t(taskProp["UID"],taskProp["SUMMARY"],description,location, etag, priority,0,tp_stamp,tp_due);
         //Task t{};
         return t;
     } else {
 
         /* chiamo il costruttore senza data */
         // TEMP Task t(taskProp["UID"], taskProp["SUMMARY"], "ciao", priority_int);
-        Task t(taskProp["UID"],taskProp["SUMMARY"],description,location, priority,0,tp_stamp);
+        Task t(taskProp["UID"],taskProp["SUMMARY"],description,location, etag, priority,0,tp_stamp);
         //Task t{};
 
         return t;
@@ -223,7 +203,7 @@ Task IcalHandler::task_creator(map<string,string> taskProp) {
     }
 }
 
-Task IcalHandler::task_from_ical_component(icalcomponent* comp){
+Task IcalHandler::task_from_ical_component(icalcomponent* comp, string etag){
     map<string, string> taskProps;           /* mappa con il nome della proprietà come key e il valore della proprietà come value */
 
     taskProps = find_properties(comp);      /* estraggo le proprietà dal componente */
@@ -234,7 +214,7 @@ Task IcalHandler::task_from_ical_component(icalcomponent* comp){
     }
      */
 
-    Task t = task_creator(taskProps);   /* creo il nuovo evento passando le proprietà */
+    Task t = task_creator(taskProps, etag);   /* creo il nuovo evento passando le proprietà */
     
     return t;
 }

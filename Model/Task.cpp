@@ -8,13 +8,13 @@
 
 Task::Task() : priority(1), completed(false), flagDate(false) {};
 
-Task::Task(string uid, string name, string description, string location, int priority, bool completed,chrono::time_point<std::chrono::system_clock> dateS):
-            uidS(uid), name(name), description(description), location(location), priority(priority),
-            completed(completed), flagDate(false) {};
-Task::Task(string uid, string name, string description, string location, int priority, bool completed,
+Task::Task(string uid, string name, string description, string location, string etag, int priority, bool completed,chrono::time_point<std::chrono::system_clock> dateS):
+            uidS(uid), name(name), description(description), location(location), etag(etag), priority(priority),
+            completed(completed), flagDate(false), dateS(dateS) {};
+Task::Task(string uid, string name, string description, string location, string etag, int priority, bool completed,
            chrono::time_point<std::chrono::system_clock> date, chrono::time_point<std::chrono::system_clock> dateS):
-        uidS(uid), name(name), description(description), location(location), priority(priority), completed(completed),
-        date(date), flagDate(true) {};
+        uidS(uid), name(name), description(description), location(location), etag(etag), priority(priority), completed(completed),
+        date(date), flagDate(true), dateS(dateS){};
 
 const string &Task::getUid() const {
     return uidS;
@@ -89,13 +89,33 @@ void Task::setDateS(const chrono::time_point<std::chrono::system_clock> &date){
 }
 
 void Task::printTask() {
-    std::cout << "TASK::\n";
-
-    std::cout << "UID: " << uidS <<endl<< "NAME: " << name<< endl<< "DESCRIPTION: " << description <<endl << "LOCATION: " << location<<endl;
-    auto tt = std::chrono::system_clock::to_time_t( date);
+    auto tt = std::chrono::system_clock::to_time_t( Task::getDate());
+    auto ttS = std::chrono::system_clock::to_time_t( Task::getDateS());
     auto lt = std::localtime(&tt);
-    std::cout << "TASK TIME: " << std::put_time(lt, "%d/%m/%Y %H:%M:%S") << "\n";
-    tt = std::chrono::system_clock::to_time_t(dateS);
-    lt = std::localtime(&tt);
-    std::cout << "CREATION TIME: " << std::put_time(lt, "%d/%m/%Y %H:%M:%S") << "\n\n";
+    auto ltS = std::localtime(&ttS);
+    std::cout << "TASK:"<<endl;
+
+    std::cout << "UID: " << uidS <<endl<< "NAME: " << name<< endl<< "DESCRIPTION: " << description <<endl << "LOCATION: " << location<<endl<<"ETAG: "<<etag<<endl;
+
+    if(Task::isFlagDate()) {
+        auto ttS2 = std::chrono::system_clock::to_time_t( Task::getDate());
+        auto ttS2D = std::chrono::system_clock::to_time_t( Task::getDateS());
+        std::cout << "time due Time: "<< std::put_time(std::localtime(&ttS2), "%b %d %Y %H:%M:%S" ) <<endl;
+        std::cout << "time dtstamp Time: "<< std::put_time(std::localtime(&ttS2D), "%b %d %Y %H:%M:%S" ) <<endl;
+        //std::cout << "DUE TIME: " << std::put_time(std::localtime(&ttS2), "%d/%m/%Y %H:%M:%S") << endl;
+        //std::cout<<"DSTAMP TIME: "<<std::put_time(ltS, "%d/%m/%Y %H:%M:%S") <<endl;
+    }
+    else{
+        auto ttS2D = std::chrono::system_clock::to_time_t( Task::getDateS());
+        std::cout << "time dtstamp Time: "<< std::put_time(std::localtime(&ttS2D), "%b %d %Y %H:%M:%S" ) <<endl;
+    }
+
+}
+
+const string &Task::getEtag() const {
+    return etag;
+}
+
+void Task::setEtag(const string &etag) {
+    Task::etag = etag;
 }

@@ -8,6 +8,7 @@
 #include <iostream>
 #include <libical/ical.h>
 #include <list>
+#include <map>
 
 using namespace std;
 
@@ -28,10 +29,13 @@ string readCtag(string str) {
     return node2.text().as_string();
 }
 
-list<icalcomponent*> readXML(string str) {
+map<string,icalcomponent*> readXML(string str) {
     pugi::xml_document doc;
     stringstream ss;
     list<icalcomponent*> lista_eventi;
+    map<string,icalcomponent* > mappa_eventi;
+
+    icalcomponent* ic;
 
     ss << str;
     pugi::xml_parse_result result = doc.load(ss, pugi::parse_default | pugi::parse_declaration);
@@ -41,12 +45,16 @@ list<icalcomponent*> readXML(string str) {
     }
 
     for (auto node: doc.child("d:multistatus").children()) {
+
+        auto nodeEtag = node.child("d:propstat").child("d:prop").child("d:getetag");
+
         for (auto node2: node.child("d:propstat").child("d:prop").child("cal:calendar-data")) {
-            //cout << node2.text().as_string() << endl;
-            lista_eventi.push_back(icalparser_parse_string(node2.text().as_string()));
+            //Inserisco in mappa con chiave etag e value il componente ical
+            mappa_eventi.insert({nodeEtag.text().as_string(), icalparser_parse_string(node2.text().as_string())});
         }
+
     }
-    return lista_eventi;
+    return mappa_eventi;
 }
 
 string readLinkUser(string str) {
