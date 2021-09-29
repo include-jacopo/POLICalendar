@@ -74,6 +74,7 @@ bool Controller::downloadEvents(){
             for (c = icalcomponent_get_first_component(evento.second, ICAL_VEVENT_COMPONENT);
                  c != 0;
                  c = icalcomponent_get_next_component(evento.second, ICAL_VEVENT_COMPONENT)) {
+                        //Inserisco il componente nella nostra lista locale insieme al suo etag
                         Event ev = IcalHandler::event_from_ical_component(c, evento.first);
                         insertLocalEvent(ev);
             }
@@ -93,18 +94,8 @@ bool Controller::downloadEvents(){
             }
         }
 
-
-
-
         displayEvents();
         displayTasks();
-
-
-
-
-        wc.reportEtag();
-
-
 
         return true;
 

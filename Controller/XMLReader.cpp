@@ -37,8 +37,6 @@ map<string,icalcomponent*> readXML(string str) {
 
     icalcomponent* ic;
 
-
-
     ss << str;
     pugi::xml_parse_result result = doc.load(ss, pugi::parse_default | pugi::parse_declaration);
 
@@ -50,15 +48,12 @@ map<string,icalcomponent*> readXML(string str) {
 
         auto nodeEtag = node.child("d:propstat").child("d:prop").child("d:getetag");
 
-
         for (auto node2: node.child("d:propstat").child("d:prop").child("cal:calendar-data")) {
-
+            //Inserisco in mappa con chiave etag e value il componente ical
             mappa_eventi.insert({nodeEtag.text().as_string(), icalparser_parse_string(node2.text().as_string())});
-
         }
 
     }
-    //return lista_eventi;
     return mappa_eventi;
 }
 
