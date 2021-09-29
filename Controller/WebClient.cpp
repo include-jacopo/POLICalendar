@@ -156,10 +156,11 @@ string WebClient::propfindCtag(string uri) {
 
     int result = ne_request_dispatch(req);
     int status = ne_get_status(req)->code;
+    ne_request_destroy(req);
 
     switch (result) {
         case NE_OK:
-            break;
+            return response;
         case NE_CONNECT:
             throw invalid_argument("ne_connect error");
         case NE_TIMEOUT:
@@ -169,9 +170,6 @@ string WebClient::propfindCtag(string uri) {
         default:
             throw invalid_argument("ne_generic error");
     }
-
-    ne_request_destroy(req);
-    return response;
 }
 
 string WebClient::report_calendar(string uri) {
@@ -194,10 +192,11 @@ string WebClient::report_calendar(string uri) {
     ne_add_response_body_reader(req, ne_accept_always, httpResponseReader, &response);
 
     int result = ne_request_dispatch(req);
+    ne_request_destroy(req);
 
     switch (result) {
         case NE_OK:
-            break;
+            return move(response);
         case NE_CONNECT:
             throw invalid_argument("ne_connect error");
         case NE_TIMEOUT:
@@ -207,9 +206,6 @@ string WebClient::report_calendar(string uri) {
         default:
             throw invalid_argument("ne_generic error");
     }
-
-    ne_request_destroy(req);
-    return move(response);
 }
 
 string WebClient::report_todo(string uri) {
@@ -234,11 +230,12 @@ string WebClient::report_todo(string uri) {
     ne_add_response_body_reader(req, ne_accept_always, httpResponseReader, &response);
 
     int result = ne_request_dispatch(req);
-    int status = ne_get_status(req)->code; //aggiungere un controllo su questi return?
+    int status = ne_get_status(req)->code;
+    ne_request_destroy(req);
 
     switch (result) {
         case NE_OK:
-            break;
+            return move(response);
         case NE_CONNECT:
             throw invalid_argument("ne_connect error");
         case NE_TIMEOUT:
@@ -248,11 +245,9 @@ string WebClient::report_todo(string uri) {
         default:
             throw invalid_argument("ne_generic error");
     }
-    ne_request_destroy(req);
-    return move(response);
 }
 
-int WebClient::put_event(string uri, string evento_xml) {
+bool WebClient::put_event(string uri, string evento_xml) {
     string response;
 
     ne_request *req = ne_request_create(sess, "PUT", (uri+".ics").c_str());
@@ -263,14 +258,13 @@ int WebClient::put_event(string uri, string evento_xml) {
 
     ne_request_dispatch(req);
     int status = ne_get_status(req)->code;
+    ne_request_destroy(req);
 
     if(status != 201) {
         cout << "\nERROR IN THE PUT METHOD" << response << endl; //da cancellare
-        ne_request_destroy(req);
-        return 1;
+        return false;
     }
-    ne_request_destroy(req);
-    return 0;
+    return true;
 }
 
 bool WebClient::deleteCalendar(const string uid) {
@@ -288,8 +282,14 @@ bool WebClient::deleteCalendar(const string uid) {
     switch (result) {
         case NE_OK:
             return true;
+        case NE_CONNECT:
+            throw invalid_argument("ne_connect error");
+        case NE_TIMEOUT:
+            throw invalid_argument("ne_timeout error");
+        case NE_AUTH:
+            throw invalid_argument("ne_auth error");
         default:
-            return false;
+            throw invalid_argument("ne_generic error");
     }
 }
 
@@ -308,8 +308,14 @@ bool WebClient::deleteTask(const string uid) {
     switch (result) {
         case NE_OK:
             return true;
+        case NE_CONNECT:
+            throw invalid_argument("ne_connect error");
+        case NE_TIMEOUT:
+            throw invalid_argument("ne_timeout error");
+        case NE_AUTH:
+            throw invalid_argument("ne_auth error");
         default:
-            return false;
+            throw invalid_argument("ne_generic error");
     }
 }
 
@@ -335,12 +341,13 @@ string WebClient::reportEtag() {
 
     int result = ne_request_dispatch(req);
     int status = ne_get_status(req)->code;
+    ne_request_destroy(req);
 
     cout << response << endl;
 
     switch (result) {
         case NE_OK:
-            break;
+            return response;
         case NE_CONNECT:
             throw invalid_argument("ne_connect error");
         case NE_TIMEOUT:
@@ -351,6 +358,4 @@ string WebClient::reportEtag() {
             throw invalid_argument("ne_generic error");
     }
 
-    ne_request_destroy(req);
-    return response;
 }

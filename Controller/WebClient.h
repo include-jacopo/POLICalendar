@@ -29,7 +29,7 @@ public:
     string report_calendar(const string uri);
     string report_todo(const string uri);
     string reportEtag();
-    int put_event(const string uri, const string evento_xml);
+    bool put_event(const string uri, const string evento_xml);
     string getUrl();
     int getPort();
     void setCtag(string ctag);

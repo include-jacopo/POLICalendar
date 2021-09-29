@@ -32,19 +32,25 @@ Controller::Controller() : wc() {
     createSession("dav.fruux.com", "b3297398995", "dap2zg5z54tu", 443);
 }
 
-void Controller::createSession (string url, string usr, string pw, int port){
+bool Controller::createSession (string url, string usr, string pw, int port){
     wc.setClient(url, usr, pw, port); //Autenticazione con il server
-    wc.propfindUri(); //Riceve dal server gli url specifici per to-do e calendario
+    try {
+        wc.propfindUri(); //Riceve dal server gli url specifici per to-do e calendario
+    } catch(invalid_argument &ie) {
+        cout << ie.what() << endl;
+        return false;
+    }
     wc.setCtag("PrimaLettura"); //Setto un ctag fittizio per la prima lettura
-
     downloadEvents(); //Riempio il calendario con gli eventi che già possiede
+
+    return true; //la creazione della sessione è andata a buon fine
 }
 
 bool Controller::updateCtag() {
     string ctagXML;
     try {
         ctagXML = wc.propfindCtag(wc.getUriCalendar());
-    } catch(invalid_argument ie) {
+    } catch(invalid_argument &ie) {
         cout << ie.what() << endl;
         return false;
     }
@@ -60,9 +66,15 @@ bool Controller::downloadEvents(){
     }
 
     if(old_ctag != wc.getCtag() || old_ctag == "PrimaLettura") {
-
-        string xml_cal = wc.report_calendar(wc.getUriCalendar()); //Lettura dell'XML del calendario dal server
-        string xml_todo = wc.report_todo(wc.getUriTodo()); //Lettura dell'XML dei to-do dal server
+        string xml_cal;
+        string xml_todo;
+        try {
+            xml_cal = wc.report_calendar(wc.getUriCalendar()); //Lettura dell'XML del calendario dal server
+            xml_todo = wc.report_todo(wc.getUriTodo()); //Lettura dell'XML dei to-do dal server
+        } catch(invalid_argument &ie) {
+            cout << ie.what() << endl;
+            return false;
+        }
 
         map<string,icalcomponent*> eventi_calendario = readXML(xml_cal);
         map<string, icalcomponent*> todo_calendario = readXML(xml_todo);
@@ -178,23 +190,32 @@ bool Controller::addEvent(Event ev) {
 
     string payloadCompleto = payloadIniziale + payloadIntermedio + payloadFinale;
 
-    if(!wc.put_event(wc.getUriCalendar()+ev.getUid(),payloadCompleto)){
-        //La richiesta di caricamento dell'evento ha avuto risultato positivo, inserisco l'evento in locale
-        Events.insert({ev.getUid(), ev});
-        return  true;
-    }
-    else{
+    try {
+        if(wc.put_event(wc.getUriCalendar()+ev.getUid(),payloadCompleto)){
+            //La richiesta di caricamento dell'evento ha avuto risultato positivo, inserisco l'evento in locale
+            Events.insert({ev.getUid(), ev});
+            return  true;
+        }
+    } catch(invalid_argument &ie) {
+        cout << ie.what() << endl;
         return false;
     }
+    return false;
 }
 
+
 bool Controller::deleteEvent(string uid) {
-    if (wc.deleteCalendar(uid)) { //se l'eliminazione online dell'evento è andata a buon fine
-        auto it = Events.find(uid);
-        if (it != Events.end()) {
-            Events.erase(it); //rimuovo l'evento anche in locale
-            return true;
+    try {
+        if (wc.deleteCalendar(uid)) { //se l'eliminazione online dell'evento è andata a buon fine
+            auto it = Events.find(uid);
+            if (it != Events.end()) {
+                Events.erase(it); //rimuovo l'evento anche in locale
+                return true;
+            }
         }
+    } catch(invalid_argument &ie) {
+        cout << ie.what() << endl;
+        return false;
     }
     return false;
 }
@@ -281,16 +302,17 @@ bool Controller::addTask(Task task) {
 
     string payloadCompleto = payloadIniziale + payloadIntermedio + payloadFinale;
 
-    if(!wc.put_event(wc.getUriTodo()+task.getUid(),payloadCompleto)){
-        //La richiesta di caricamento dell'evento ha avuto risultato positivo, inserisco l'evento in locale
-        Tasks.insert({task.getUid(), task});
-        cout<<"HO INSERITO il task CORRETTAMENTe"<<endl;
-        return  true;
-    }
-    else {
-        cout << "INSERIMENTO FALLITO" << endl;
+    try {
+        if(wc.put_event(wc.getUriTodo()+task.getUid(),payloadCompleto)){
+            //La richiesta di caricamento dell'evento ha avuto risultato positivo, inserisco il task in locale
+            Tasks.insert({task.getUid(), task});
+            return  true;
+        }
+    } catch(invalid_argument &ie) {
+        cout << ie.what() << endl;
         return false;
     }
+    return false;
 }
 
 bool Controller::editTask(Task task) {
@@ -305,13 +327,18 @@ bool Controller::editTask(Task task) {
 
 
 bool Controller::deleteTask(string uid) {
-    if (wc.deleteTask(uid)) { //se l'eliminazione online dell'evento è andata a buon fine
-        auto it = Tasks.find(uid);
-        if (it != Tasks.end()) {
-            Tasks.erase(it); //rimuovo l'evento anche in locale
-            cout<<"ho rimosso con successo il task"<<endl;
-            return true;
+    try {
+        if (wc.deleteTask(uid)) { //se l'eliminazione online dell'evento è andata a buon fine
+            auto it = Tasks.find(uid);
+            if (it != Tasks.end()) {
+                Tasks.erase(it); //rimuovo l'evento anche in locale
+                cout<<"ho rimosso con successo il task"<<endl;
+                return true;
+            }
         }
+    } catch(invalid_argument &ie) {
+        cout << ie.what() << endl;
+        return false;
     }
     return false;
 }
