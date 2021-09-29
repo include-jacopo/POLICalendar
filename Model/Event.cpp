@@ -33,12 +33,12 @@ Event::Event() {
 }
 
 Event::Event(const std::string &uid, const std::string &name, const std::string &description,
-             const std::string &location, const std::string &url,
+             const std::string &location, const std::string &url, const std::string &etag,
              const std::chrono::time_point<std::chrono::system_clock> &creationTime,
              const std::chrono::time_point<std::chrono::system_clock> &startTime,
              const std::chrono::time_point<std::chrono::system_clock> &endTime) :
              uidS(uid), nameS(name), descr(description), loc(location), url(url),
-             creationT(creationTime), startT(startTime), endT(endTime) {
+             etag(etag), creationT(creationTime), startT(startTime), endT(endTime) {
 }
 
 const std::string &Event::getUid() const {
@@ -131,4 +131,12 @@ std::string Event::gen_random(std::string s, int len) {
     }
 
     return s;
+}
+
+const std::string &Event::getEtag() const {
+    return etag;
+}
+
+void Event::setEtag(const std::string &etag) {
+    Event::etag = etag;
 }

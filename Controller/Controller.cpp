@@ -93,21 +93,16 @@ bool Controller::downloadEvents(){
         }
 
 
-
-
-
         //CANCELLA DA QUI
 
-        /*
-        Event prova = getEvents().begin()->second;
-        prova.setName("PROVA DI INSERIMENTO");
-        prova.setUid("0d84aa00-bb6c-436b-af79-e1c79f0yt87f");
-        //prova.setUid("0d84aa00bb6c436baf79e1c79f0yt87f");
-        addEvent(prova);
+
         for (auto i : Events){
             cout << "uid = " << i.first << " nome = " << i.second.getName() << endl;
         }
-         */
+
+        cout << "prova per fermare" << endl;
+
+        wc.reportEtag();
 
         //CANCELLA FINO A QUI
 
@@ -180,7 +175,7 @@ bool Controller::addEvent(Event ev) {
     creationT = streamCreationT.str();
 
     string payloadIntermedio = "DTSTART:"+startT+"\n"+"UID:"+ev.getUid()+"\n"+"CREATED:"+creationT+"\n"+"DTSTAMP:"+creationT+"\n"+
-                        "DTEND:"+endT+"\n"+"SUMMARY:"+ev.getName()+"\n";
+                               "DTEND:"+endT+"\n"+"SUMMARY:"+ev.getName()+"\n";
 
     string payloadCompleto = payloadIniziale + payloadIntermedio + payloadFinale;
 

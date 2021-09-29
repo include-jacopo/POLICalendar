@@ -125,7 +125,7 @@ Event IcalHandler::event_creator(map<string,string> eventProp){
         return ev;
     }
     if(eventProp.find("LOCATION")==eventProp.end()){
-        /* non ho la proprietà location, quindi passo una stringa vuota al costruttore
+        // non ho la proprietà location, quindi passo una stringa vuota al costruttore
         Event ev = Event(eventProp["UID"], eventProp["SUMMARY"],eventProp["DESCRIPTION"],"",tp_creation, tp_start,tp_end);
         return ev;
     } */

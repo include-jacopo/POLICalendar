@@ -312,3 +312,45 @@ bool WebClient::deleteTask(const string uid) {
             return false;
     }
 }
+
+string WebClient::reportEtag() {
+    string response;
+    string propfind = "<c:calendar-query xmlns:d=\"DAV:\" xmlns:c=\"urn:ietf:params:xml:ns:caldav\">\n"
+                      "    <d:prop>\n"
+                      "        <d:getetag />\n"
+                      "    </d:prop>\n"
+                      "    <c:filter>\n"
+                      "        <c:comp-filter name=\"VCALENDAR\">\n"
+                      "            <c:comp-filter name=\"VEVENT\" />\n"
+                      "        </c:comp-filter>\n"
+                      "    </c:filter>\n"
+                      "</c:calendar-query>";
+
+    ne_request *req = ne_request_create(sess, "REPORT", (this->uri_calendar).c_str());
+    ne_add_request_header(req, "Authorization", ("Basic "+base64_auth).c_str());
+    ne_add_request_header(req, "Depth", "1");
+
+    ne_set_request_body_buffer(req, propfind.c_str(), propfind.size());
+    ne_add_response_body_reader(req, ne_accept_always, httpResponseReader, &response);
+
+    int result = ne_request_dispatch(req);
+    int status = ne_get_status(req)->code;
+
+    cout << response << endl;
+
+    switch (result) {
+        case NE_OK:
+            break;
+        case NE_CONNECT:
+            throw invalid_argument("ne_connect error");
+        case NE_TIMEOUT:
+            throw invalid_argument("ne_timeout error");
+        case NE_AUTH:
+            throw invalid_argument("ne_auth error");
+        default:
+            throw invalid_argument("ne_generic error");
+    }
+
+    ne_request_destroy(req);
+    return response;
+}
