@@ -6,7 +6,9 @@
 #include <iostream>
 #include <iomanip>
 
-Task::Task() : priority(1), completed(false), flagDate(false) {};
+Task::Task() : priority(1), completed(false), flagDate(false) {
+    uidS = createUid();
+};
 
 Task::Task(string uid, string name, string description, string location, string etag, int priority, bool completed,chrono::time_point<std::chrono::system_clock> dateS):
             uidS(uid), name(name), description(description), location(location), etag(etag), priority(priority),
@@ -15,6 +17,40 @@ Task::Task(string uid, string name, string description, string location, string 
            chrono::time_point<std::chrono::system_clock> date, chrono::time_point<std::chrono::system_clock> dateS):
         uidS(uid), name(name), description(description), location(location), etag(etag), priority(priority), completed(completed),
         date(date), flagDate(true), dateS(dateS){};
+
+const std::string Task::createUid() {
+    std::string s1("aaaaaaaa");
+    std::string s2("aaaa");
+    std::string s3("aaaa");
+    std::string s4("aaaa");
+    std::string s5("aaaaaaaaaaaa");
+    /** UID: 5 campi alfanumerici separati da 4 */
+
+    //Calcolo 5 stringhe casuali
+    std::string ss1 = gen_random(s1, 8);
+    std::string ss2 = gen_random(s2, 4);
+    std::string ss3 = gen_random(s3, 4);
+    std::string ss4 = gen_random(s4, 4);
+    std::string ss5 = gen_random(s5, 12);
+
+    //Le unisco */
+    std::string s = ss1 + "-" + ss2 + "-" + ss3 + "-" + ss4 + "-" + ss5;
+    return s;
+}
+
+std::string Task::gen_random(std::string s, int len) {
+    static const char alphanum[] =
+            "0123456789"
+            "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+            "abcdefghijklmnopqrstuvwxyz";
+
+    for (int i = 0; i < len; ++i) {
+        int randNum = rand() % (63 - 0 + 1) + 0;
+        s[i] = alphanum[randNum];
+    }
+
+    return s;
+}
 
 const string &Task::getUid() const {
     return uidS;

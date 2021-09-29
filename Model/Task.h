@@ -19,6 +19,11 @@ private:
     bool completed;
     /** Flag che quando settato a true segnala la presenza della data opzionale */
     bool flagDate;
+
+
+    std::string gen_random(std::string s, int len);
+    const std::string createUid();
+
 public:
     Task();
     Task(string uid, string name, string description, string location, string etag, int priority, bool completed, chrono::time_point<std::chrono::system_clock> date); /* costruttore per i task senza data */
@@ -37,6 +42,7 @@ public:
     void setPriority(int priority);
     const string &getEtag() const;
     void setEtag(const string &etag);
+
 
     /** Gets the Task due datetime
      * @return Due datetime UTC time

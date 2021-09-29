@@ -109,7 +109,15 @@ bool Controller::downloadEvents(){
 
         displayEvents();
         displayTasks();
-
+        /*
+        Task prova = getTasks().begin()->second;
+        prova.setUidS("stringauid12345");
+        prova.setName("task inserito a mano");
+        auto prova4 = new Task;
+        cout<<"task creato senza parametri"<<" uid: "<<prova4->getUid()<<endl;
+        //cout<<prova.getUid()<<endl;
+        addTask(*prova4);
+*/
         return true;
 
     } else {
