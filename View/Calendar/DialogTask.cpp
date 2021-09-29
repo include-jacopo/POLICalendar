@@ -10,9 +10,6 @@ DialogTask::DialogTask(QWidget *parent) : QDialog(parent), ui(new Ui::DialogTask
 
     controller = Controller::getInstance();
     setDueDate(QDateTime::currentDateTime());
-
-    // Connect checkbox to dueDate field (enable/disable)
-    connect(ui->enableDueDate, SIGNAL(stateChanged(int)), this, SLOT(setDueDateEnabled(int)));
 }
 
 DialogTask::DialogTask(const Task &task, QWidget *parent) : DialogTask(parent) {
@@ -77,7 +74,7 @@ void DialogTask::setDescription(const QString &description) {
 }
 
 void DialogTask::setDueDateEnabled(int val) {
-    ui->enableDueDate->setCheckState((Qt::CheckState) val);
+    ui->fieldDueDate->setEnabled((Qt::CheckState) val);
 }
 
 void DialogTask::setDueDate(const QDateTime &dueDate) {

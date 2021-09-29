@@ -75,7 +75,7 @@
    <item row="9" column="0" colspan="2">
     <layout class="QHBoxLayout" name="buttonLayout">
      <property name="topMargin">
-      <number>0</number>
+      <number>15</number>
      </property>
      <item>
       <widget class="QPushButton" name="deleteButton">
@@ -171,6 +171,16 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>fieldTaskName</tabstop>
+  <tabstop>enableDueDate</tabstop>
+  <tabstop>fieldDueDate</tabstop>
+  <tabstop>prioritySlider</tabstop>
+  <tabstop>fieldLocation</tabstop>
+  <tabstop>fieldDescription</tabstop>
+  <tabstop>taskCompleted</tabstop>
+  <tabstop>deleteButton</tabstop>
+ </tabstops>
  <resources/>
  <connections>
   <connection>
@@ -209,15 +219,15 @@
    <sender>deleteButton</sender>
    <signal>clicked()</signal>
    <receiver>DialogTask</receiver>
-   <slot>deleteEvent()</slot>
+   <slot>deleteTask()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>36</x>
-     <y>269</y>
+     <x>56</x>
+     <y>278</y>
     </hint>
     <hint type="destinationlabel">
-     <x>93</x>
-     <y>296</y>
+     <x>61</x>
+     <y>260</y>
     </hint>
    </hints>
   </connection>
@@ -225,21 +235,21 @@
    <sender>enableDueDate</sender>
    <signal>stateChanged(int)</signal>
    <receiver>DialogTask</receiver>
-   <slot>enableDueDate(int)</slot>
+   <slot>setDueDateEnabled(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>79</x>
-     <y>57</y>
+     <x>78</x>
+     <y>50</y>
     </hint>
     <hint type="destinationlabel">
-     <x>124</x>
-     <y>70</y>
+     <x>127</x>
+     <y>40</y>
     </hint>
    </hints>
   </connection>
  </connections>
  <slots>
-  <slot>deleteEvent()</slot>
-  <slot>enableDueDate(int)</slot>
+  <slot>deleteTask()</slot>
+  <slot>setDueDateEnabled(int)</slot>
  </slots>
 </ui>
