@@ -106,8 +106,9 @@ void Event::setEndTime(const std::chrono::time_point<std::chrono::system_clock> 
 void Event::printEvent() const {
 
     std::cout << "Evento:\n";
-    std::cout << "UID: " << uidS << " NAME: " << nameS << "\nDESCRIPTION: " << descr << "\nLOCATION: " << loc << "\nURL: "
+    std::cout << "UID: " << uidS << "\nNAME: " << nameS << "\nDESCRIPTION: " << descr << "\nLOCATION: " << loc << "\nURL: "
               << url << "\n";
+    std::cout<<"ETAG: "<<etag<<std::endl;
     auto tt = std::chrono::system_clock::to_time_t(startT);
     auto lt = std::localtime(&tt);
     std::cout << "START TIME: " << std::put_time(lt, "%d/%m/%Y %H:%M:%S") << "\n";

@@ -29,7 +29,7 @@ map<string,string> IcalHandler::find_properties(icalcomponent* comp){
 }
 
 
-Event IcalHandler::event_creator(map<string,string> eventProp){
+Event IcalHandler::event_creator(map<string,string> eventProp, string etag){
     Event ev1;
 
     tm tm_start = {};
@@ -86,7 +86,7 @@ Event IcalHandler::event_creator(map<string,string> eventProp){
      */
 
     /*creo l'evento */
-    string location, description, url, etag;
+    string location, description, url;
     /* non ho la proprietà location, quindi passo una stringa vuota al costruttore */
     if(eventProp.find("LOCATION")==eventProp.end()){
         location = "";
@@ -109,12 +109,12 @@ Event IcalHandler::event_creator(map<string,string> eventProp){
         url = eventProp["URL"];
     }
     /* non ho la proprietà description, quindi passo una stringa vuota al costruttore */
-    if(eventProp.find("ETAG")==eventProp.end()){
-        etag= "";
-    }
-    else{
-        etag = eventProp["ETAG"];
-    }
+    //if(eventProp.find("ETAG")==eventProp.end()){
+     //   etag= "";
+    //}
+    //else{
+   //     etag = eventProp["ETAG"];
+    //}
 
     Event ev = Event(eventProp["UID"], eventProp["SUMMARY"],description,location,url,etag,tp_creation, tp_start,tp_end);
 
@@ -122,11 +122,11 @@ Event IcalHandler::event_creator(map<string,string> eventProp){
 
 };
 
-Event IcalHandler::event_from_ical_component(icalcomponent* comp){
+Event IcalHandler::event_from_ical_component(icalcomponent* comp, string etag){
     map<string,string> eventProps;           /* mappa con il nome della proprietà come key e il valore della proprietà come value */
     eventProps = find_properties(comp);      /* estraggo le proprietà dal componente */
 
-    Event ev = event_creator(eventProps);   /* creo il nuovo evento passando le proprietà */
+    Event ev = event_creator(eventProps, etag);   /* creo il nuovo evento passando le proprietà */
 
     return ev;
 

@@ -8,10 +8,11 @@
 #include <string>
 #include <libical/ical.h>
 #include <list>
+#include <map>
 
 using namespace std;
 
-list<icalcomponent*> readXML(string str);
+map<string,icalcomponent*> readXML(string str);
 string readCtag(string str);
 string readLinkUser (string str);
 string readCalendarCollection (string str);

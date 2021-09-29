@@ -9,6 +9,7 @@
 #include <ctime>
 #include <iomanip>
 #include <sstream>
+#include <type_traits>
 #include <libical/ical.h>
 #include "WebClient.h"
 #include "XMLReader.h"
@@ -63,26 +64,28 @@ bool Controller::downloadEvents(){
         string xml_cal = wc.report_calendar(wc.getUriCalendar()); //Lettura dell'XML del calendario dal server
         string xml_todo = wc.report_todo(wc.getUriTodo()); //Lettura dell'XML dei to-do dal server
 
-        list<icalcomponent *> eventi_calendario = readXML(xml_cal);
-        list<icalcomponent *> todo_calendario = readXML(xml_todo);
+        map<string,icalcomponent*> eventi_calendario = readXML(xml_cal);
+        map<string, icalcomponent*> todo_calendario = readXML(xml_todo);
 
         //Scorro ogni evento e i suoi sottoeventi per riempire Event.cpp
         for (auto evento: eventi_calendario) {
             icalcomponent *c;
-            for (c = icalcomponent_get_first_component(evento, ICAL_VEVENT_COMPONENT);
+
+            for (c = icalcomponent_get_first_component(evento.second, ICAL_VEVENT_COMPONENT);
                  c != 0;
-                 c = icalcomponent_get_next_component(evento, ICAL_VEVENT_COMPONENT)) {
-                        Event ev = IcalHandler::event_from_ical_component(c);
+                 c = icalcomponent_get_next_component(evento.second, ICAL_VEVENT_COMPONENT)) {
+                        Event ev = IcalHandler::event_from_ical_component(c, evento.first);
                         insertLocalEvent(ev);
             }
         }
+        /* scorro la lista di componenti per creare gli oggetti task */
 
-        //Scorro la lista di componenti per creare gli oggetti task
+        //cout<<"************ TASKS*****************"<<endl;
         for (auto todo: todo_calendario) {
             icalcomponent *c;
-            for (c = icalcomponent_get_first_component(todo, ICAL_VTODO_COMPONENT);
+            for (c = icalcomponent_get_first_component(todo.second, ICAL_VTODO_COMPONENT);
                  c != 0;
-                 c = icalcomponent_get_next_component(todo, ICAL_VTODO_COMPONENT)) {
+                 c = icalcomponent_get_next_component(todo.second, ICAL_VTODO_COMPONENT)) {
 
                 Task t = IcalHandler::task_from_ical_component(c);
 
@@ -90,19 +93,18 @@ bool Controller::downloadEvents(){
             }
         }
 
-        //CANCELLA DA QUI
 
-        cout<<"************TASKS*****************"<<endl;
-        for(auto i: Tasks){
-            cout<< "uid = " << i.first << " nome = " << i.second.getName() << endl;
-        }
 
-        cout<<"************EVENTI*****************"<<endl;
-        for (auto i : Events){
-            cout << "uid = " << i.first << " nome = " << i.second.getName() << endl;
-        }
 
-        //CANCELLA FINO A QUI
+        displayEvents();
+        displayTasks();
+
+
+
+
+        wc.reportEtag();
+
+
 
         return true;
 
@@ -206,6 +208,7 @@ bool Controller::deleteEvent(string uid) {
 }
 
 optional<Event> Controller::findEvent(string uid) {
+
     auto it = Events.find(uid);
 
     if (it != Events.end()) {
@@ -221,6 +224,13 @@ void Controller::displayEvents() {
     cout << "**EVENTI ATTUALMENTE PRESENTI NEL CONTENITORE**" << endl;
     for (auto i: Events) {
         i.second.printEvent();
+    }
+    cout << "***********************************************" << endl;
+}
+void Controller::displayTasks() {
+    cout << "**EVENTI ATTUALMENTE PRESENTI NEL CONTENITORE**" << endl;
+    for (auto i: Tasks) {
+        i.second.printTask();
     }
     cout << "***********************************************" << endl;
 }

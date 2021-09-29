@@ -37,6 +37,7 @@ public:
     bool deleteCalendar(const string uid);
     bool deleteTask(const string uid);
 
+
 private:
     ne_session *sess;
     string base64_auth;
