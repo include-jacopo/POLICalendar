@@ -9,7 +9,6 @@
 #include <ctime>
 #include <iomanip>
 #include <sstream>
-#include <type_traits>
 #include <libical/ical.h>
 #include "WebClient.h"
 #include "XMLReader.h"
@@ -40,8 +39,7 @@ void Controller::createSession (string url, string usr, string pw, int port){
     downloadEvents(); //Riempio il calendario con gli eventi che già possiede
 }
 
-bool Controller::downloadEvents(){
-
+bool Controller::updateCtag() {
     string ctagXML;
     try {
         ctagXML = wc.propfindCtag(wc.getUriCalendar());
@@ -49,11 +47,18 @@ bool Controller::downloadEvents(){
         cout << ie.what() << endl;
         return false;
     }
+    wc.setCtag(readCtag(ctagXML));
+    return true; //l'aggiornamento del ctag è avvenuto correttamente
+}
 
-    string ctag = readCtag(ctagXML); //Estrazione del CTAG dalla stringa PROPFIND
+bool Controller::downloadEvents(){
+    string old_ctag = wc.getCtag();
 
-    if(ctag != wc.getCtag() || ctag == "PrimaLettura") {
-        wc.setCtag(ctag); //salvo nel wc il ctag corrispondente
+    if(!updateCtag()){
+        return false; //c'è stato qualche problema nell'aggiornamento del ctag
+    }
+
+    if(old_ctag != wc.getCtag() || old_ctag == "PrimaLettura") {
 
         string xml_cal = wc.report_calendar(wc.getUriCalendar()); //Lettura dell'XML del calendario dal server
         string xml_todo = wc.report_todo(wc.getUriTodo()); //Lettura dell'XML dei to-do dal server
@@ -71,9 +76,8 @@ bool Controller::downloadEvents(){
                         insertLocalEvent(ev);
             }
         }
-        /* scorro la lista di componenti per creare gli oggetti task */
 
-        cout<<"************ TASKS*****************"<<endl;
+        //Scorro la lista di componenti per creare gli oggetti task
         for (auto todo: todo_calendario) {
             icalcomponent *c;
             for (c = icalcomponent_get_first_component(todo, ICAL_VTODO_COMPONENT);
@@ -86,30 +90,24 @@ bool Controller::downloadEvents(){
             }
         }
 
-        for(auto i: Tasks){
-            cout<<""<<endl;
-            i.second.printTask();
-            cout<<""<<endl;
-        }
-
-
         //CANCELLA DA QUI
 
+        cout<<"************TASKS*****************"<<endl;
+        for(auto i: Tasks){
+            cout<< "uid = " << i.first << " nome = " << i.second.getName() << endl;
+        }
 
+        cout<<"************EVENTI*****************"<<endl;
         for (auto i : Events){
             cout << "uid = " << i.first << " nome = " << i.second.getName() << endl;
         }
-
-        cout << "prova per fermare" << endl;
-
-        wc.reportEtag();
 
         //CANCELLA FINO A QUI
 
         return true;
 
     } else {
-        return false;
+        return false; //gli eventi sono già aggiornati
     }
 }
 
@@ -201,7 +199,6 @@ bool Controller::deleteEvent(string uid) {
 }
 
 optional<Event> Controller::findEvent(string uid) {
-
     auto it = Events.find(uid);
 
     if (it != Events.end()) {
@@ -242,8 +239,8 @@ bool Controller::addTask(Task task) {
 
     std::time_t tt1, tt2;
     /* ottengo degli oggetti time_t partendo dai campi chrono::system::clock dell'evento */
-    tt1 = chrono::system_clock::to_time_t ( task.getDate());      /* data task */
-    tt2 = chrono::system_clock::to_time_t ( task.getDateS());     /* data creazione task */
+    tt1 = chrono::system_clock::to_time_t ( task.getDate());      //Data task
+    tt2 = chrono::system_clock::to_time_t ( task.getDateS());     //Data creazione task
 
 
     string startT, dateT;
@@ -260,10 +257,10 @@ bool Controller::addTask(Task task) {
     /* aggiungo i campi obbligatori */
     string payloadIntermedio = "DTSTART:"+startT+"\n"+"UID:"+task.getUid()+"\n"+"DTSTAMP:"+dateT+"\n"+"\n"+"SUMMARY:"+task.getName()+"\n";
     /* aggiungo i campi opzionali */
-    if(task.getDescription()!=""){
+    if(!task.getDescription().empty()){
         payloadIntermedio = payloadIntermedio + "DESCRIPTION:"+task.getDescription()+"\n";
     }
-    if(task.getLocation()!=""){
+    if(!task.getLocation().empty()){
         payloadIntermedio = payloadIntermedio + "LOCATION:"+task.getLocation()+"\n";
     }
     if(task.isFlagDate()){

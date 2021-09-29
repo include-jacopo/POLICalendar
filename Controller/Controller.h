@@ -21,6 +21,7 @@ public:
     static Controller* getInstance();
     Controller(const Controller&) = delete;
     void operator=(const Controller&) = delete;
+    bool updateCtag();
 
     /* Events methods */
     bool downloadEvents();
@@ -32,13 +33,12 @@ public:
     bool deleteEvent(string uid) override;
     void displayEvents();
 
-    void displayTasks();
-
     /* Tasks methods */
     const map<std::string, Task> &getTasks() override;
     bool addTask(Task task) override;
     bool editTask(Task task) override;
     bool deleteTask(string uid) override;
+    void displayTasks();
 
 private:
     map<string, Event> Events;

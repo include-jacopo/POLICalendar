@@ -32,7 +32,6 @@ map<string,string> IcalHandler::find_properties(icalcomponent* comp){
 Event IcalHandler::event_creator(map<string,string> eventProp){
     Event ev1;
 
-
     tm tm_start = {};
     tm tm_end = {};
     tm tm_creation = {};
@@ -43,7 +42,6 @@ Event IcalHandler::event_creator(map<string,string> eventProp){
     strptime(   eventProp["DTSTART"].c_str(), "%Y%m%dT%H%M%SZ", &tm_start);
     strptime(   eventProp["DTEND"].c_str(), "%Y%m%dT%H%M%SZ", &tm_end);
     strptime(   eventProp["CREATED"].c_str(), "%Y%m%dT%H%M%SZ", &tm_creation);
-
 
     /**
      * Sostituito std::mktime con timegm.
@@ -88,7 +86,7 @@ Event IcalHandler::event_creator(map<string,string> eventProp){
      */
 
     /*creo l'evento */
-    string location, description, url;
+    string location, description, url, etag;
     /* non ho la proprietà location, quindi passo una stringa vuota al costruttore */
     if(eventProp.find("LOCATION")==eventProp.end()){
         location = "";
@@ -110,30 +108,18 @@ Event IcalHandler::event_creator(map<string,string> eventProp){
     else{
         url = eventProp["URL"];
     }
+    /* non ho la proprietà description, quindi passo una stringa vuota al costruttore */
+    if(eventProp.find("ETAG")==eventProp.end()){
+        etag= "";
+    }
+    else{
+        etag = eventProp["ETAG"];
+    }
 
-    Event ev = Event(eventProp["UID"], eventProp["SUMMARY"],description,location,url,tp_creation, tp_start,tp_end);
+    Event ev = Event(eventProp["UID"], eventProp["SUMMARY"],description,location,url,etag,tp_creation, tp_start,tp_end);
 
     return ev;
 
-
-
-    /*
-    if(eventProp.size()>6){
-        cout<<"l'evento ha 7 campi!"<<endl;
-        Event ev = Event(eventProp["UID"], eventProp["SUMMARY"],eventProp["DESCRIPTION"],eventProp["LOCATION"],tp_creation, tp_start,tp_end);
-        cout<<"UID: "<<ev.getUid()<<" NAME: "<<ev.getName()<<endl;
-        return ev;
-    }
-    if(eventProp.find("LOCATION")==eventProp.end()){
-        // non ho la proprietà location, quindi passo una stringa vuota al costruttore
-        Event ev = Event(eventProp["UID"], eventProp["SUMMARY"],eventProp["DESCRIPTION"],"",tp_creation, tp_start,tp_end);
-        return ev;
-    } */
-
-
-    return ev1;
-
-    // }
 };
 
 Event IcalHandler::event_from_ical_component(icalcomponent* comp){
@@ -147,8 +133,6 @@ Event IcalHandler::event_from_ical_component(icalcomponent* comp){
 }
 
 Task IcalHandler::task_creator(map<string,string> taskProp) {
-    /*creo il task */
-
     string description, location;
     bool flagData;                                                   /* flag che segnala la presenza della data */
     int priority;

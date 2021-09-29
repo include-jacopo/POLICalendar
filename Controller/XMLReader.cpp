@@ -41,13 +41,8 @@ list<icalcomponent*> readXML(string str) {
     }
 
     for (auto node: doc.child("d:multistatus").children()) {
-        for (auto node2: node.child("d:propstat").child("d:prop")) {
-            auto nodeEtag = node2.child("d:getetag");
-
-            auto nodeElement = node2.child("cal:calendar-data");
-
-            lista_eventi.push_back(icalparser_parse_string(nodeElement.text().as_string()));
-
+        for (auto node2: node.child("d:propstat").child("d:prop").child("cal:calendar-data")) {
+            lista_eventi.push_back(icalparser_parse_string(node2.text().as_string()));
         }
     }
     return lista_eventi;
