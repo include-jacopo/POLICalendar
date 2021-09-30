@@ -15,18 +15,19 @@ private:
     string uidS, name, description, location, etag;
     int priority;
     /** Datetimes are always UTC Time */
-    chrono::time_point<std::chrono::system_clock> date, dateS;
+    chrono::time_point<std::chrono::system_clock> dueDate, dateCompleted, dateS;
     bool completed;
     /** Flag che quando settato a true segnala la presenza della data opzionale */
     bool flagDate;
 
 
     std::string gen_random(std::string s, int len);
-    const std::string createUid();
+    std::string createUid();
 
 public:
     Task();
-    Task(string uid, string name, string description, string location, string etag, int priority, bool completed, chrono::time_point<std::chrono::system_clock> date); /* costruttore per i task senza data */
+    Task(string uid, string name, string description, string location, string etag, int priority, bool completed,
+         chrono::time_point<std::chrono::system_clock> date); /* costruttore per i task senza data */
     Task(string uid, string name, string description, string location, string etag, int priority, bool completed,
          chrono::time_point<std::chrono::system_clock> date, chrono::time_point<std::chrono::system_clock> dateS);
 
@@ -42,16 +43,16 @@ public:
     void setPriority(int priority);
     const string &getEtag() const;
     void setEtag(const string &etag);
-
-
     /** Gets the Task due datetime
      * @return Due datetime UTC time
      */
-    const chrono::time_point<std::chrono::system_clock> &getDate() const;
+    const chrono::time_point<std::chrono::system_clock> &getDueDate() const;
     /** Sets the Task due datetime
-     * @param date Due datetime UTC time
+     * @param dueDate Due datetime UTC time
      */
-    void setDate(const chrono::time_point<std::chrono::system_clock> &date);
+    void setDueDate(const chrono::time_point<std::chrono::system_clock> &date);
+    const chrono::time_point<std::chrono::system_clock> &getDateCompleted() const;
+    void setDateCompleted(const chrono::time_point<std::chrono::system_clock> &dateCompleted);
     const std::chrono::time_point<std::chrono::system_clock> &getDateS() const;
     void setDateS(const chrono::time_point<std::chrono::system_clock> &date);
     bool isFlagDate() const;

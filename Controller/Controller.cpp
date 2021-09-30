@@ -274,7 +274,7 @@ bool Controller::addTask(Task task) {
 
     std::time_t tt1, tt2;
     /* ottengo degli oggetti time_t partendo dai campi chrono::system::clock dell'evento */
-    tt1 = chrono::system_clock::to_time_t ( task.getDate());      //Data task
+    tt1 = chrono::system_clock::to_time_t (task.getDueDate());      //Data task
     tt2 = chrono::system_clock::to_time_t ( task.getDateS());     //Data creazione task
 
 
@@ -299,7 +299,7 @@ bool Controller::addTask(Task task) {
         payloadIntermedio = payloadIntermedio + "LOCATION:"+task.getLocation()+"\n";
     }
     if(task.isFlagDate()){
-        tt1 = chrono::system_clock::to_time_t ( task.getDate());      /* data task */
+        tt1 = chrono::system_clock::to_time_t (task.getDueDate());      /* data task */
         streamStartT << std::put_time(std::gmtime(&tt1), "%Y%m%dT%H%M%SZ" );
         startT = streamStartT.str();
         payloadIntermedio = payloadIntermedio+"DTSTART:"+startT;

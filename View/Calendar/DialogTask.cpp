@@ -19,7 +19,7 @@ DialogTask::DialogTask(const Task &task, QWidget *parent) : DialogTask(parent) {
     if (task.isFlagDate()) {
         ui->enableDueDate->setChecked(true);
         setDueDate(QDateTime::fromSecsSinceEpoch(
-                std::chrono::duration_cast<std::chrono::seconds>(task.getDate().time_since_epoch()).count()));
+                std::chrono::duration_cast<std::chrono::seconds>(task.getDueDate().time_since_epoch()).count()));
     }
     setLocation(QString::fromStdString(task.getLocation()));
     setDescription(QString::fromStdString(task.getDescription()));
@@ -117,9 +117,14 @@ Task DialogTask::getTask() {
     task.setLocation(getLocation().toStdString());
     task.setDescription(getDescription().toStdString());
     task.setFlagDate(getDueDateEnabled());
-    task.setDate(std::chrono::time_point<std::chrono::system_clock>(
+    task.setDueDate(std::chrono::time_point<std::chrono::system_clock>(
             std::chrono::seconds(getDueDate().toUTC().toSecsSinceEpoch())));
     task.setPriority(getPriority());
+    // Add completion date if old task was not completed, and now it is
+    if (!task.isCompleted() && getCompleted()) {
+        task.setDateCompleted(std::chrono::time_point<std::chrono::system_clock>(
+                std::chrono::seconds(QDateTime::currentDateTimeUtc().toSecsSinceEpoch())));
+    }
     task.setCompleted(getCompleted());
     return task;
 }

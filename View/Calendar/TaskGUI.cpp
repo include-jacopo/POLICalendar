@@ -51,7 +51,7 @@ void TaskGUI::updateFields() {
     auto labelDueDate = this->findChild<QLabel*>("labelDueDate");
     if (task.isFlagDate()) {
         auto dueDateTime = QDateTime::fromSecsSinceEpoch(
-                std::chrono::duration_cast<std::chrono::seconds>(task.getDate().time_since_epoch()).count());
+                std::chrono::duration_cast<std::chrono::seconds>(task.getDueDate().time_since_epoch()).count());
         labelDueDate->setText(dueDateTime.toString("dd/MM/yyyy hh:mm"));
     }
 }
