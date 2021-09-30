@@ -22,7 +22,9 @@ private:
     QDate date;
     ICalendarGUIEventsHandler *handler;
 
-    void setGeometryEvent(CalendarEvent *e);
+    enum GeometryEventType {Resize, AddElement, RemoveElement};
+    QRect calculateCoords(CalendarEvent *e);
+    void setGeometryEvent(CalendarEvent *e, GeometryEventType type);
 
 public:
     explicit CalendarEvents(QDate date, ICalendarGUIEventsHandler *handler, QWidget *parent = nullptr);
@@ -34,9 +36,6 @@ public:
 protected:
     void paintEvent(QPaintEvent *event) override;
     void resizeEvent(QResizeEvent *event) override;
-
-public slots:
-
 };
 
 

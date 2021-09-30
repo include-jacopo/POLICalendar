@@ -27,9 +27,9 @@ public slots:
     void deleteEvent();
 
 signals:
-    void eventCreated(const Event& evCreated);
-    void eventEdited(const Event& evUpdated);
-    void eventDeleted(const Event& evDeleted);
+    void eventCreated(Event evCreated);
+    void eventEdited(Event evUpdated);
+    void eventDeleted(Event evDeleted);
 
 private:
     Ui::DialogEdit *ui;

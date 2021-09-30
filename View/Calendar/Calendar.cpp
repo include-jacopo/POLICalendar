@@ -5,7 +5,6 @@
 #include <QDir>
 #include <QPushButton>
 #include "Calendar.h"
-#include "DialogEdit.h"
 
 Calendar::Calendar(QWidget *parent) : QFrame(parent) {
     // Stylesheet

@@ -76,7 +76,7 @@ void Tasklist::removeTask(const Task &task) {
     if (it != tasks.constEnd()) {
         qsizetype i = it - tasks.constBegin();
         tasksLayout->removeWidget(tasks[i]);
-        delete tasks[i];
+        tasks[i]->deleteLater();
         tasks.remove(i);
     }
 }
