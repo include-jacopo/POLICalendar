@@ -101,7 +101,11 @@ void CalendarEvents::setGeometryEvent(CalendarEvent *e, GeometryEventType type) 
             e->setProperty("zIndex", 0);
             for (auto ev: events) {
                 int zIndex;
-                if (geometry.contains(ev->geometry())) {
+                bool IContain, WeIntercept;
+                IContain = geometry.contains(ev->geometry());
+                WeIntercept = ev->geometry().intersects(geometry);
+
+                if (IContain) {
                     // Modify the other one
                     auto otherGeom = ev->geometry();
                     int maxX = std::min(otherGeom.x() + 30, this->width() - 40);
@@ -112,9 +116,7 @@ void CalendarEvents::setGeometryEvent(CalendarEvent *e, GeometryEventType type) 
                     zIndex = ev->property("zIndex").toInt();
                     ev->setProperty("zIndex", zIndex + 1);
 
-                }
-                if (ev->geometry().contains(geometry) ||
-                    (!geometry.contains(ev->geometry()) && ev->geometry().intersects(geometry))) {
+                } else if (WeIntercept) {
                     // Modify myself
                     int maxX = std::min(geometry.x() + 30, this->width() - 40);
                     geometry.setX(maxX);
@@ -151,8 +153,8 @@ void CalendarEvents::setGeometryEvent(CalendarEvent *e, GeometryEventType type) 
                     ev->setGeometry(otherGeom);
 
                     // Update zIndex for colors
-                    auto zIndex = ev->property("zIndex");
-                    ev->setProperty("zIndex", zIndex.toInt() - 1);
+                    auto zIndex = ev->property("zIndex").toInt();
+                    ev->setProperty("zIndex", zIndex - 1);
                 }
             }
 

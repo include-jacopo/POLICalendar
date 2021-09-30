@@ -19,9 +19,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
 
     resize(login->sizeHint());
     setCentralWidget(login);
-
-    //TODO TEMPORARY
-    loginSuccessful();
 }
 
 void MainWindow::loginSuccessful() {
@@ -33,8 +30,4 @@ void MainWindow::loginSuccessful() {
 
 QSize MainWindow::sizeHint() const {
     return QSize(1280, 720);
-}
-
-void MainWindow::updateEvents() {
-    // TODO
 }

@@ -9,6 +9,20 @@ using namespace std;
 
 class IController {
 public:
+    /* **** LOGIN **** */
+
+    /**
+     * Connect to the CalDav server.
+     * @param url CalDav server URL
+     * @param usr Username
+     * @param pw Password
+     * @param port Server port
+     * @return true if connection successful, false otherwise
+     */
+    virtual bool createSession (std::string url, std::string usr, std::string pw, int port) = 0;
+
+
+
     /* **** EVENTS **** */
 
     /**

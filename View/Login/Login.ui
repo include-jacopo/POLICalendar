@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>320</width>
-    <height>218</height>
+    <height>322</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -40,32 +40,6 @@
    </property>
    <item row="1" column="0">
     <spacer name="horizontalSpacer">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>40</width>
-       <height>20</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
-   <item row="0" column="1">
-    <spacer name="verticalSpacer">
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>20</width>
-       <height>40</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
-   <item row="1" column="2">
-    <spacer name="horizontalSpacer_2">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>
@@ -123,6 +97,13 @@
       <property name="spacing">
        <number>10</number>
       </property>
+      <item row="1" column="0">
+       <widget class="QLabel" name="label">
+        <property name="text">
+         <string>Username</string>
+        </property>
+       </widget>
+      </item>
       <item row="5" column="0" colspan="2">
        <widget class="Line" name="line">
         <property name="orientation">
@@ -130,7 +111,44 @@
         </property>
        </widget>
       </item>
-      <item row="6" column="1" alignment="Qt::AlignRight">
+      <item row="9" column="1">
+       <widget class="QLineEdit" name="lineEdit_port">
+        <property name="inputMask">
+         <string>90000</string>
+        </property>
+        <property name="text">
+         <string>443</string>
+        </property>
+        <property name="maxLength">
+         <number>5</number>
+        </property>
+       </widget>
+      </item>
+      <item row="6" column="0" colspan="2">
+       <widget class="QLabel" name="label_3">
+        <property name="text">
+         <string>Server information</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QLineEdit" name="lineEdit_username">
+        <property name="text">
+         <string>b3297398995</string>
+        </property>
+       </widget>
+      </item>
+      <item row="8" column="1">
+       <widget class="QLineEdit" name="lineEdit_url">
+        <property name="text">
+         <string>dav.fruux.com</string>
+        </property>
+       </widget>
+      </item>
+      <item row="10" column="1" alignment="Qt::AlignRight">
        <widget class="QPushButton" name="pushButton_login">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -146,17 +164,10 @@
         </property>
        </widget>
       </item>
-      <item row="1" column="0">
-       <widget class="QLabel" name="label">
+      <item row="8" column="0">
+       <widget class="QLabel" name="label_4">
         <property name="text">
-         <string>Username</string>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="0">
-       <widget class="QLabel" name="label_2">
-        <property name="text">
-         <string>Password</string>
+         <string>URL</string>
         </property>
        </widget>
       </item>
@@ -185,17 +196,66 @@
         </property>
        </widget>
       </item>
-      <item row="1" column="1">
-       <widget class="QLineEdit" name="lineEdit_username"/>
+      <item row="3" column="0">
+       <widget class="QLabel" name="label_2">
+        <property name="text">
+         <string>Password</string>
+        </property>
+       </widget>
+      </item>
+      <item row="9" column="0">
+       <widget class="QLabel" name="label_5">
+        <property name="text">
+         <string>Port</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0" colspan="2">
+       <widget class="QLabel" name="label_6">
+        <property name="text">
+         <string>User information</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
       </item>
      </layout>
     </widget>
+   </item>
+   <item row="1" column="2">
+    <spacer name="horizontalSpacer_2">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>40</width>
+       <height>20</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="0" column="1">
+    <spacer name="verticalSpacer">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>40</height>
+      </size>
+     </property>
+    </spacer>
    </item>
   </layout>
  </widget>
  <tabstops>
   <tabstop>lineEdit_username</tabstop>
   <tabstop>lineEdit_password</tabstop>
+  <tabstop>lineEdit_url</tabstop>
+  <tabstop>lineEdit_port</tabstop>
   <tabstop>pushButton_login</tabstop>
  </tabstops>
  <resources/>
@@ -207,8 +267,8 @@
    <slot>onLoginClicked()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>224</x>
-     <y>140</y>
+     <x>258</x>
+     <y>261</y>
     </hint>
     <hint type="destinationlabel">
      <x>210</x>

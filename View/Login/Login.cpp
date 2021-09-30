@@ -1,5 +1,6 @@
 #include "Login.h"
 #include "ui_Login.h"
+#include "../../Controller/Controller.h"
 #include <QMessageBox>
 #include <QDir>
 
@@ -20,12 +21,15 @@ Login::~Login() {
 }
 
 void Login::onLoginClicked() {
-    QString username = ui->lineEdit_username->text();
-    QString password = ui->lineEdit_password->text();
+    std::string username = ui->lineEdit_username->text().toStdString();
+    std::string password = ui->lineEdit_password->text().toStdString();
+    std::string serverUrl = ui->lineEdit_url->text().toStdString();
+    int serverPort = ui->lineEdit_port->text().toInt();
 
-    if (username == "jacopo" && password == "admin") { // TODO TEMP
+    auto controller = Controller::getInstance();
+    if (controller->createSession(serverUrl, username, password, serverPort)) {
         emit loginSuccessful();
     } else {
-        QMessageBox::warning(this, "Login", "Username o password errati");
+        QMessageBox::warning(this, "Login", "Login fallito");
     }
 }
