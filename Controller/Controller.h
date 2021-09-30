@@ -17,7 +17,7 @@ using namespace std;
 class Controller : public IController {
 
 public:
-    bool createSession (string url, string usr, string pw, int port);
+    bool createSession (string url, string usr, string pw, int port) override;
     static Controller* getInstance();
     Controller(const Controller&) = delete;
     void operator=(const Controller&) = delete;

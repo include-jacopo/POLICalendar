@@ -27,10 +27,7 @@ Controller *Controller::getInstance() {
     return instance;
 }
 
-Controller::Controller() : wc() {
-    //DA SVUOTARE, QUESTO METODO LO DOVRÀ CHIAMARE RICCARDO
-    createSession("dav.fruux.com", "b3297398995", "dap2zg5z54tu", 443);
-}
+Controller::Controller() : wc() {}
 
 bool Controller::createSession (string url, string usr, string pw, int port){
     wc.setClient(url, usr, pw, port); //Autenticazione con il server

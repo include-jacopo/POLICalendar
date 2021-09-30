@@ -9,9 +9,8 @@
 #include <QWidget>
 #include "Calendar/Calendar.h"
 #include "Login/Login.h"
-#include "IView.h"
 
-class MainWindow : public QMainWindow, public IView {
+class MainWindow : public QMainWindow {
     Q_OBJECT
 
 private:
@@ -22,8 +21,6 @@ public:
     explicit MainWindow(QWidget *parent = nullptr);
 
     [[nodiscard]] QSize sizeHint() const override;
-
-    void updateEvents() override;
 
 public slots:
     void loginSuccessful();
