@@ -7,9 +7,9 @@ CalendarEvent[zIndex="1"] {
 }
 
 CalendarEvent[zIndex="2"] {
-    background-color: rgba(0, 255, 255, 0.2);
+    background-color: rgba(208, 255, 0, 0.4);
 }
 
 CalendarEvent[zIndex="3"] {
-    background-color: rgba(255, 192, 203, 0.2);
+    background-color: rgba(255, 66, 99, 0.4);
 }

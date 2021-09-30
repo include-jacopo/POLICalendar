@@ -17,8 +17,8 @@ void CalendarEvents::setDate(const QDate &date) {
 
 void CalendarEvents::addEvent(const Event &event) {
     auto calEv = new CalendarEvent(event, handler, this);
-    setGeometryEvent(calEv, CalendarEvents::AddElement);
     calEv->show();
+    setGeometryEvent(calEv, CalendarEvents::AddElement);
     events.push_back(calEv);
 }
 
@@ -32,14 +32,14 @@ void CalendarEvents::removeEvent(const Event &event) {
         // Update geometry levels
         setGeometryEvent(events[i], CalendarEvents::RemoveElement);
 
-        delete events[i];
+        events[i]->deleteLater();
         events.remove(i);
     }
 }
 
 void CalendarEvents::clearEvents() {
     for (auto calEv: events) {
-        delete calEv;
+        calEv->deleteLater();
     }
     events.clear();
 }
@@ -66,7 +66,7 @@ void CalendarEvents::resizeEvent(QResizeEvent *event) {
     }
 }
 
-void CalendarEvents::setGeometryEvent(CalendarEvent *e, GeometryEventType type) {
+QRect CalendarEvents::calculateCoords(CalendarEvent *e) {
     auto dtStart = std::max(e->getDateTimeStart(), date.startOfDay());
     auto dtEnd = std::min(e->getDateTimeEnd(), date.endOfDay());
     int sm, dur;
@@ -75,54 +75,74 @@ void CalendarEvents::setGeometryEvent(CalendarEvent *e, GeometryEventType type) 
 
     auto tl = QPoint(e->geometry().x(), (int) (this->height() / 24.0 * sm / 60));
     auto br = QPoint(this->width() - 5, (int) (this->height() / 24.0 * (sm + dur) / 60));
-    auto geometry = QRect(tl, br);
+    return QRect(tl, br);
+}
+
+void orderLayers(const QMultiMap<int, CalendarEvent *> &events) {
+    for (auto it = events.constBegin(); it != events.constEnd(); it++) {
+        // Raise to the top
+        it.value()->raise();
+    }
+}
+
+void CalendarEvents::setGeometryEvent(CalendarEvent *e, GeometryEventType type) {
+    QRect geometry;
     QFile fileS;
+    QMultiMap<int, CalendarEvent *> zIndexMap;
 
     // Handle overlapping events
     switch (type) {
         case Resize:
-            e->setGeometry(QRect(tl, br));
+            e->setGeometry(calculateCoords(e));
             break;
         case AddElement:
-            tl.setX(5);
+            geometry = calculateCoords(e);
+            geometry.setX(5);
             e->setProperty("zIndex", 0);
             for (auto ev: events) {
-                if (geometry.intersects(ev->geometry())) {
-                    if (geometry.contains(ev->geometry())) {
-                        // Modify the other one
-                        auto otherGeom = ev->geometry();
-                        int maxX = std::min(otherGeom.x() + 30, this->width() - 40);
-                        otherGeom.setX(maxX);
-                        ev->setGeometry(otherGeom);
+                int zIndex;
+                if (geometry.contains(ev->geometry())) {
+                    // Modify the other one
+                    auto otherGeom = ev->geometry();
+                    int maxX = std::min(otherGeom.x() + 30, this->width() - 40);
+                    otherGeom.setX(maxX);
+                    ev->setGeometry(otherGeom);
 
-                        // Raise zIndex to top
-                        //TODO Fix layer problems
-                        ev->raise();
+                    // Update zIndex for colors
+                    zIndex = ev->property("zIndex").toInt();
+                    ev->setProperty("zIndex", zIndex + 1);
 
-                        // Update zIndex for colors
-                        auto zIndex = ev->property("zIndex").toInt();
-                        ev->setProperty("zIndex", zIndex + 1);
+                }
+                if (ev->geometry().contains(geometry) ||
+                    (!geometry.contains(ev->geometry()) && ev->geometry().intersects(geometry))) {
+                    // Modify myself
+                    int maxX = std::min(geometry.x() + 30, this->width() - 40);
+                    geometry.setX(maxX);
 
-                    } else {
-                        // Modify myself
-                        int maxX = std::min(tl.x() + 30, this->width() - 40);
-                        tl.setX(maxX);
-
-                        // Update zIndex for colors
-                        auto zIndex = e->property("zIndex").toInt();
-                        e->setProperty("zIndex", zIndex + 1);
-                    }
+                    // Update my zIndex for colors
+                    zIndex = e->property("zIndex").toInt();
+                    e->setProperty("zIndex", zIndex + 1);
                 }
             }
+
+            // Reorder zIndex layers
+            zIndexMap.insert(e->property("zIndex").toInt(), e);
+            for (auto ev: events) {
+                zIndexMap.insert(ev->property("zIndex").toInt(), ev);
+            }
+            orderLayers(zIndexMap);
+
             // Reapply stylesheet
             fileS.setFileName(QDir::current().filePath("../View/Calendar/EventColors.qss"));
             fileS.open(QFile::ReadOnly);
             setStyleSheet(fileS.readAll());
 
-            e->setGeometry(QRect(tl, br));
+            e->setGeometry(geometry);
             break;
         case RemoveElement:
+            geometry = e->geometry();
             for (auto ev: events) {
+                if (ev == e) continue;
                 if (geometry.contains(ev->geometry())) {
                     // Modify the other one
                     auto otherGeom = ev->geometry();
@@ -135,6 +155,7 @@ void CalendarEvents::setGeometryEvent(CalendarEvent *e, GeometryEventType type) 
                     ev->setProperty("zIndex", zIndex.toInt() - 1);
                 }
             }
+
             // Reapply stylesheet
             fileS.setFileName(QDir::current().filePath("../View/Calendar/EventColors.qss"));
             fileS.open(QFile::ReadOnly);
