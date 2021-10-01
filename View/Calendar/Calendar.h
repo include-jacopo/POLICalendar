@@ -28,6 +28,9 @@ public:
 
 protected:
     void resizeEvent(QResizeEvent *event) override;
+
+private slots:
+    void sync();
 };
 
 

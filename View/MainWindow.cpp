@@ -7,7 +7,7 @@
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     // Stylesheet
-    QFile file(QDir::current().filePath("../View/AppStyle.qss"));
+    QFile file(":/AppStyle.qss");
     file.open(QFile::ReadOnly);
     setStyleSheet(file.readAll());
 

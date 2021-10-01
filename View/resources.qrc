@@ -1,0 +1,8 @@
+<RCC>
+    <qresource prefix="/">
+        <file>Calendar/sync.svg</file>
+        <file>Calendar/Calendar.qss</file>
+        <file>Calendar/EventColors.qss</file>
+        <file>AppStyle.qss</file>
+    </qresource>
+</RCC>

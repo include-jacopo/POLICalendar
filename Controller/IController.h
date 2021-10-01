@@ -23,6 +23,16 @@ public:
 
 
 
+    /* **** GENERAL **** */
+
+    /**
+     * Sync the local database with remote data.
+     * @return true if request completed, false if error
+     */
+    virtual bool sync() = 0;
+
+
+
     /* **** EVENTS **** */
 
     /**
@@ -30,18 +40,6 @@ public:
      * @return Const reference to a map -> key = uid, value = Event
      */
     virtual const std::map<std::string, Event>& getEvents() = 0;
-
-    /**
-     * Update events.
-     * @return true if request completed, false if error
-     */
-    virtual bool updateEvents() = 0;
-
-    /**
-     * Search for an event based on its unique uid.
-     * @return optional<Event>
-     */
-    virtual optional<Event> findEvent(string uid) = 0;
 
     /**
      * Add an event to the calendar.

@@ -135,7 +135,7 @@ void CalendarEvents::setGeometryEvent(CalendarEvent *e, GeometryEventType type) 
             orderLayers(zIndexMap);
 
             // Reapply stylesheet
-            fileS.setFileName(QDir::current().filePath("../View/Calendar/EventColors.qss"));
+            fileS.setFileName(":/Calendar/EventColors.qss");
             fileS.open(QFile::ReadOnly);
             setStyleSheet(fileS.readAll());
 
@@ -159,7 +159,7 @@ void CalendarEvents::setGeometryEvent(CalendarEvent *e, GeometryEventType type) 
             }
 
             // Reapply stylesheet
-            fileS.setFileName(QDir::current().filePath("../View/Calendar/EventColors.qss"));
+            fileS.setFileName(":/Calendar/EventColors.qss");
             fileS.open(QFile::ReadOnly);
             setStyleSheet(fileS.readAll());
             break;

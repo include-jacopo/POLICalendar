@@ -55,6 +55,11 @@ bool Controller::updateCtag() {
     return true; //l'aggiornamento del ctag è avvenuto correttamente
 }
 
+bool Controller::sync() {
+    // TODO!
+    return false;
+}
+
 bool Controller::downloadEvents(){
     string old_ctag = wc.getCtag();
 
