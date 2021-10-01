@@ -56,6 +56,10 @@ TaskGUI {
     padding: 5px 0;
 }
 
+TaskGUI[isCompleted="true"] {
+    background-color: #FFEFD3;
+}
+
 TaskGUI[isLast="true"] {
     border-bottom: 1px solid #086375;
 }

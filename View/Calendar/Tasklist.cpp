@@ -34,15 +34,6 @@ Tasklist::Tasklist(QWidget *parent) : QFrame(parent) {
     tasksLayout->setContentsMargins(0, 0, 0, 0);
     w->setLayout(tasksLayout);
 
-    /*for (int i = 0; i < 14; ++i) {
-        auto task = new TaskGUI(task, this, this);
-        layout2->addWidget(task);
-        task->setProperty("isLast", i==13);
-        tasks.push_back(task);
-
-    }
-    */
-
     // Initialize task list
     auto controller = Controller::getInstance();
     auto mapTasks = controller->getTasks();
@@ -63,8 +54,13 @@ Tasklist::Tasklist(QWidget *parent) : QFrame(parent) {
 void Tasklist::addTask(const Task &task) {
     auto taskgui = new TaskGUI(task, this, this);
     taskgui->setProperty("isLast", true);
+    taskgui->setProperty("isCompleted", task.isCompleted());
     taskgui->show();
     tasks.last()->setProperty("isLast", false);
+
+    // Necessary to reapply stylesheet after property edit
+    setStyleSheet("TaskGUI[isLast=true] {border-bottom: 1px solid #086375;}");
+
     tasks.push_back(taskgui);
     tasksLayout->addWidget(taskgui);
 }
@@ -75,6 +71,13 @@ void Tasklist::removeTask(const Task &task) {
     });
     if (it != tasks.constEnd()) {
         qsizetype i = it - tasks.constBegin();
+
+        if (i == tasks.size() - 1) {
+            tasks[i-1]->setProperty("isLast", true);
+            // Necessary to reapply stylesheet after property edit
+            setStyleSheet("TaskGUI[isLast=true] {border-bottom: 1px solid #086375;}");
+        }
+
         tasksLayout->removeWidget(tasks[i]);
         tasks[i]->deleteLater();
         tasks.remove(i);

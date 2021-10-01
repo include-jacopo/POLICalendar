@@ -8,6 +8,9 @@ DialogTask::DialogTask(QWidget *parent) : QDialog(parent), ui(new Ui::DialogTask
     // Hide delete button if new task dialog
     ui->deleteButton->hide();
 
+    // Set focus to first field
+    ui->fieldTaskName->setFocus();
+
     controller = Controller::getInstance();
     setDueDate(QDateTime::currentDateTime());
 }
@@ -118,6 +121,7 @@ void DialogTask::accept() {
             statusOk = controller->editTask(getTask());
             if (statusOk) emit taskEdited(getTask());
         }
+        QDialog::accept();
     }
 }
 

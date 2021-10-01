@@ -35,12 +35,18 @@ QString TaskGUI::getTaskUid() {
 
 void TaskGUI::updateTask(const Task &task) {
     this->task = task;
+
+    if (task.isCompleted() xor property("isCompleted").toBool()) {
+        setProperty("isCompleted", task.isCompleted());
+        setStyleSheet("TaskGUI[isCompleted=false] {background-color: #FFC49B};\n"
+                      "TaskGUI[isCompleted=true] {background-color: #FFEFD3};");
+    }
     updateFields();
 }
 
 void TaskGUI::updateFields() {
     // Title label
-    auto labelTitle = this->findChild<QLabel*>("labelTitle");
+    auto labelTitle = this->findChild<QLabel *>("labelTitle");
     if (task.isCompleted()) {
         labelTitle->setText(QString::fromStdString("<s>" + task.getName() + "</s>"));
     } else {
@@ -48,7 +54,7 @@ void TaskGUI::updateFields() {
     }
 
     // Due date label
-    auto labelDueDate = this->findChild<QLabel*>("labelDueDate");
+    auto labelDueDate = this->findChild<QLabel *>("labelDueDate");
     if (task.isFlagDate()) {
         auto dueDateTime = QDateTime::fromSecsSinceEpoch(
                 std::chrono::duration_cast<std::chrono::seconds>(task.getDueDate().time_since_epoch()).count());
