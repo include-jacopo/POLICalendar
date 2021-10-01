@@ -106,6 +106,18 @@ bool Controller::downloadEvents(){
 
         displayEvents();
         displayTasks();
+
+        /*
+        Task tprova;
+        tprova = Tasks.begin()->second;
+
+        tprova.setDateCompleted(Tasks.begin()->second.getDateS());
+        tprova.setName("PROVA TASK COMPLETED 5");
+        tprova.setUidS("ciaoUID123452246");
+        tprova.setCompleted(true);
+        addTask(tprova);
+
+        */
         /*
         Task prova = getTasks().begin()->second;
         prova.setUidS("stringauid12345");
@@ -272,14 +284,14 @@ bool Controller::addTask(Task task) {
     string  payloadFinale =  "END:VTODO\n"
                              "END:VCALENDAR";
 
-    std::time_t tt1, tt2;
+    std::time_t tt1, tt2, tt3;
     /* ottengo degli oggetti time_t partendo dai campi chrono::system::clock dell'evento */
     tt1 = chrono::system_clock::to_time_t (task.getDueDate());      //Data task
     tt2 = chrono::system_clock::to_time_t ( task.getDateS());     //Data creazione task
 
 
-    string startT, dateT;
-    stringstream streamStartT, streamDateT;
+    string startT, dateT, complT;
+    stringstream streamStartT, streamDateT, streamComplT;
 
     /* inserisco l'output in uno stream di stringhe */
     streamDateT << std::put_time(std::gmtime(&tt2), "%Y%m%dT%H%M%SZ" );
@@ -303,6 +315,13 @@ bool Controller::addTask(Task task) {
         streamStartT << std::put_time(std::gmtime(&tt1), "%Y%m%dT%H%M%SZ" );
         startT = streamStartT.str();
         payloadIntermedio = payloadIntermedio+"DTSTART:"+startT;
+    }
+    if(task.isCompleted()){
+        tt3 = chrono::system_clock::to_time_t (task.getDateCompleted());      /* data task */
+        streamComplT << std::put_time(std::gmtime(&tt3), "%Y%m%dT%H%M%SZ" );
+        complT = streamStartT.str();
+        payloadIntermedio = payloadIntermedio+"COMPLETED:"+complT+"\n";
+
     }
 
     string payloadCompleto = payloadIniziale + payloadIntermedio + payloadFinale;

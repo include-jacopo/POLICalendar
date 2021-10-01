@@ -10,13 +10,19 @@ Task::Task() : priority(1), completed(false), flagDate(false) {
     uidS = createUid();
 };
 
-Task::Task(string uid, string name, string description, string location, string etag, int priority, bool completed,chrono::time_point<std::chrono::system_clock> dateS):
+Task::Task(string uid, string name, string description, string location, string etag, int priority, bool completed,chrono::time_point<std::chrono::system_clock> dateS, chrono::time_point<std::chrono::system_clock> dateCompl):
             uidS(uid), name(name), description(description), location(location), etag(etag), priority(priority),
-            completed(completed), flagDate(false), dateS(dateS) {};
+            completed(completed), flagDate(false), dateS(dateS) {
+    if(completed)
+        setDateCompleted(dateCompl);
+};
 Task::Task(string uid, string name, string description, string location, string etag, int priority, bool completed,
-           chrono::time_point<std::chrono::system_clock> date, chrono::time_point<std::chrono::system_clock> dateS):
+           chrono::time_point<std::chrono::system_clock> date, chrono::time_point<std::chrono::system_clock> dateS, chrono::time_point<std::chrono::system_clock> dateCompl):
         uidS(uid), name(name), description(description), location(location), etag(etag), priority(priority), completed(completed),
-        dueDate(date), flagDate(true), dateS(dateS){};
+        dueDate(date), flagDate(true), dateS(dateS){
+    if(completed)
+        setDateCompleted(dateCompl);
+};
 
 std::string Task::createUid() {
     std::string s1("aaaaaaaa");
@@ -152,6 +158,12 @@ void Task::printTask() {
     else{
         auto ttS2D = std::chrono::system_clock::to_time_t( Task::getDateS());
         std::cout << "time dtstamp Time: "<< std::put_time(std::localtime(&ttS2D), "%b %d %Y %H:%M:%S" ) <<endl;
+    }
+    if(isCompleted()){
+        cout<<"flag completed: "<<Task::isCompleted()<<endl;
+        auto ttScompl = std::chrono::system_clock::to_time_t(Task::getDateCompleted());
+
+        std::cout << "time due Time: "<< std::put_time(std::localtime(&ttScompl), "%b %d %Y %H:%M:%S" ) <<endl;
     }
 
 }

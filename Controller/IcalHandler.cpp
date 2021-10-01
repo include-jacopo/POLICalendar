@@ -134,9 +134,9 @@ Event IcalHandler::event_from_ical_component(icalcomponent* comp, string etag){
 
 Task IcalHandler::task_creator(map<string,string> taskProp, string etag) {
     string description, location;
-    bool flagData;                                                   /* flag che segnala la presenza della data */
+    bool flagData, flagCompleted;                                                   /* flag che segnala la presenza della data  e della data di completamento */
     int priority;
-    std::chrono::time_point<std::chrono::system_clock> tp_due, tp_stamp;       /* variabili che salva la data del task e la data di creazione del task *(
+    std::chrono::time_point<std::chrono::system_clock> tp_due, tp_stamp, tp_compl;       /* variabili che salva la data del task e la data di creazione del task *(
 
     /* converto la priorità da string a int */
     if (taskProp.find("PRIORITY") == taskProp.end()) {
@@ -172,6 +172,18 @@ Task IcalHandler::task_creator(map<string,string> taskProp, string etag) {
 
     }
 
+    /* se il task è completato allora salvo la data e setto il flag completed a true */
+    if (taskProp.find("COMPLETED") != taskProp.end()) {
+        tm tm_compl = {};
+        /* eseguo il parsing della stringa contenente la data */
+        strptime(taskProp["COMPLETED"].c_str(), "%Y%m%dT%H%M%SZ", &tm_compl);
+        /* creo gli oggetti di tipo system_clock */
+        tp_compl = std::chrono::system_clock::from_time_t(timegm(&tm_compl));
+        flagCompleted = true;
+    } else {
+        flagCompleted = false;
+    }
+
     /* non ho la proprietà description, quindi passo una stringa vuota al costruttore */
     if (taskProp.find("DESCRIPTION") == taskProp.end()) {
         description = "";
@@ -188,14 +200,14 @@ Task IcalHandler::task_creator(map<string,string> taskProp, string etag) {
 
     if (flagData == true) {
         /* chiamo il costruttore con data */
-        Task t(taskProp["UID"],taskProp["SUMMARY"],description,location, etag, priority,0,tp_stamp,tp_due);
+        Task t(taskProp["UID"],taskProp["SUMMARY"],description,location, etag, priority,flagCompleted,tp_stamp,tp_due, tp_compl);
         //Task t{};
         return t;
     } else {
 
         /* chiamo il costruttore senza data */
         // TEMP Task t(taskProp["UID"], taskProp["SUMMARY"], "ciao", priority_int);
-        Task t(taskProp["UID"],taskProp["SUMMARY"],description,location, etag, priority,0,tp_stamp);
+        Task t(taskProp["UID"],taskProp["SUMMARY"],description,location, etag, priority,flagCompleted,tp_stamp, tp_compl);
         //Task t{};
 
         return t;
