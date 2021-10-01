@@ -23,17 +23,20 @@ public:
     void setClient(const string url, const string user, const string pass, int port);
     string propfindCtag(string uri);
     void propfindUri();
-    void setUri(string strCalendar, string strTodo);
+    void setUri(string strCalendar, string strTask);
     string getUriCalendar();
-    string getUriTodo();
+    string getUriTask();
     string report_calendar(const string uri);
-    string report_todo(const string uri);
-    string reportEtag();
+    string report_task(const string uri);
+    string reportEtagCalendar();
+    string reportEtagTask();
     bool put_event(const string uri, const string evento_xml);
     string getUrl();
     int getPort();
-    void setCtag(string ctag);
-    string getCtag();
+    void setCtagCalendar(string ctag);
+    void setCtagTask(string ctag);
+    string getCtagCalendar();
+    string getCtagTask();
     bool deleteCalendar(const string uid);
     bool deleteTask(const string uid);
 
@@ -43,9 +46,10 @@ private:
     string base64_auth;
     string url;
     string uri_calendar;
-    string uri_todo;
+    string uri_task;
     int port;
-    string ctag;
+    string ctag_calendar;
+    string ctag_task;
 };
 
 

@@ -115,7 +115,7 @@ string readUriCalendar(string str) {
     return uri;
 }
 
-string readUriTodo(string str) {
+string readUriTask(string str) {
     pugi::xml_document doc;
     stringstream ss;
 
@@ -138,4 +138,99 @@ string readUriTodo(string str) {
     }
     return uri;
 }
+
+map<string,string> readEtagCalendar (string str, string uri_calendar){
+    pugi::xml_document doc;
+    stringstream ss;
+
+    ss << str;
+    pugi::xml_parse_result result = doc.load(ss, pugi::parse_default | pugi::parse_declaration);
+
+    if (!result) { // check of the correct loading of the xml
+        std::cout << "Parse error: " << result.description() << ", character pos= " << result.offset;
+    }
+
+    string uid, etag;
+    map <string, string> event_from_etag;
+    for (auto node: doc.child("d:multistatus").children()) {
+
+        //Pesco l'UID dalla Propfind
+        auto node2 = node.child("d:href");
+        uid = node2.text().as_string();
+        //Rimuovo dalla stringa dell'evento l'URI in modo da lasciare solo l'UID
+        uid = removeURI(uid, uri_calendar);
+
+        //Pesco l'etag dalla Propfind
+        auto node3 = node.child("d:propstat").child("d:prop").child("d:getetag");
+        etag = node3.text().as_string();
+        //Eseguo la funzione per togliere il '"' all'inizio ed alla fine
+        etag = removeQuote(etag);
+
+        event_from_etag.insert({uid, etag});
+
+    }
+    return event_from_etag;
+}
+
+map<string,string> readEtagTask (string str, string uri_task){
+    pugi::xml_document doc;
+    stringstream ss;
+
+    ss << str;
+    pugi::xml_parse_result result = doc.load(ss, pugi::parse_default | pugi::parse_declaration);
+
+    if (!result) { // check of the correct loading of the xml
+        std::cout << "Parse error: " << result.description() << ", character pos= " << result.offset;
+    }
+
+    string uid, etag;
+    map <string, string> task_from_etag;
+    for (auto node: doc.child("d:multistatus").children()) {
+
+        //Pesco l'UID dalla Propfind
+        auto node2 = node.child("d:href");
+        uid = node2.text().as_string();
+        //Rimuovo dalla stringa dell'evento l'URI in modo da lasciare solo l'UID
+        uid = removeURI(uid, uri_task);
+
+        //Pesco l'etag dalla Propfind
+        auto node3 = node.child("d:propstat").child("d:prop").child("d:getetag");
+        etag = node3.text().as_string();
+        //Eseguo la funzione per togliere il '"' all'inizio ed alla fine
+        etag = removeQuote(etag);
+
+        task_from_etag.insert({uid, etag});
+
+    }
+    return task_from_etag;
+}
+
+string removeQuote (string str){
+    //Funzione per rimuovere le virgolette o il "&quot;" dal campo dell'etag
+    string remove_quote1 = "&quot;";
+    string remove_quote2 = "\"";
+    size_t pos;
+
+    while ((pos  = str.find(remove_quote1) )!= std::string::npos) {
+        str.erase(pos, remove_quote1.length());
+    }
+    while ((pos  = str.find(remove_quote2) )!= std::string::npos) {
+        str.erase(pos, remove_quote2.length());
+    }
+    return str;
+}
+
+string removeURI (string str, const string& uid){
+    size_t pos;
+    string ics = ".ics";
+
+    if((pos = str.find(uid)) != string::npos) {
+        str.erase(pos, uid.length());
+    }
+    if((pos = str.find(ics)) != string::npos) {
+        str.erase(pos, ics.length());
+    }
+    return str;
+}
+
 

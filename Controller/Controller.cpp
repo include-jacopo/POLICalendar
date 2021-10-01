@@ -37,13 +37,15 @@ bool Controller::createSession (string url, string usr, string pw, int port){
         cout << ie.what() << endl;
         return false;
     }
-    wc.setCtag("PrimaLettura"); //Setto un ctag fittizio per la prima lettura
+    wc.setCtagCalendar("PrimaLettura"); //Setto un ctag fittizio per la prima lettura
+    wc.setCtagTask("PrimaLettura");
     downloadEvents(); //Riempio il calendario con gli eventi che già possiede
+    downloadTask(); //Riempio il calendario con gli eventi che già possiede
 
     return true; //la creazione della sessione è andata a buon fine
 }
 
-bool Controller::updateCtag() {
+bool Controller::updateCtagCalendar() {
     string ctagXML;
     try {
         ctagXML = wc.propfindCtag(wc.getUriCalendar());
@@ -51,7 +53,19 @@ bool Controller::updateCtag() {
         cout << ie.what() << endl;
         return false;
     }
-    wc.setCtag(readCtag(ctagXML));
+    wc.setCtagCalendar(readCtag(ctagXML));
+    return true; //l'aggiornamento del ctag è avvenuto correttamente
+}
+
+bool Controller::updateCtagTask() {
+    string ctagXML;
+    try {
+        ctagXML = wc.propfindCtag(wc.getUriTask());
+    } catch(invalid_argument &ie) {
+        cout << ie.what() << endl;
+        return false;
+    }
+    wc.setCtagTask(readCtag(ctagXML));
     return true; //l'aggiornamento del ctag è avvenuto correttamente
 }
 
@@ -61,25 +75,22 @@ bool Controller::sync() {
 }
 
 bool Controller::downloadEvents(){
-    string old_ctag = wc.getCtag();
+    string old_ctag = wc.getCtagCalendar();
 
-    if(!updateCtag()){
+    if(!updateCtagCalendar()){
         return false; //c'è stato qualche problema nell'aggiornamento del ctag
     }
 
-    if(old_ctag != wc.getCtag() || old_ctag == "PrimaLettura") {
+    if(old_ctag != wc.getCtagCalendar() || old_ctag == "PrimaLettura") {
         string xml_cal;
-        string xml_todo;
         try {
             xml_cal = wc.report_calendar(wc.getUriCalendar()); //Lettura dell'XML del calendario dal server
-            xml_todo = wc.report_todo(wc.getUriTodo()); //Lettura dell'XML dei to-do dal server
         } catch(invalid_argument &ie) {
             cout << ie.what() << endl;
             return false;
         }
 
         map<string,icalcomponent*> eventi_calendario = readXML(xml_cal);
-        map<string, icalcomponent*> todo_calendario = readXML(xml_todo);
 
         //Scorro ogni evento e i suoi sottoeventi per riempire Event.cpp
         for (auto evento: eventi_calendario) {
@@ -93,24 +104,8 @@ bool Controller::downloadEvents(){
                         insertLocalEvent(ev);
             }
         }
-        /* scorro la lista di componenti per creare gli oggetti task */
-
-        //cout<<"************ TASKS*****************"<<endl;
-        for (auto todo: todo_calendario) {
-            icalcomponent *c;
-            for (c = icalcomponent_get_first_component(todo.second, ICAL_VTODO_COMPONENT);
-                 c != 0;
-                 c = icalcomponent_get_next_component(todo.second, ICAL_VTODO_COMPONENT)) {
-
-                Task t = IcalHandler::task_from_ical_component(c, todo.first);
-
-               insertLocalTask(t);
-
-            }
-        }
 
         displayEvents();
-        displayTasks();
 
         /*
         Task tprova;
@@ -132,6 +127,51 @@ bool Controller::downloadEvents(){
         //cout<<prova.getUid()<<endl;
         addTask(*prova4);
 */
+        string uno = "CICCIOGAMER";
+        string due = "CICCIO";
+
+        updateEvents();
+        updateTasks();
+        return true;
+
+    } else {
+        return false; //gli eventi sono già aggiornati
+    }
+}
+
+bool Controller::downloadTask(){
+    string old_ctag = wc.getCtagTask();
+
+    if(!updateCtagTask()){
+        return false; //c'è stato qualche problema nell'aggiornamento del ctag
+    }
+
+    if(old_ctag != wc.getCtagTask() || old_ctag == "PrimaLettura") {
+        string xml_task;
+        try {
+            xml_task = wc.report_task(wc.getUriTask()); //Lettura dell'XML dei to-do dal server
+        } catch(invalid_argument &ie) {
+            cout << ie.what() << endl;
+            return false;
+        }
+
+        map<string, icalcomponent*> task_calendario = readXML(xml_task);
+
+        //Scorro la lista di componenti per creare gli oggetti task */
+        for (auto task: task_calendario) {
+            icalcomponent *c;
+            for (c = icalcomponent_get_first_component(task.second, ICAL_VTODO_COMPONENT);
+                 c != 0;
+                 c = icalcomponent_get_next_component(task.second, ICAL_VTODO_COMPONENT)) {
+
+                Task t = IcalHandler::task_from_ical_component(c, task.first);
+
+                insertLocalTask(t);
+
+            }
+        }
+
+        displayTasks();
         return true;
 
     } else {
@@ -153,12 +193,18 @@ int Controller::insertLocalTask(Task t){
 }
 
 bool Controller::updateEvents() {
-    string old_ctag = wc.getCtag();
+    string old_ctag = wc.getCtagCalendar();
 
+    /* QUESTO PEZZO DI CODICE CONTROLLA CHE IL CTAG SIA CAMBIATO. ELIMINA SOLO LE /* DOPO CHE L'HAI IMPLEMENTATA
     if(!updateCtag() || old_ctag == wc.getCtag()){
         //Se qualcosa è andato storto nell'aggiornamento del ctag o il ctag non è cambiato
         return false;
-    }
+    } */
+
+    //Leggo dalla richiesta l'elenco di tutti gli UID e ETAG per il calendario
+    string etag_XML = wc.reportEtagCalendar();
+    //Creo una mappa con in chiave l'UID e con valore l'ETAG per confrontarla con quelli che già ho
+    map<string,string> eventi_con_etag = readEtagCalendar(etag_XML, wc.getUriCalendar());
 
     //DA IMPLEMENTARE
     return true;
@@ -332,7 +378,7 @@ bool Controller::addTask(Task task) {
     string payloadCompleto = payloadIniziale + payloadIntermedio + payloadFinale;
 
     try {
-        if(wc.put_event(wc.getUriTodo()+task.getUid(),payloadCompleto)){
+        if(wc.put_event(wc.getUriTask()+task.getUid(),payloadCompleto)){
             //La richiesta di caricamento dell'evento ha avuto risultato positivo, inserisco il task in locale
             Tasks.insert({task.getUid(), task});
             return  true;
@@ -354,7 +400,6 @@ bool Controller::editTask(Task task) {
 }
 
 
-
 bool Controller::deleteTask(string uid) {
     try {
         if (wc.deleteTask(uid)) { //se l'eliminazione online dell'evento è andata a buon fine
@@ -370,4 +415,22 @@ bool Controller::deleteTask(string uid) {
         return false;
     }
     return false;
+}
+
+bool Controller::updateTasks() {
+    string old_ctag = wc.getCtagTask();
+
+    /* QUESTO PEZZO DI CODICE CONTROLLA CHE IL CTAG SIA CAMBIATO. ELIMINA SOLO LE /* DOPO CHE L'HAI IMPLEMENTATA
+    if(!updateCtagTask() || old_ctag == wc.getCtagTask()){
+        //Se qualcosa è andato storto nell'aggiornamento del ctag o il ctag non è cambiato
+        return false;
+    } */
+
+    //Leggo dalla richiesta l'elenco di tutti gli UID e ETAG per il calendario
+    string etag_XML = wc.reportEtagTask();
+    //Creo una mappa con in chiave l'UID e con valore l'ETAG per confrontarla con quelli che già ho
+    map<string,string> task_con_etag = readEtagTask(etag_XML, wc.getUriTask());
+
+    //DA IMPLEMENTARE
+    return true;
 }

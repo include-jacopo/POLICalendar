@@ -17,7 +17,11 @@ string readCtag(string str);
 string readLinkUser (string str);
 string readCalendarCollection (string str);
 string readUriCalendar (string str);
-string readUriTodo (string str);
+string readUriTask (string str);
+map<string,string> readEtagCalendar (string str, string uri_calendar);
+map<string,string> readEtagTask (string str, string uri_task);
+string removeQuote (string str);
+string removeURI (string str, const string& uid);
 
 #endif //POLICALENDAR_XMLREADER_H
 

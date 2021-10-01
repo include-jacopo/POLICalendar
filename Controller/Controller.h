@@ -21,7 +21,6 @@ public:
     static Controller* getInstance();
     Controller(const Controller&) = delete;
     void operator=(const Controller&) = delete;
-    bool updateCtag();
 
     /* General methods */
     bool sync() override;
@@ -35,13 +34,17 @@ public:
     bool editEvent(Event ev) override;
     bool deleteEvent(string uid) override;
     void displayEvents();
+    bool updateCtagCalendar();
 
     /* Tasks methods */
+    bool downloadTask();
     const map<std::string, Task> &getTasks() override;
     bool addTask(Task task) override;
     bool editTask(Task task) override;
     bool deleteTask(string uid) override;
     void displayTasks();
+    bool updateCtagTask();
+    bool updateTasks();
 
 private:
     map<string, Event> Events;
