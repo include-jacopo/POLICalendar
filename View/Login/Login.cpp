@@ -9,8 +9,13 @@ Login::Login(QWidget *parent) :
         ui(new Ui::Login) {
     ui->setupUi(this);
 
+    // Set logo image
+    auto logo = QPixmap(":/Login/logo.png").scaledToWidth(this->width(), Qt::SmoothTransformation);
+    ui->logo->setPixmap(logo);
+
     // Style
-    setStyleSheet("Login {background-color: white;}");
+    setStyleSheet("Login {background-color: white;}\n"
+                  "QLabel#logo {margin-bottom: 8px;}");
 
     // Set focus
     ui->lineEdit_username->setFocus();
