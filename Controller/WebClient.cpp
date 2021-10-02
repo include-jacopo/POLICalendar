@@ -47,6 +47,43 @@ void WebClient::setClient(const string url, const string user, const string pass
     ne_ssl_trust_default_ca(sess);
 }
 
+int WebClient::tryLogin() {
+    //Provo ad ottenere i dati del mio utente per testare il login
+    string response;
+    string propfind_link_user = "<d:propfind xmlns:d=\"DAV:\">\n"
+                                "  <d:prop>\n"
+                                "     <d:current-user-principal />\n"
+                                "  </d:prop>\n"
+                                "</d:propfind>";
+
+    string url_prop = "https://" + getUrl() + "/";
+
+    ne_request *req = ne_request_create(sess, "PROPFIND", (url_prop).c_str());
+    ne_add_request_header(req, "Authorization", ("Basic "+base64_auth).c_str());
+
+    ne_set_request_body_buffer(req, propfind_link_user.c_str(), propfind_link_user.size());
+    ne_add_response_body_reader(req, ne_accept_always, httpResponseReader, &response);
+
+    int result = ne_request_dispatch(req);
+    ne_request_destroy(req);
+    string link_user = readLinkUser(response); //ottenuto l'xml, pesco solo l'url che mi interessa, altrimenti è vuoto
+
+    if(link_user.empty()){
+        return 1; //Non ho avuto la risposta che mi aspettavo, il login non è avvenuto
+    }
+
+    switch (result) {
+        case NE_OK:
+            return 0; //Il login è andato a buon fine
+        case NE_CONNECT:
+            return 2; //Errore di connessione con il server
+        case NE_TIMEOUT:
+            return 3; //Connessione timeout
+        default:
+            return 4; //Errore generico con il server
+    }
+}
+
 void WebClient::setUri(string strCalendar, string strTask) {
     this->uri_calendar = strCalendar;
     this->uri_task = strTask;

@@ -21,6 +21,7 @@ public:
     WebClient();
     ~WebClient();
     void setClient(const string url, const string user, const string pass, int port);
+    int tryLogin();
     string propfindCtag(string uri);
     void propfindUri();
     void setUri(string strCalendar, string strTask);

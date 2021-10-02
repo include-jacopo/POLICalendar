@@ -29,14 +29,12 @@ Controller *Controller::getInstance() {
 
 Controller::Controller() : wc() {}
 
+//Cancella questa funzione bool e togli i commenti dall'altra int
 bool Controller::createSession (string url, string usr, string pw, int port){
     wc.setClient(url, usr, pw, port); //Autenticazione con il server
-    try {
-        wc.propfindUri(); //Riceve dal server gli url specifici per to-do e calendario
-    } catch(invalid_argument &ie) {
-        cout << ie.what() << endl;
-        return false;
-    }
+
+    wc.propfindUri(); //Riceve dal server gli url specifici per to-do e calendario
+
     wc.setCtagCalendar("PrimaLettura"); //Setto un ctag fittizio per la prima lettura
     wc.setCtagTask("PrimaLettura");
     downloadEvents(); //Riempio il calendario con gli eventi che già possiede
@@ -44,6 +42,38 @@ bool Controller::createSession (string url, string usr, string pw, int port){
 
     return true; //la creazione della sessione è andata a buon fine
 }
+
+/*
+int Controller::createSession (string url, string usr, string pw, int port){
+    wc.setClient(url, usr, pw, port); //Autenticazione con il server
+
+    switch (wc.tryLogin()) { //Funzione che testa il login e la connessione verso il server
+        case 1:
+            return 1; //Il login non è andato a buon fine
+        case 2:
+            return 2; //Errore di connessione con il server
+        case 3:
+            return 3; //Connessione timeout
+        case 4:
+            return 4; //Errore generico con il server
+    }
+
+    wc.propfindUri(); //Riceve dal server gli url specifici per to-do e calendario
+
+    wc.setCtagCalendar("PrimaLettura"); //Setto un ctag fittizio per la prima lettura
+    wc.setCtagTask("PrimaLettura");
+
+    if(!downloadEvents()){ //Riempio il calendario con gli eventi che già possiede
+        return 5; //in caso di errore
+    }
+    if(!downloadTask()) { //Riempio il calendario con i task che già possiede
+        return 6; //in caso di errore
+    }
+
+    return 0; //la creazione della sessione è andata a buon fine
+}
+ */
+
 
 bool Controller::updateCtagCalendar() {
     string ctagXML;
