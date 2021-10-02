@@ -27,9 +27,25 @@ void Login::onLoginClicked() {
     int serverPort = ui->lineEdit_port->text().toInt();
 
     auto controller = Controller::getInstance();
-    if (controller->createSession(serverUrl, username, password, serverPort)) {
-        emit loginSuccessful();
-    } else {
-        QMessageBox::warning(this, "Login", "Login fallito");
+    int status = controller->createSession(serverUrl, username, password, serverPort);
+    QString errorMsg;
+    switch (status) {
+        case 0:
+            emit loginSuccessful();
+            return;
+        case 1:
+            errorMsg = "Username o password errati";
+            break;
+        case 2:
+            errorMsg = "Connessione al server fallita";
+            break;
+        case 3:
+            errorMsg = "Timeout di connessione";
+            break;
+        default:
+            errorMsg = "Errore";
+    }
+    if (!errorMsg.isEmpty()) {
+        QMessageBox::warning(this, "Login", errorMsg);
     }
 }

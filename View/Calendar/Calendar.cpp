@@ -23,7 +23,7 @@ Calendar::Calendar(QWidget *parent) : QFrame(parent) {
     calendarColumns = new CalendarColumns();
     layout->addWidget(calendarColumns, 0, 0, 3, 1);
     layout->setColumnStretch(0, 1);
-    handler = calendarColumns;
+    evHandler = calendarColumns;
 
     // Calendar widget
     calendarWidget = new QCalendarWidget();
@@ -33,6 +33,7 @@ Calendar::Calendar(QWidget *parent) : QFrame(parent) {
     auto tasklist = new Tasklist();
     layout->addWidget(tasklist, 1, 1);
     layout->setRowStretch(1, 1);
+    tHandler = tasklist;
 
     // Add event and task buttons
     auto newButtons = new QFrame();
@@ -53,7 +54,7 @@ Calendar::Calendar(QWidget *parent) : QFrame(parent) {
     // Connect sync button to controller sync
     connect(syncBtn, SIGNAL(clicked()), this, SLOT(sync()));
     // Connect new event button to dialog
-    auto objHandler = dynamic_cast<QObject*>(handler);
+    auto objHandler = dynamic_cast<QObject*>(evHandler);
     connect(newEvent, SIGNAL(clicked()), objHandler, SLOT(createEventDialog()));
     // Connect new task button to dialog
     connect(newTask, SIGNAL(clicked()), tasklist, SLOT(createTaskDialog()));
@@ -71,7 +72,10 @@ QSize Calendar::sizeHint() const {
 
 void Calendar::sync() {
     auto controller = Controller::getInstance();
-    if (!controller->sync()) {
+    if (controller->sync()) {
+        evHandler->updateEvents();
+        tHandler->updateTasks();
+    } else {
         QMessageBox::warning(this, "Sync", "Sincronizzazione fallita");
     }
 }

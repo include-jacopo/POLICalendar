@@ -9,6 +9,7 @@ class ICalendarGUITaskHandler {
 public:
     virtual void createTaskDialog() = 0;
     virtual void editTaskDialog(const Task &task) = 0;
+    virtual void updateTasks() = 0;
 
 protected:
     virtual void addTask(const Task &task) = 0;

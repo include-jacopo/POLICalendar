@@ -17,14 +17,12 @@ using namespace std;
 class Controller : public IController {
 
 public:
-    //cancella la prossima funzione bool e togli i commenti da quella int
-    bool createSession (string url, string usr, string pw, int port) override;
-    //int createSession (string url, string usr, string pw, int port) override;
     static Controller* getInstance();
     Controller(const Controller&) = delete;
     void operator=(const Controller&) = delete;
 
     /* General methods */
+    int createSession (string url, string usr, string pw, int port) override;
     bool sync() override;
 
     /* Events methods */

@@ -25,6 +25,9 @@ TaskGUI::TaskGUI(const Task &task, ICalendarGUITaskHandler *handler, QWidget *pa
     labelDueDate->setObjectName("labelDueDate");
     layout->addWidget(labelDueDate);
 
+    // Set property
+    setProperty("isCompleted", task.isCompleted());
+
     // Fill fields value
     updateFields();
 }

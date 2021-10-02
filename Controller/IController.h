@@ -9,7 +9,7 @@ using namespace std;
 
 class IController {
 public:
-    /* **** LOGIN **** */
+    /* **** GENERAL **** */
 
     /**
      * Connect to the CalDav server.
@@ -17,13 +17,15 @@ public:
      * @param usr Username
      * @param pw Password
      * @param port Server port
-     * @return true if connection successful, false otherwise
+     * @return 0 -> Login successful
+     * @return 1 -> Login failed
+     * @return 2 -> Connection failed
+     * @return 3 -> Connection timeout
+     * @return 4 -> Generic server error
+     * @return 5 -> Can't download events
+     * @return 6 -> Can't download tasks
      */
-    virtual bool createSession (std::string url, std::string usr, std::string pw, int port) = 0;
-
-
-
-    /* **** GENERAL **** */
+    virtual int createSession (std::string url, std::string usr, std::string pw, int port) = 0;
 
     /**
      * Sync the local database with remote data.

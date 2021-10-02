@@ -24,7 +24,6 @@ private:
     QDate firstColDate;
     int colsOnScreen = 0;
 
-    void updateEvents();
     static bool checkIfEventInDay(const Event& e, const QDate& date);
 
 public:
@@ -37,6 +36,7 @@ public slots:
     void dateChanged(QDate date);
     void createEventDialog() override;
     void editEventDialog(const Event &event) override;
+    void updateEvents() override;
 
 protected slots:
     void addEvent(const Event &event) override;

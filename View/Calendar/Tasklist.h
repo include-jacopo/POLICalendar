@@ -26,6 +26,7 @@ public:
 public slots:
     void createTaskDialog() override;
     void editTaskDialog(const Task &task) override;
+    void updateTasks() override;
 
 protected slots:
     void addTask(const Task &task) override;

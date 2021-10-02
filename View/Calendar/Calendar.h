@@ -20,7 +20,8 @@ private:
     QCalendarWidget *calendarWidget;
     CalendarColumns *calendarColumns;
     QGridLayout *layout;
-    ICalendarGUIEventsHandler *handler;
+    ICalendarGUIEventsHandler *evHandler;
+    ICalendarGUITaskHandler *tHandler;
 
 public:
     explicit Calendar(QWidget *parent = nullptr);

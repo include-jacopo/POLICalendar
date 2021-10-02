@@ -107,3 +107,35 @@ void Tasklist::editTaskDialog(const Task &task) {
     connect(dialog, SIGNAL(taskDeleted(Task)), this, SLOT(removeTask(Task)));
     dialog->exec();
 }
+
+void Tasklist::updateTasks() {
+    // Delete displayed tasks
+    for (auto task: tasks) {
+        task->deleteLater();
+    }
+    tasks.clear();
+    // Delete layout spacer
+    QLayoutItem *child;
+    while ((child = tasksLayout->takeAt(0)) != nullptr) {
+        delete child->widget();
+        delete child;
+    }
+
+    // Reload the task list
+    auto controller = Controller::getInstance();
+    auto mapTasks = controller->getTasks();
+    for (const auto &mapTaskIter: mapTasks) {
+        auto task = mapTaskIter.second;
+        auto taskgui = new TaskGUI(task, this, this);
+        taskgui->setProperty("isLast", false);
+        taskgui->show();
+        tasks.push_back(taskgui);
+        tasksLayout->addWidget(taskgui);
+    }
+    if (!tasks.empty()) tasks.last()->setProperty("isLast", true);
+    // Necessary to reapply stylesheet after property edit
+    setStyleSheet("TaskGUI[isLast=true] {border-bottom: 1px solid #086375;}");
+
+    // Fill empty space at the end
+    tasksLayout->insertStretch(-1, 1);
+}

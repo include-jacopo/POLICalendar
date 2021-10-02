@@ -29,21 +29,6 @@ Controller *Controller::getInstance() {
 
 Controller::Controller() : wc() {}
 
-//Cancella questa funzione bool e togli i commenti dall'altra int
-bool Controller::createSession (string url, string usr, string pw, int port){
-    wc.setClient(url, usr, pw, port); //Autenticazione con il server
-
-    wc.propfindUri(); //Riceve dal server gli url specifici per to-do e calendario
-
-    wc.setCtagCalendar("PrimaLettura"); //Setto un ctag fittizio per la prima lettura
-    wc.setCtagTask("PrimaLettura");
-    downloadEvents(); //Riempio il calendario con gli eventi che già possiede
-    downloadTask(); //Riempio il calendario con gli eventi che già possiede
-
-    return true; //la creazione della sessione è andata a buon fine
-}
-
-/*
 int Controller::createSession (string url, string usr, string pw, int port){
     wc.setClient(url, usr, pw, port); //Autenticazione con il server
 
@@ -72,7 +57,6 @@ int Controller::createSession (string url, string usr, string pw, int port){
 
     return 0; //la creazione della sessione è andata a buon fine
 }
- */
 
 bool Controller::updateCtagCalendar() {
     string ctagXML;

@@ -9,6 +9,7 @@ class ICalendarGUIEventsHandler {
 public:
     virtual void createEventDialog() = 0;
     virtual void editEventDialog(const Event &event) = 0;
+    virtual void updateEvents() = 0;
 
 protected:
     virtual void addEvent(const Event &event) = 0;
