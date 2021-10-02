@@ -74,7 +74,6 @@ int Controller::createSession (string url, string usr, string pw, int port){
 }
  */
 
-
 bool Controller::updateCtagCalendar() {
     string ctagXML;
     try {
@@ -100,8 +99,11 @@ bool Controller::updateCtagTask() {
 }
 
 bool Controller::sync() {
-    // TODO!
-    return false;
+    if(!updateEvents()){
+        return false; // Non c'è stato nessun nuovo evento o task
+    }
+    //updateTasks();
+    return true;
 }
 
 bool Controller::downloadEvents(){
@@ -137,31 +139,6 @@ bool Controller::downloadEvents(){
 
         displayEvents();
 
-        /*
-        Task tprova;
-        tprova = Tasks.begin()->second;
-
-        tprova.setDateCompleted(Tasks.begin()->second.getDateS());
-        tprova.setName("PROVA TASK COMPLETED 5");
-        tprova.setUidS("ciaoUID123452246");
-        tprova.setCompleted(true);
-        addTask(tprova);
-
-        */
-        /*
-        Task prova = getTasks().begin()->second;
-        prova.setUidS("stringauid12345");
-        prova.setName("task inserito a mano");
-        auto prova4 = new Task;
-        cout<<"task creato senza parametri"<<" uid: "<<prova4->getUid()<<endl;
-        //cout<<prova.getUid()<<endl;
-        addTask(*prova4);
-*/
-        string uno = "CICCIOGAMER";
-        string due = "CICCIO";
-
-        updateEvents();
-        updateTasks();
         return true;
 
     } else {
@@ -217,6 +194,7 @@ int Controller::insertLocalEvent(Event ev){
     Events.insert({ev.getUid(), ev});
     return 1;
 }
+
 int Controller::insertLocalTask(Task t){
     Tasks.insert({t.getUid(), t});
     return 1;
@@ -225,18 +203,63 @@ int Controller::insertLocalTask(Task t){
 bool Controller::updateEvents() {
     string old_ctag = wc.getCtagCalendar();
 
-    /* QUESTO PEZZO DI CODICE CONTROLLA CHE IL CTAG SIA CAMBIATO. ELIMINA SOLO LE /* DOPO CHE L'HAI IMPLEMENTATA
-    if(!updateCtag() || old_ctag == wc.getCtag()){
+    if(!updateCtagCalendar() || old_ctag == wc.getCtagCalendar()){
         //Se qualcosa è andato storto nell'aggiornamento del ctag o il ctag non è cambiato
         return false;
-    } */
+    }
 
     //Leggo dalla richiesta l'elenco di tutti gli UID e ETAG per il calendario
     string etag_XML = wc.reportEtagCalendar();
     //Creo una mappa con in chiave l'UID e con valore l'ETAG per confrontarla con quelli che già ho
     map<string,string> eventi_con_etag = readEtagCalendar(etag_XML, wc.getUriCalendar());
 
-    //DA IMPLEMENTARE
+    list<string> uid_nuovi_eventi; //Ospiterà i nuovi eventi trovati
+    for(const auto& e: eventi_con_etag){
+        auto pos_event = Events.find(e.first);
+        if(pos_event != Events.end()){ //Trovato l'evento nella mappa locale
+            //L'evento scaricato dal server già esiste in locale
+            if(pos_event->second.getEtag() != e.second){ //controllo che l'etag sia differente
+                //cout << "UID ELEMENTO IN LISTA " << e.first << endl;
+                //cout << "ETAG ELEMENTO IN NOSTRA MAPPA " << pos_event->second.getEtag() << endl;
+                uid_nuovi_eventi.push_back(e.first); //lo aggiungo nella lista dei nuovi eventi da scaricare
+                Events.erase(pos_event); //Elimino la vecchia versione dalla lista locale
+            }
+        } else {
+            //cout << "UID ELEMENTO NUOVO " << e.first << endl;
+            uid_nuovi_eventi.push_back(e.first); //L'evento è nuovo per noi
+        }
+    }
+
+    if(uid_nuovi_eventi.size() == 0){
+        return false; //non c'è nessun nuovo evento o evento modificato
+    }
+
+    //Se ho qualche evento che è stato aggiunto o modificato
+    string xml_cal;
+    try {
+        xml_cal = wc.multiGetCalendar(uid_nuovi_eventi); //Ottengo l'xml da una multiget utilizzando i nuovi uid
+    } catch(invalid_argument &ie) {
+        cout << ie.what() << endl;
+        return false;
+    }
+
+    map<string,icalcomponent*> eventi_calendario = readXML(xml_cal);
+
+    //Scorro ogni evento e i suoi sottoeventi per riempire Event.cpp
+    for (auto evento: eventi_calendario) {
+        icalcomponent *c;
+        for (c = icalcomponent_get_first_component(evento.second, ICAL_VEVENT_COMPONENT);
+             c != 0;
+             c = icalcomponent_get_next_component(evento.second, ICAL_VEVENT_COMPONENT)) {
+            //Inserisco il componente nella nostra lista locale insieme al suo etag
+            Event ev = IcalHandler::event_from_ical_component(c, evento.first);
+            insertLocalEvent(ev);
+        }
+    }
+
+    displayEvents();
+
+    //MANCA DA AGGIUNGERE SE ELIMINO UN EVENTO DA FRUUX
     return true;
 }
 
@@ -301,7 +324,6 @@ bool Controller::addEvent(Event ev) {
     return false;
 }
 
-
 bool Controller::deleteEvent(string uid) {
     try {
         if (wc.deleteCalendar(uid)) { //se l'eliminazione online dell'evento è andata a buon fine
@@ -338,6 +360,7 @@ void Controller::displayEvents() {
     }
     cout << "***********************************************" << endl;
 }
+
 void Controller::displayTasks() {
     cout << "**EVENTI ATTUALMENTE PRESENTI NEL CONTENITORE**" << endl;
     for (auto i: Tasks) {
@@ -428,7 +451,6 @@ bool Controller::editTask(Task task) {
     }
     return false;
 }
-
 
 bool Controller::deleteTask(string uid) {
     try {

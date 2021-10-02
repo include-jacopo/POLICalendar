@@ -126,10 +126,20 @@ Event IcalHandler::event_from_ical_component(icalcomponent* comp, string etag){
     map<string,string> eventProps;           /* mappa con il nome della proprietà come key e il valore della proprietà come value */
     eventProps = find_properties(comp);      /* estraggo le proprietà dal componente */
 
+    //Rimuovo le vigolette o quote dall'etag ottenuto
+    string remove_quote1 = "&quot;";
+    string remove_quote2 = "\"";
+    size_t pos;
+
+    while ((pos  = etag.find(remove_quote1) )!= std::string::npos) {
+        etag.erase(pos, remove_quote1.length());
+    }
+    while ((pos  = etag.find(remove_quote2) )!= std::string::npos) {
+        etag.erase(pos, remove_quote2.length());
+    }
+
     Event ev = event_creator(eventProps, etag);   /* creo il nuovo evento passando le proprietà */
-
     return ev;
-
 }
 
 Task IcalHandler::task_creator(map<string,string> taskProp, string etag) {
@@ -220,11 +230,17 @@ Task IcalHandler::task_from_ical_component(icalcomponent* comp, string etag){
 
     taskProps = find_properties(comp);      /* estraggo le proprietà dal componente */
 
-    /*
-    for(auto i: taskProps){
-        cout<<"key: "<<i.first<<" value: "<<i.second<<endl;
+    //Rimuovo le vigolette o quote dall'etag ottenuto
+    string remove_quote1 = "&quot;";
+    string remove_quote2 = "\"";
+    size_t pos;
+
+    while ((pos  = etag.find(remove_quote1) )!= std::string::npos) {
+        etag.erase(pos, remove_quote1.length());
     }
-     */
+    while ((pos  = etag.find(remove_quote2) )!= std::string::npos) {
+        etag.erase(pos, remove_quote2.length());
+    }
 
     Task t = task_creator(taskProps, etag);   /* creo il nuovo evento passando le proprietà */
     
