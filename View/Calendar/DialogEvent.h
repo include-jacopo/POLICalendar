@@ -1,5 +1,5 @@
-#ifndef DIALOGEDIT_H
-#define DIALOGEDIT_H
+#ifndef DIALOGEVENT_H
+#define DIALOGEVENT_H
 
 #include <QWidget>
 #include <QDialog>
@@ -9,16 +9,16 @@
 #include "../../Controller/Controller.h"
 
 namespace Ui {
-class DialogEdit;
+    class DialogEvent;
 }
 
-class DialogEdit : public QDialog {
+class DialogEvent : public QDialog {
     Q_OBJECT
 
 public:
-    explicit DialogEdit(QWidget *parent = nullptr);
-    explicit DialogEdit(const Event& event, QWidget* parent = nullptr);
-    ~DialogEdit() override;
+    explicit DialogEvent(QWidget *parent = nullptr);
+    explicit DialogEvent(const Event& event, QWidget* parent = nullptr);
+    ~DialogEvent() override;
 
     Event getEvent();
 
@@ -32,7 +32,7 @@ signals:
     void eventDeleted(Event evDeleted);
 
 private:
-    Ui::DialogEdit *ui;
+    Ui::DialogEvent *ui;
 
     Event event;
     Controller *controller;
@@ -63,4 +63,4 @@ private:
     void setDateEnd(const QDateTime& dateEnd);
 };
 
-#endif // DIALOGEDIT_H
+#endif // DIALOGEVENT_H

@@ -5,7 +5,7 @@
 #include "HourVBar.h"
 #include "../../Controller/Controller.h"
 #include "CalendarColumns.h"
-#include "DialogEdit.h"
+#include "DialogEvent.h"
 
 #define NCOLS 7
 
@@ -156,14 +156,14 @@ void CalendarColumns::removeEvent(const Event &event) {
 }
 
 void CalendarColumns::createEventDialog() {
-    auto dialog = new DialogEdit(this);
+    auto dialog = new DialogEvent(this);
     connect(dialog, SIGNAL(eventCreated(Event)), this, SLOT(addEvent(Event)));
     dialog->setWindowTitle("Nuovo evento");
     dialog->exec();
 }
 
 void CalendarColumns::editEventDialog(const Event &event) {
-    auto dialog = new DialogEdit(event, this);
+    auto dialog = new DialogEvent(event, this);
     connect(dialog, SIGNAL(eventEdited(Event)), this, SLOT(editEvent(Event)));
     connect(dialog, SIGNAL(eventDeleted(Event)), this, SLOT(removeEvent(Event)));
     dialog->exec();

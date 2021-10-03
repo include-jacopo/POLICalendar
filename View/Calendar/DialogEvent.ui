@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>DialogEdit</class>
- <widget class="QDialog" name="DialogEdit">
+ <class>DialogEvent</class>
+ <widget class="QDialog" name="DialogEvent">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -134,7 +134,7 @@
   <connection>
    <sender>okCancelButtons</sender>
    <signal>accepted()</signal>
-   <receiver>DialogEdit</receiver>
+   <receiver>DialogEvent</receiver>
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -150,7 +150,7 @@
   <connection>
    <sender>okCancelButtons</sender>
    <signal>rejected()</signal>
-   <receiver>DialogEdit</receiver>
+   <receiver>DialogEvent</receiver>
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -166,7 +166,7 @@
   <connection>
    <sender>deleteButton</sender>
    <signal>clicked()</signal>
-   <receiver>DialogEdit</receiver>
+   <receiver>DialogEvent</receiver>
    <slot>deleteEvent()</slot>
    <hints>
     <hint type="sourcelabel">

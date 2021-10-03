@@ -1,8 +1,8 @@
 #include <QMessageBox>
-#include "DialogEdit.h"
-#include "ui_DialogEdit.h"
+#include "DialogEvent.h"
+#include "ui_DialogEvent.h"
 
-DialogEdit::DialogEdit(QWidget *parent) : QDialog(parent), ui(new Ui::DialogEdit) {
+DialogEvent::DialogEvent(QWidget *parent) : QDialog(parent), ui(new Ui::DialogEvent) {
     ui->setupUi(this);
     mode = DialogMode::New;
     // Hide delete button if new event dialog
@@ -13,7 +13,7 @@ DialogEdit::DialogEdit(QWidget *parent) : QDialog(parent), ui(new Ui::DialogEdit
     setDateEnd(QDateTime::currentDateTime());
 }
 
-DialogEdit::DialogEdit(const Event& event, QWidget *parent) : DialogEdit(parent) {
+DialogEvent::DialogEvent(const Event& event, QWidget *parent) : DialogEvent(parent) {
     mode = DialogMode::Edit;
     this->event = event;
     setName(QString::fromStdString(event.getName()));
@@ -29,48 +29,48 @@ DialogEdit::DialogEdit(const Event& event, QWidget *parent) : DialogEdit(parent)
     ui->deleteButton->show();
 }
 
-DialogEdit::~DialogEdit() {
+DialogEvent::~DialogEvent() {
     delete ui;
 }
 
-QString DialogEdit::getName() {
+QString DialogEvent::getName() {
     return ui->fieldEventName->text();
 }
 
-QString DialogEdit::getLocation() {
+QString DialogEvent::getLocation() {
     return ui->fieldLocation->text();
 }
-QString DialogEdit::getDescription() {
+QString DialogEvent::getDescription() {
     return ui->fieldDescription->toPlainText();
 }
-QDateTime DialogEdit::getDateStart() {
+QDateTime DialogEvent::getDateStart() {
     return ui->fieldDateStart->dateTime();
 }
-QDateTime DialogEdit::getDateEnd() {
+QDateTime DialogEvent::getDateEnd() {
     return ui->fieldDateEnd->dateTime();
 }
 
-void DialogEdit::setName(const QString& eventName) {
+void DialogEvent::setName(const QString& eventName) {
     ui->fieldEventName->setText(eventName);
 }
 
-void DialogEdit::setLocation(const QString& location) {
+void DialogEvent::setLocation(const QString& location) {
     ui->fieldLocation->setText(location);
 }
 
-void DialogEdit::setDescription(const QString& description) {
+void DialogEvent::setDescription(const QString& description) {
     ui->fieldDescription->setText(description);
 }
 
-void DialogEdit::setDateStart(const QDateTime& dateStart) {
+void DialogEvent::setDateStart(const QDateTime& dateStart) {
     ui->fieldDateStart->setDateTime(dateStart);
 }
 
-void DialogEdit::setDateEnd(const QDateTime& dateEnd) {
+void DialogEvent::setDateEnd(const QDateTime& dateEnd) {
     ui->fieldDateEnd->setDateTime(dateEnd);
 }
 
-void DialogEdit::accept() {
+void DialogEvent::accept() {
     QList<QString> errors;
     if (getName().isEmpty()) {
         errors.push_back(QString("Inserire il nome dell'evento"));
@@ -102,13 +102,13 @@ void DialogEdit::accept() {
     }
 }
 
-void DialogEdit::deleteEvent() {
+void DialogEvent::deleteEvent() {
     bool statusOk = controller->deleteEvent(event.getUid());
     if (statusOk) emit eventDeleted(getEvent());
     done(2);
 }
 
-Event DialogEdit::getEvent() {
+Event DialogEvent::getEvent() {
     event.setName(getName().toStdString());
     event.setLocation(getLocation().toStdString());
     event.setDescription(getDescription().toStdString());
