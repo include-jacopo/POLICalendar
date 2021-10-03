@@ -83,9 +83,10 @@ bool Controller::updateCtagTask() {
 }
 
 bool Controller::sync() {
-    if(!updateEvents()){
-        return false; // Non c'è stato nessun nuovo evento o task
+    if(!updateEvents() && !updateTasks()){
+        return false; // Non c'è stato nessun nuovo evento
     }
+
     //updateTasks();
     return true;
 }
@@ -112,9 +113,7 @@ bool Controller::downloadEvents(){
         for (auto evento: eventi_calendario) {
             icalcomponent *c;
 
-            for (c = icalcomponent_get_first_component(evento.second, ICAL_VEVENT_COMPONENT);
-                 c != 0;
-                 c = icalcomponent_get_next_component(evento.second, ICAL_VEVENT_COMPONENT)) {
+            for (c = icalcomponent_get_first_component(evento.second, ICAL_VEVENT_COMPONENT); c != 0; c = icalcomponent_get_next_component(evento.second, ICAL_VEVENT_COMPONENT)) {
                         //Inserisco il componente nella nostra lista locale insieme al suo etag
                         Event ev = IcalHandler::event_from_ical_component(c, evento.first);
                         insertLocalEvent(ev);
@@ -151,14 +150,9 @@ bool Controller::downloadTask(){
         //Scorro la lista di componenti per creare gli oggetti task */
         for (auto task: task_calendario) {
             icalcomponent *c;
-            for (c = icalcomponent_get_first_component(task.second, ICAL_VTODO_COMPONENT);
-                 c != 0;
-                 c = icalcomponent_get_next_component(task.second, ICAL_VTODO_COMPONENT)) {
-
+            for (c = icalcomponent_get_first_component(task.second, ICAL_VTODO_COMPONENT); c != 0; c = icalcomponent_get_next_component(task.second, ICAL_VTODO_COMPONENT)) {
                 Task t = IcalHandler::task_from_ical_component(c, task.first);
-
                 insertLocalTask(t);
-
             }
         }
 
@@ -232,9 +226,7 @@ bool Controller::updateEvents() {
     //Scorro ogni evento e i suoi sottoeventi per riempire Event.cpp
     for (auto evento: eventi_calendario) {
         icalcomponent *c;
-        for (c = icalcomponent_get_first_component(evento.second, ICAL_VEVENT_COMPONENT);
-             c != 0;
-             c = icalcomponent_get_next_component(evento.second, ICAL_VEVENT_COMPONENT)) {
+        for (c = icalcomponent_get_first_component(evento.second, ICAL_VEVENT_COMPONENT); c != 0; c = icalcomponent_get_next_component(evento.second, ICAL_VEVENT_COMPONENT)) {
             //Inserisco il componente nella nostra lista locale insieme al suo etag
             Event ev = IcalHandler::event_from_ical_component(c, evento.first);
             insertLocalEvent(ev);
@@ -456,17 +448,59 @@ bool Controller::deleteTask(string uid) {
 bool Controller::updateTasks() {
     string old_ctag = wc.getCtagTask();
 
-    /* QUESTO PEZZO DI CODICE CONTROLLA CHE IL CTAG SIA CAMBIATO. ELIMINA SOLO LE /* DOPO CHE L'HAI IMPLEMENTATA
     if(!updateCtagTask() || old_ctag == wc.getCtagTask()){
         //Se qualcosa è andato storto nell'aggiornamento del ctag o il ctag non è cambiato
         return false;
-    } */
+    }
 
     //Leggo dalla richiesta l'elenco di tutti gli UID e ETAG per il calendario
     string etag_XML = wc.reportEtagTask();
     //Creo una mappa con in chiave l'UID e con valore l'ETAG per confrontarla con quelli che già ho
     map<string,string> task_con_etag = readEtagTask(etag_XML, wc.getUriTask());
 
-    //DA IMPLEMENTARE
+    list<string> uid_nuovi_task; //Ospiterà i nuovi task trovati
+    for(const auto& t: task_con_etag){
+        auto pos_task = Tasks.find(t.first);
+        if(pos_task != Tasks.end()){ //Trovato il task nella mappa locale
+            //Il task scaricato dal server già esiste in locale
+            if(pos_task->second.getEtag() != t.second){ //controllo che l'etag sia differente
+                //cout << "UID ELEMENTO IN LISTA " << t.first << endl;
+                //cout << "ETAG ELEMENTO IN NOSTRA MAPPA " << pos_event->second.getEtag() << endl;
+                uid_nuovi_task.push_back(t.first); //lo aggiungo nella lista dei nuovi eventi da scaricare
+                Tasks.erase(pos_task); //Elimino la vecchia versione dalla lista locale
+            }
+        } else {
+            //cout << "UID ELEMENTO NUOVO " << e.first << endl;
+            uid_nuovi_task.push_back(t.first); //L'evento è nuovo per noi
+        }
+    }
+
+    if(uid_nuovi_task.size() == 0){
+        return false; //non c'è nessun nuovo evento o evento modificato
+    }
+
+    //Se ho qualche evento che è stato aggiunto o modificato
+    string xml_task;
+    try {
+        xml_task = wc.multiGetTask(uid_nuovi_task); //Ottengo l'xml da una multiget utilizzando i nuovi uid
+    } catch(invalid_argument &ie) {
+        cout << ie.what() << endl;
+        return false;
+    }
+
+    map<string,icalcomponent*> task_calendario = readXML(xml_task);
+
+    //Scorro ogni evento e i suoi sottoeventi per riempire Event.cpp
+    for (auto task: task_calendario) {
+        icalcomponent *c;
+        for (c = icalcomponent_get_first_component(task.second, ICAL_VTODO_COMPONENT); c != 0; c = icalcomponent_get_next_component(task.second, ICAL_VTODO_COMPONENT)) {
+            Task t = IcalHandler::task_from_ical_component(c, task.first);
+            insertLocalTask(t);
+        }
+    }
+
+    displayTasks();
+
+    //MANCA DA AGGIUNGERE SE ELIMINO UN TASK DA FRUUX
     return true;
 }
