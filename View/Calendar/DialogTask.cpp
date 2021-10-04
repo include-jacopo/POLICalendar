@@ -145,5 +145,7 @@ Task DialogTask::getTask() {
                 std::chrono::seconds(QDateTime::currentDateTimeUtc().toSecsSinceEpoch())));
     }
     task.setCompleted(getCompleted());
+    task.setDateS(std::chrono::time_point<std::chrono::system_clock>(
+            std::chrono::seconds(QDateTime::currentDateTimeUtc().toSecsSinceEpoch())));
     return task;
 }

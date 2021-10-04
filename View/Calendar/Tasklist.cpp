@@ -18,6 +18,16 @@ Tasklist::Tasklist(QWidget *parent) : QFrame(parent) {
     auto title = new QLabel("Tasklist");
     layout->addWidget(title, 0, Qt::AlignCenter);
 
+    // Filters
+    auto filterArea = new QWidget();
+    auto filterLayout = new QHBoxLayout(filterArea);
+    auto filterCompleted = new QCheckBox("Nascondi task completati");
+    filterCompleted->setObjectName("filterCompleted");
+    filterLayout->addWidget(filterCompleted);
+    filters.insert(filterCompleted, [](TaskGUI *t){return t->getTask().isCompleted();});
+    layout->addWidget(filterArea);
+    connect(filterCompleted, SIGNAL(stateChanged(int)), this, SLOT(updateGUI()));
+
     // Scroll area
     auto scrollarea = new QScrollArea();
     scrollarea->setWidgetResizable(true);
@@ -35,58 +45,33 @@ Tasklist::Tasklist(QWidget *parent) : QFrame(parent) {
     w->setLayout(tasksLayout);
 
     // Initialize task list
-    auto controller = Controller::getInstance();
-    auto mapTasks = controller->getTasks();
-    for (const auto &mapTaskIter: mapTasks) {
-        auto task = mapTaskIter.second;
-        auto taskgui = new TaskGUI(task, this, this);
-        taskgui->setProperty("isLast", false);
-        taskgui->show();
-        tasks.push_back(taskgui);
-        tasksLayout->addWidget(taskgui);
-    }
-    if (!tasks.empty()) tasks.last()->setProperty("isLast", true);
-
-    // Fill empty space at the end
-    tasksLayout->insertStretch(-1, 1);
+    updateTasks();
 }
 
 void Tasklist::addTask(const Task &task) {
     auto taskgui = new TaskGUI(task, this, this);
-    taskgui->setProperty("isLast", true);
-    taskgui->setProperty("isCompleted", task.isCompleted());
-    taskgui->show();
-    tasks.last()->setProperty("isLast", false);
-
-    // Necessary to reapply stylesheet after property edit
-    setStyleSheet("TaskGUI[isLast=true] {border-bottom: 1px solid #086375;}");
-
     tasks.push_back(taskgui);
-    tasksLayout->addWidget(taskgui);
+
+    updateGUI();
 }
 
 void Tasklist::removeTask(const Task &task) {
+    // Fild TaskGUI in all tasks
     auto it = std::find_if(tasks.constBegin(), tasks.constEnd(), [&task](TaskGUI *t) {
-        return t->getTaskUid() == QString::fromStdString(task.getUid());
+        return t->getTask().getUid() == task.getUid();
     });
     if (it != tasks.constEnd()) {
         qsizetype i = it - tasks.constBegin();
-
-        if (i == tasks.size() - 1) {
-            tasks[i-1]->setProperty("isLast", true);
-            // Necessary to reapply stylesheet after property edit
-            setStyleSheet("TaskGUI[isLast=true] {border-bottom: 1px solid #086375;}");
-        }
-
-        tasksLayout->removeWidget(tasks[i]);
         tasks[i]->deleteLater();
         tasks.remove(i);
+
+        updateGUI();
     }
 }
 
 void Tasklist::editTask(const Task &task) {
     auto it = std::find_if(tasks.constBegin(), tasks.constEnd(), [&task](TaskGUI *t) {
-        return t->getTaskUid() == QString::fromStdString(task.getUid());
+        return t->getTask().getUid() == task.getUid();
     });
     if (it != tasks.constEnd()) {
         qsizetype i = it - tasks.constBegin();
@@ -108,18 +93,25 @@ void Tasklist::editTaskDialog(const Task &task) {
     dialog->exec();
 }
 
-void Tasklist::updateTasks() {
-    // Delete displayed tasks
+void Tasklist::clearTasks() {
+    // Delete all tasks
     for (auto task: tasks) {
         task->deleteLater();
     }
     tasks.clear();
+    filteredTasks.clear();
+
     // Delete layout spacer
     QLayoutItem *child;
     while ((child = tasksLayout->takeAt(0)) != nullptr) {
         delete child->widget();
         delete child;
     }
+}
+
+void Tasklist::updateTasks() {
+    // Clear all the tasks
+    clearTasks();
 
     // Reload the task list
     auto controller = Controller::getInstance();
@@ -128,14 +120,55 @@ void Tasklist::updateTasks() {
         auto task = mapTaskIter.second;
         auto taskgui = new TaskGUI(task, this, this);
         taskgui->setProperty("isLast", false);
-        taskgui->show();
-        tasks.push_back(taskgui);
         tasksLayout->addWidget(taskgui);
+        tasks.push_back(taskgui);
     }
-    if (!tasks.empty()) tasks.last()->setProperty("isLast", true);
+    tasksLayout->addStretch(1);
+
+    // Apply filters and show
+    updateGUI();
+}
+
+void Tasklist::updateGUI() {
+    // Hide shown tasks
+    for (const auto& taskGUI: filteredTasks) {
+        taskGUI->hide();
+    }
+
+    // Reset last task
+    if (!filteredTasks.isEmpty()) {
+        filteredTasks.last()->setProperty("isLast", false);
+    }
+
+    // Filter tasks
+    QList<TaskGUI*> toBeFilteredTasks;
+    filteredTasks = QList(tasks);
+    // For each filter
+    for (auto it = filters.constBegin(); it != filters.constEnd(); it++) {
+        // If the filter is active
+        if (it.key()->isChecked()) {
+            // For each task still present in filteredTasks
+            for (const auto& task: filteredTasks){
+                // Apply the filter and add the element to toBeFilteredTasks if ok
+                if (!it.value()(task)) {
+                    toBeFilteredTasks.push_back(task);
+                }
+            }
+        } else {
+            // If filter not active, all elements are ok
+            toBeFilteredTasks = QList(filteredTasks);
+        }
+        filteredTasks = QList(toBeFilteredTasks);
+        toBeFilteredTasks.clear();
+    }
+
+    // Show tasks
+    for (const auto& taskGUI: filteredTasks) {
+        taskGUI->show();
+    }
+
+    // Border bottom of list
+    if (!filteredTasks.empty()) filteredTasks.last()->setProperty("isLast", true);
     // Necessary to reapply stylesheet after property edit
     setStyleSheet("TaskGUI[isLast=true] {border-bottom: 1px solid #086375;}");
-
-    // Fill empty space at the end
-    tasksLayout->insertStretch(-1, 1);
 }

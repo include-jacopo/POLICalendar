@@ -23,7 +23,7 @@ private:
 
 public:
     TaskGUI(const Task &task, ICalendarGUITaskHandler *handler, QWidget *parent = nullptr);
-    QString getTaskUid();
+    Task getTask();
     void updateTask(const Task& task);
 
 protected:

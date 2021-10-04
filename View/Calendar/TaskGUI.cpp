@@ -32,8 +32,8 @@ TaskGUI::TaskGUI(const Task &task, ICalendarGUITaskHandler *handler, QWidget *pa
     updateFields();
 }
 
-QString TaskGUI::getTaskUid() {
-    return QString::fromStdString(task.getUid());
+Task TaskGUI::getTask() {
+    return task;
 }
 
 void TaskGUI::updateTask(const Task &task) {
@@ -62,6 +62,8 @@ void TaskGUI::updateFields() {
         auto dueDateTime = QDateTime::fromSecsSinceEpoch(
                 std::chrono::duration_cast<std::chrono::seconds>(task.getDueDate().time_since_epoch()).count());
         labelDueDate->setText(dueDateTime.toString("dd/MM/yyyy hh:mm"));
+    } else {
+        labelDueDate->setText("");
     }
 }
 

@@ -116,5 +116,7 @@ Event DialogEvent::getEvent() {
             std::chrono::seconds(getDateStart().toUTC().toSecsSinceEpoch())));
     event.setEndTime(std::chrono::time_point<std::chrono::system_clock>(
             std::chrono::seconds(getDateEnd().toUTC().toSecsSinceEpoch())));
+    event.setCreationTime(std::chrono::time_point<std::chrono::system_clock>(
+            std::chrono::seconds(QDateTime::currentDateTimeUtc().toSecsSinceEpoch())));
     return event;
 }
