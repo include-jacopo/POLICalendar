@@ -259,7 +259,7 @@ bool Controller::addEvent(Event ev) {
 
     string payloadIniziale = "BEGIN:VCALENDAR\n"
                              "VERSION:2.0\n"
-                             "PRODID:-//fruux//CalendarApp//EN\n"
+                             "PRODID:-//PoliCalendar//CalendarApp//EN\n"
                              "CALSCALE:GREGORIAN\n"
                              "BEGIN:VEVENT\n";
 
@@ -359,7 +359,7 @@ bool Controller::addTask(Task task) {
     string payloadIniziale = "BEGIN:VCALENDAR\n"
                              "VERSION:2.0\n"
                              "CALSCALE:GREGORIAN\n"
-                             "PRODID:-//fruux//CalendarApp//EN\n"
+                             "PRODID:-//PoliCalendar//CalendarApp//EN\n"
                              "BEGIN:VTODO\n";
 
     string  payloadFinale =  "END:VTODO\n"
