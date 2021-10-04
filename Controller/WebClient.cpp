@@ -298,6 +298,8 @@ string WebClient::report_task(string uri) {
 bool WebClient::put_event(string uri, string evento_xml) {
     string response;
 
+    cout << uri+".ics" << endl;
+
     ne_request *req = ne_request_create(sess, "PUT", (uri+".ics").c_str());
     ne_add_request_header(req, "Authorization", ("Basic "+base64_auth).c_str());
 
@@ -459,6 +461,45 @@ string WebClient::multiGetCalendar(list<string> l) {
     string report = payload_iniziale + event_to_get + payload_finale;
 
     ne_request *req = ne_request_create(sess, "REPORT", getUriCalendar().c_str());
+    ne_add_request_header(req, "Authorization", ("Basic "+base64_auth).c_str());
+    ne_add_request_header(req, "Depth", "1");
+
+    ne_set_request_body_buffer(req, report.c_str(), report.size());
+    ne_add_response_body_reader(req, ne_accept_always, httpResponseReader, &response);
+
+    int result = ne_request_dispatch(req);
+    ne_request_destroy(req);
+
+    switch (result) {
+        case NE_OK:
+            return move(response);
+        case NE_CONNECT:
+            throw invalid_argument("ne_connect error");
+        case NE_TIMEOUT:
+            throw invalid_argument("ne_timeout error");
+        case NE_AUTH:
+            throw invalid_argument("ne_auth error");
+        default:
+            throw invalid_argument("ne_generic error");
+    }
+}
+
+string WebClient::multiGetTask(list<string> l) {
+    string response;
+    string payload_iniziale = "<c:calendar-multiget xmlns:d=\"DAV:\" xmlns:c=\"urn:ietf:params:xml:ns:caldav\">\n"
+                              "    <d:prop>\n"
+                              "        <d:getetag />\n"
+                              "        <c:calendar-data />\n"
+                              "    </d:prop>\n";
+    string payload_finale =   "</c:calendar-multiget>";
+
+    string task_to_get;
+    for(auto i: l){
+        task_to_get.append("<d:href>"+getUriTask()+i+".ics</d:href>\n");
+    }
+    string report = payload_iniziale + task_to_get + payload_finale;
+
+    ne_request *req = ne_request_create(sess, "REPORT", getUriTask().c_str());
     ne_add_request_header(req, "Authorization", ("Basic "+base64_auth).c_str());
     ne_add_request_header(req, "Depth", "1");
 

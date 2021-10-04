@@ -42,6 +42,7 @@ public:
     bool deleteCalendar(const string uid);
     bool deleteTask(const string uid);
     string multiGetCalendar(list<string> l);
+    string multiGetTask(list<string> l);
 
 
 private:
