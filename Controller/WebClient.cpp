@@ -298,6 +298,8 @@ string WebClient::report_task(string uri) {
 bool WebClient::put_event(string uri, string evento_xml) {
     string response;
 
+    cout << uri+".ics" << endl;
+
     ne_request *req = ne_request_create(sess, "PUT", (uri+".ics").c_str());
     ne_add_request_header(req, "Authorization", ("Basic "+base64_auth).c_str());
 

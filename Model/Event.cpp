@@ -134,7 +134,7 @@ std::string Event::gen_random(std::string s, int len) {
             "abcdefghijklmnopqrstuvwxyz";
 
     for (int i = 0; i < len; ++i) {
-        int randNum = rand() % (63 - 0 + 1) + 0;
+        int randNum = rand() % (62 - 1);
         s[i] = alphanum[randNum];
     }
 

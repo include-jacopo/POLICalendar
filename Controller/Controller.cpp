@@ -83,11 +83,9 @@ bool Controller::updateCtagTask() {
 }
 
 bool Controller::sync() {
-    if(!updateEvents() && !updateTasks()){
-        return false; // Non c'è stato nessun nuovo evento
+    if(!updateEvents() || !updateTasks()){
+        return false; // C'è stato un errore con il server
     }
-
-    //updateTasks();
     return true;
 }
 
@@ -181,61 +179,68 @@ int Controller::insertLocalTask(Task t){
 bool Controller::updateEvents() {
     string old_ctag = wc.getCtagCalendar();
 
-    if(!updateCtagCalendar() || old_ctag == wc.getCtagCalendar()){
-        //Se qualcosa è andato storto nell'aggiornamento del ctag o il ctag non è cambiato
-        return false;
+    if(!updateCtagCalendar()){
+        return false; //errore di risposta dal server per ottenere il nuovo ctag
     }
 
-    //Leggo dalla richiesta l'elenco di tutti gli UID e ETAG per il calendario
-    string etag_XML = wc.reportEtagCalendar();
-    //Creo una mappa con in chiave l'UID e con valore l'ETAG per confrontarla con quelli che già ho
-    map<string,string> eventi_con_etag = readEtagCalendar(etag_XML, wc.getUriCalendar());
+    if(old_ctag != wc.getCtagCalendar()){
+        //Leggo dalla richiesta l'elenco di tutti gli UID e ETAG per il calendario
+        string etag_XML = wc.reportEtagCalendar();
+        //Creo una mappa con in chiave l'UID e con valore l'ETAG per confrontarla con quelli che già ho
+        map<string,string> eventi_con_etag = readEtagCalendar(etag_XML, wc.getUriCalendar());
 
-    list<string> uid_nuovi_eventi; //Ospiterà i nuovi eventi trovati
-    for(const auto& e: eventi_con_etag){
-        auto pos_event = Events.find(e.first);
-        if(pos_event != Events.end()){ //Trovato l'evento nella mappa locale
-            //L'evento scaricato dal server già esiste in locale
-            if(pos_event->second.getEtag() != e.second){ //controllo che l'etag sia differente
-                //cout << "UID ELEMENTO IN LISTA " << e.first << endl;
-                //cout << "ETAG ELEMENTO IN NOSTRA MAPPA " << pos_event->second.getEtag() << endl;
-                uid_nuovi_eventi.push_back(e.first); //lo aggiungo nella lista dei nuovi eventi da scaricare
-                Events.erase(pos_event); //Elimino la vecchia versione dalla lista locale
+        //Cerco se online sono presenti nuovi eventi oppure nuovi eventi modificati
+        list<string> uid_nuovi_eventi; //Ospiterà i nuovi eventi trovati
+        for(const auto& e: eventi_con_etag){
+            auto pos_event = Events.find(e.first);
+            if(pos_event != Events.end()){ //Trovato l'evento nella mappa locale
+                //L'evento scaricato dal server già esiste in locale
+                if(pos_event->second.getEtag() != e.second){ //controllo che l'etag sia differente
+                    //cout << "UID ELEMENTO IN LISTA " << e.first << endl;
+                    //cout << "ETAG ELEMENTO IN NOSTRA MAPPA " << pos_event->second.getEtag() << endl;
+                    uid_nuovi_eventi.push_back(e.first); //lo aggiungo nella lista dei nuovi eventi da scaricare
+                    Events.erase(pos_event); //Elimino la vecchia versione dalla lista locale
+                }
+            } else {
+                //cout << "UID ELEMENTO NUOVO " << e.first << endl;
+                uid_nuovi_eventi.push_back(e.first); //L'evento è nuovo per noi
             }
-        } else {
-            //cout << "UID ELEMENTO NUOVO " << e.first << endl;
-            uid_nuovi_eventi.push_back(e.first); //L'evento è nuovo per noi
         }
-    }
 
-    if(uid_nuovi_eventi.size() == 0){
-        return false; //non c'è nessun nuovo evento o evento modificato
-    }
+        //Cerco se online sono stati cancellati degli eventi che noi abbiamo in locale
+        for(const auto& e: Events) {
+            auto pos_event = eventi_con_etag.find(e.first);
+            if(pos_event == eventi_con_etag.end()){ //Se negli eventi online ho eliminato qualcosa che ho ancora in locale
+                Events.erase(e.first); //la rimuovo dal locale
+            }
+        }
 
-    //Se ho qualche evento che è stato aggiunto o modificato
-    string xml_cal;
-    try {
-        xml_cal = wc.multiGetCalendar(uid_nuovi_eventi); //Ottengo l'xml da una multiget utilizzando i nuovi uid
-    } catch(invalid_argument &ie) {
-        cout << ie.what() << endl;
-        return false;
-    }
+        if(uid_nuovi_eventi.size()>0){
+            //Se ho qualche evento che è stato aggiunto o modificato
+            string xml_cal;
+            try {
+                xml_cal = wc.multiGetCalendar(uid_nuovi_eventi); //Ottengo l'xml da una multiget utilizzando i nuovi uid
+            } catch(invalid_argument &ie) {
+                cout << ie.what() << endl;
+                return false;
+            }
 
-    map<string,icalcomponent*> eventi_calendario = readXML(xml_cal);
+            map<string,icalcomponent*> eventi_calendario = readXML(xml_cal);
 
-    //Scorro ogni evento e i suoi sottoeventi per riempire Event.cpp
-    for (auto evento: eventi_calendario) {
-        icalcomponent *c;
-        for (c = icalcomponent_get_first_component(evento.second, ICAL_VEVENT_COMPONENT); c != 0; c = icalcomponent_get_next_component(evento.second, ICAL_VEVENT_COMPONENT)) {
-            //Inserisco il componente nella nostra lista locale insieme al suo etag
-            Event ev = IcalHandler::event_from_ical_component(c, evento.first);
-            insertLocalEvent(ev);
+            //Scorro ogni evento e i suoi sottoeventi per riempire Event.cpp
+            for (auto evento: eventi_calendario) {
+                icalcomponent *c;
+                for (c = icalcomponent_get_first_component(evento.second, ICAL_VEVENT_COMPONENT); c != 0; c = icalcomponent_get_next_component(evento.second, ICAL_VEVENT_COMPONENT)) {
+                    //Inserisco il componente nella nostra lista locale insieme al suo etag
+                    Event ev = IcalHandler::event_from_ical_component(c, evento.first);
+                    insertLocalEvent(ev);
+                }
+            }
         }
     }
 
     displayEvents();
 
-    //MANCA DA AGGIUNGERE SE ELIMINO UN EVENTO DA FRUUX
     return true;
 }
 
@@ -256,8 +261,6 @@ bool Controller::addEvent(Event ev) {
                              "VERSION:2.0\n"
                              "PRODID:-//fruux//CalendarApp//EN\n"
                              "CALSCALE:GREGORIAN\n"
-                             "X-WR-CALNAME:Calendar\n"
-                             "X-APPLE-CALENDAR-COLOR:#B90E28\n"
                              "BEGIN:VEVENT\n";
 
     string  payloadFinale =  "END:VEVENT\n"
@@ -355,56 +358,72 @@ bool Controller::addTask(Task task) {
 
     string payloadIniziale = "BEGIN:VCALENDAR\n"
                              "VERSION:2.0\n"
-                             "PRODID:-//fruux//CalendarApp//EN\n"
                              "CALSCALE:GREGORIAN\n"
-                             "X-WR-CALNAME:Calendar\n"
-                             "X-APPLE-CALENDAR-COLOR:#B90E28\n"
+                             "PRODID:-//fruux//CalendarApp//EN\n"
                              "BEGIN:VTODO\n";
 
     string  payloadFinale =  "END:VTODO\n"
                              "END:VCALENDAR";
 
-    std::time_t tt1, tt2, tt3;
-    /* ottengo degli oggetti time_t partendo dai campi chrono::system::clock dell'evento */
-    tt1 = chrono::system_clock::to_time_t (task.getDueDate());      //Data task
-    tt2 = chrono::system_clock::to_time_t ( task.getDateS());     //Data creazione task
+    std::time_t tt1, tt2, tt3; //Otterro' degli oggetti time_t partendo dai campi chrono::system::clock dell'evento
+    stringstream streamStartT, streamDateT, streamComplT; //Lo utilizzo per convertire l'oggetto di tipo time in stringa
+    string startT, dateT, complT; //Per unire le stringhe dello stream in una stringa unica
 
-
-    string startT, dateT, complT;
-    stringstream streamStartT, streamDateT, streamComplT;
-
-    /* inserisco l'output in uno stream di stringhe */
+   //Gestione della stringa di data creazione task
+    tt2 = chrono::system_clock::to_time_t ( task.getDateS()); //Data creazione task
     streamDateT << std::put_time(std::gmtime(&tt2), "%Y%m%dT%H%M%SZ" );
+    dateT = streamDateT.str(); //Salvo lo stream di stringhe all'interno di una singola stringa
 
+    // Aggiungo i campi obbligatori
+    string payloadIntermedio = "UID:"+task.getUid()+"\n"+"CREATED:"+dateT+"\n"+"DTSTAMP:"+dateT;
+            //+"\n"+"DTSTAMP:"+dateT+"\n"+"\n"+"SUMMARY:"+task.getName()+"\n";
 
-    /* salvo lo stream di stringhe all'interno di una singola stringa */
+    //Aggiungo se il task è completato o deve esserlo
+    if(task.isCompleted()){
+        payloadIntermedio = payloadIntermedio+"\n"+"STATUS:COMPLETED";
+    } else {
+        payloadIntermedio = payloadIntermedio+"\n"+"STATUS:NEEDS-ACTION";
+    }
 
-    dateT = streamDateT.str();
-
-    /* aggiungo i campi obbligatori */
-    string payloadIntermedio = "DTSTART:"+startT+"\n"+"UID:"+task.getUid()+"\n"+"DTSTAMP:"+dateT+"\n"+"\n"+"SUMMARY:"+task.getName()+"\n";
-    /* aggiungo i campi opzionali */
+    //Se c'è la descrizione la aggiungo
     if(!task.getDescription().empty()){
-        payloadIntermedio = payloadIntermedio + "DESCRIPTION:"+task.getDescription()+"\n";
+        payloadIntermedio = payloadIntermedio+"\n"+"DESCRIPTION:"+task.getDescription();
     }
-    if(!task.getLocation().empty()){
-        payloadIntermedio = payloadIntermedio + "LOCATION:"+task.getLocation()+"\n";
-    }
+
+    //Se c'è una data di scadenza la aggiungo
     if(task.isFlagDate()){
-        tt1 = chrono::system_clock::to_time_t (task.getDueDate());      /* data task */
+        tt1 = chrono::system_clock::to_time_t (task.getDueDate()); //Data scadenza task
         streamStartT << std::put_time(std::gmtime(&tt1), "%Y%m%dT%H%M%SZ" );
         startT = streamStartT.str();
-        payloadIntermedio = payloadIntermedio+"DTSTART:"+startT;
+        payloadIntermedio = payloadIntermedio+"\n"+"DUE:"+startT;
     }
+
+    //Aggiungo il tipo di prirità al task se esiste (1 bassa, 3 media, 5 alta)
+    if(task.getPriority() > 0) {
+        payloadIntermedio = payloadIntermedio + "\n" + "PRIORITY:" + to_string(task.getPriority());
+    }
+
+    //Il summary dell'evento è obbligatorio
+    payloadIntermedio = payloadIntermedio+"\n"+"SUMMARY:"+task.getName();
+
+    //Aggiungo la data di quando è stato completato il task
     if(task.isCompleted()){
         tt3 = chrono::system_clock::to_time_t (task.getDateCompleted());      /* data task */
         streamComplT << std::put_time(std::gmtime(&tt3), "%Y%m%dT%H%M%SZ" );
-        complT = streamStartT.str();
-        payloadIntermedio = payloadIntermedio+"COMPLETED:"+complT+"\n";
+        complT = streamComplT.str();
+        cout << "L'ho completato il: " + complT << endl;
+        payloadIntermedio = payloadIntermedio+"\n"+"COMPLETED:"+complT;
 
     }
 
-    string payloadCompleto = payloadIniziale + payloadIntermedio + payloadFinale;
+    //Aggiungo l'eventuale location
+    if(!task.getLocation().empty()){
+        payloadIntermedio = payloadIntermedio+"\n"+"LOCATION:"+task.getLocation();
+    }
+
+    string payloadCompleto = payloadIniziale + payloadIntermedio + "\n" + payloadFinale;
+
+    cout << payloadCompleto << endl;
 
     try {
         if(wc.put_event(wc.getUriTask()+task.getUid(),payloadCompleto)){
@@ -448,59 +467,65 @@ bool Controller::deleteTask(string uid) {
 bool Controller::updateTasks() {
     string old_ctag = wc.getCtagTask();
 
-    if(!updateCtagTask() || old_ctag == wc.getCtagTask()){
-        //Se qualcosa è andato storto nell'aggiornamento del ctag o il ctag non è cambiato
-        return false;
+    if(!updateCtagTask()) {
+        return false; //Errore con il server nell'ottenere il ctag
     }
 
-    //Leggo dalla richiesta l'elenco di tutti gli UID e ETAG per il calendario
-    string etag_XML = wc.reportEtagTask();
-    //Creo una mappa con in chiave l'UID e con valore l'ETAG per confrontarla con quelli che già ho
-    map<string,string> task_con_etag = readEtagTask(etag_XML, wc.getUriTask());
+    if(old_ctag != wc.getCtagTask()){ //Solo se il ctag è cambiato provo a leggere i nuovi
+        //Leggo dalla richiesta l'elenco di tutti gli UID e ETAG per il calendario
+        string etag_XML = wc.reportEtagTask();
+        //Creo una mappa con in chiave l'UID e con valore l'ETAG per confrontarla con quelli che già ho
+        map<string,string> task_con_etag = readEtagTask(etag_XML, wc.getUriTask());
 
-    list<string> uid_nuovi_task; //Ospiterà i nuovi task trovati
-    for(const auto& t: task_con_etag){
-        auto pos_task = Tasks.find(t.first);
-        if(pos_task != Tasks.end()){ //Trovato il task nella mappa locale
-            //Il task scaricato dal server già esiste in locale
-            if(pos_task->second.getEtag() != t.second){ //controllo che l'etag sia differente
-                //cout << "UID ELEMENTO IN LISTA " << t.first << endl;
-                //cout << "ETAG ELEMENTO IN NOSTRA MAPPA " << pos_event->second.getEtag() << endl;
-                uid_nuovi_task.push_back(t.first); //lo aggiungo nella lista dei nuovi eventi da scaricare
-                Tasks.erase(pos_task); //Elimino la vecchia versione dalla lista locale
+        list<string> uid_nuovi_task; //Ospiterà i nuovi task trovati
+        for(const auto& t: task_con_etag){
+            auto pos_task = Tasks.find(t.first);
+            if(pos_task != Tasks.end()){ //Trovato il task nella mappa locale
+                //Il task scaricato dal server già esiste in locale
+                if(pos_task->second.getEtag() != t.second){ //controllo che l'etag sia differente
+                    //cout << "UID ELEMENTO IN LISTA " << t.first << endl;
+                    //cout << "ETAG ELEMENTO IN NOSTRA MAPPA " << pos_event->second.getEtag() << endl;
+                    uid_nuovi_task.push_back(t.first); //lo aggiungo nella lista dei nuovi eventi da scaricare
+                    Tasks.erase(pos_task); //Elimino la vecchia versione dalla lista locale
+                }
+            } else {
+                //cout << "UID ELEMENTO NUOVO " << e.first << endl;
+                uid_nuovi_task.push_back(t.first); //L'evento è nuovo per noi
             }
-        } else {
-            //cout << "UID ELEMENTO NUOVO " << e.first << endl;
-            uid_nuovi_task.push_back(t.first); //L'evento è nuovo per noi
         }
-    }
 
-    if(uid_nuovi_task.size() == 0){
-        return false; //non c'è nessun nuovo evento o evento modificato
-    }
+        //Cerco se online sono stati cancellati dei task che noi abbiamo in locale
+        for(const auto& t: Tasks) {
+            auto pos_task = task_con_etag.find(t.first);
+            if(pos_task == task_con_etag.end()){ //Se negli eventi online ho eliminato qualcosa che ho ancora in locale
+                Tasks.erase(t.first); //la rimuovo dal locale
+            }
+        }
 
-    //Se ho qualche evento che è stato aggiunto o modificato
-    string xml_task;
-    try {
-        xml_task = wc.multiGetTask(uid_nuovi_task); //Ottengo l'xml da una multiget utilizzando i nuovi uid
-    } catch(invalid_argument &ie) {
-        cout << ie.what() << endl;
-        return false;
-    }
+        if(uid_nuovi_task.size() > 0){
+            //Se ho qualche evento che è stato aggiunto o modificato
+            string xml_task;
+            try {
+                xml_task = wc.multiGetTask(uid_nuovi_task); //Ottengo l'xml da una multiget utilizzando i nuovi uid
+            } catch(invalid_argument &ie) {
+                cout << ie.what() << endl;
+                return false;
+            }
 
-    map<string,icalcomponent*> task_calendario = readXML(xml_task);
+            map<string,icalcomponent*> task_calendario = readXML(xml_task);
 
-    //Scorro ogni evento e i suoi sottoeventi per riempire Event.cpp
-    for (auto task: task_calendario) {
-        icalcomponent *c;
-        for (c = icalcomponent_get_first_component(task.second, ICAL_VTODO_COMPONENT); c != 0; c = icalcomponent_get_next_component(task.second, ICAL_VTODO_COMPONENT)) {
-            Task t = IcalHandler::task_from_ical_component(c, task.first);
-            insertLocalTask(t);
+            //Scorro ogni evento e i suoi sottoeventi per riempire Event.cpp
+            for (auto task: task_calendario) {
+                icalcomponent *c;
+                for (c = icalcomponent_get_first_component(task.second, ICAL_VTODO_COMPONENT); c != 0; c = icalcomponent_get_next_component(task.second, ICAL_VTODO_COMPONENT)) {
+                    Task t = IcalHandler::task_from_ical_component(c, task.first);
+                    insertLocalTask(t);
+                }
+            }
         }
     }
 
     displayTasks();
 
-    //MANCA DA AGGIUNGERE SE ELIMINO UN TASK DA FRUUX
     return true;
 }
