@@ -58,7 +58,9 @@ QDateTime DialogTask::getDueDate() {
 
 int DialogTask::getPriority() {
     int sliderVal = ui->prioritySlider->value();
-    if (sliderVal == 1) {
+    if (sliderVal == 0) {
+        return 0; // No priority
+    } else if (sliderVal == 1) {
         return 9; // Low priority
     } else if (sliderVal == 2) {
         return 5; // Middle priority
@@ -93,7 +95,9 @@ void DialogTask::setDueDate(const QDateTime &dueDate) {
 
 void DialogTask::setPriority(int priority) {
     int sliderVal;
-    if (priority == 0 || priority > 5) {
+    if (priority == 0) {
+      sliderVal = 0; // No priority
+    } else if (priority > 5) {
         sliderVal = 1; // Low priority
     } else if (priority == 5) {
         sliderVal = 2; // Middle priority
