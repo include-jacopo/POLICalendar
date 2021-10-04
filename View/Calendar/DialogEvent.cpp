@@ -2,18 +2,18 @@
 #include "DialogEvent.h"
 #include "ui_DialogEvent.h"
 
-DialogEvent::DialogEvent(QWidget *parent) : QDialog(parent), ui(new Ui::DialogEvent) {
+DialogEvent::DialogEvent(QDate date, QWidget *parent) : QDialog(parent), ui(new Ui::DialogEvent) {
     ui->setupUi(this);
     mode = DialogMode::New;
     // Hide delete button if new event dialog
     ui->deleteButton->hide();
 
     controller = Controller::getInstance();
-    setDateStart(QDateTime::currentDateTime());
-    setDateEnd(QDateTime::currentDateTime());
+    setDateStart(QDateTime(date, QTime::currentTime()));
+    setDateEnd(QDateTime(date, QTime::currentTime()).addSecs(3600));
 }
 
-DialogEvent::DialogEvent(const Event& event, QWidget *parent) : DialogEvent(parent) {
+DialogEvent::DialogEvent(const Event& event, QWidget *parent) : DialogEvent(QDate::currentDate(), parent) {
     mode = DialogMode::Edit;
     this->event = event;
     setName(QString::fromStdString(event.getName()));

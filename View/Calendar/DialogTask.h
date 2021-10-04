@@ -44,7 +44,7 @@ private:
     QString getDescription();
     bool getDueDateEnabled();
     /** Gets the due date GUI field value
-    * @return Due date as UTC time
+    * @return Due date as local time
     */
     QDateTime getDueDate();
     int getPriority();
@@ -54,7 +54,7 @@ private:
     void setDescription(const QString& description);
     Q_SLOT void setDueDateEnabled(int val);
     /** Sets the due date GUI field value
-     * @param dueDate Due date as UTC time
+     * @param dueDate Due date as local time
      */
     void setDueDate(const QDateTime& dueDate);
     void setPriority(int priority);

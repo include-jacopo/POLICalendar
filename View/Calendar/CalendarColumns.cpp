@@ -156,7 +156,7 @@ void CalendarColumns::removeEvent(const Event &event) {
 }
 
 void CalendarColumns::createEventDialog() {
-    auto dialog = new DialogEvent(this);
+    auto dialog = new DialogEvent(firstColDate, this);
     connect(dialog, SIGNAL(eventCreated(Event)), this, SLOT(addEvent(Event)));
     dialog->setWindowTitle("Nuovo evento");
     dialog->exec();
