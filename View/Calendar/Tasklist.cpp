@@ -18,16 +18,6 @@ Tasklist::Tasklist(QWidget *parent) : QFrame(parent) {
     auto title = new QLabel("Tasklist");
     layout->addWidget(title, 0, Qt::AlignCenter);
 
-    // Filters
-    auto filterArea = new QWidget();
-    auto filterLayout = new QHBoxLayout(filterArea);
-    auto filterCompleted = new QCheckBox("Nascondi task completati");
-    filterCompleted->setObjectName("filterCompleted");
-    filterLayout->addWidget(filterCompleted);
-    filters.insert(filterCompleted, [](TaskGUI *t) { return t->getTask().isCompleted(); });
-    layout->addWidget(filterArea);
-    connect(filterCompleted, SIGNAL(stateChanged(int)), this, SLOT(updateGUI()));
-
     // Scroll area
     auto scrollarea = new QScrollArea();
     scrollarea->setWidgetResizable(true);
@@ -43,6 +33,16 @@ Tasklist::Tasklist(QWidget *parent) : QFrame(parent) {
     tasksLayout->setSpacing(0);
     tasksLayout->setContentsMargins(0, 0, 0, 0);
     w->setLayout(tasksLayout);
+
+    // Filters
+    auto filterArea = new QWidget();
+    auto filterLayout = new QHBoxLayout(filterArea);
+    auto filterCompleted = new QCheckBox("Nascondi task completati");
+    filterCompleted->setObjectName("filterCompleted");
+    filterLayout->addWidget(filterCompleted);
+    filters.insert(filterCompleted, [](TaskGUI *t) { return t->getTask().isCompleted(); });
+    layout->addWidget(filterArea);
+    connect(filterCompleted, SIGNAL(stateChanged(int)), this, SLOT(updateGUI()));
 
     // Initialize task list
     auto controller = Controller::getInstance();

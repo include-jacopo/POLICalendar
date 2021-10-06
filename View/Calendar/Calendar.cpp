@@ -5,6 +5,7 @@
 #include <QDir>
 #include <QPushButton>
 #include <QMessageBox>
+#include <QTableView>
 #include "Calendar.h"
 #include "../../Controller/Controller.h"
 
@@ -27,6 +28,7 @@ Calendar::Calendar(QWidget *parent) : QFrame(parent) {
 
     // Calendar widget
     calendarWidget = new QCalendarWidget();
+    calendarWidget->setVerticalHeaderFormat(QCalendarWidget::NoVerticalHeader);
     layout->addWidget(calendarWidget, 0, 1);
 
     // Tasklist widget
