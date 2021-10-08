@@ -5,16 +5,13 @@
 #include "WebClient.h"
 #include <neon/ne_session.h>
 #include <neon/ne_request.h>
-#include <neon/ne_207.h>
-#include <neon/ne_utils.h>
 #include <neon/ne_uri.h>
-#include <neon/ne_props.h>
 #include <iostream>
 #include <string>
-#include <random>
+#include <list>
+#include <neon/ne_utils.h>
 #include "Base64.h"
 #include "XMLReader.h"
-#include <list>
 
 using namespace std;
 
@@ -41,6 +38,15 @@ int WebClient::getPort(){
     return this->port;
 };
 
+void hook_pre_send(ne_request *req, void *userdata, ne_buffer *header) {
+    std::string headersToAdd[] = {"User-Agent: PoliCalendar/0.1\n",
+                                  "Content-Type: application/xml charset=utf-8\n",
+                                  std::string("Authorization: Basic ") + std::string((char*)userdata) + "\n"};
+    for (const auto& h: headersToAdd) {
+        ne_buffer_zappend(header, h.c_str());
+    }
+}
+
 void WebClient::setClient(const string url, const string user, const string pass, int port) {
     this->port = port;
     this->url = url;
@@ -48,6 +54,13 @@ void WebClient::setClient(const string url, const string user, const string pass
     ne_sock_init();
     sess = ne_session_create("https", url.c_str(), port);
     ne_ssl_trust_default_ca(sess);
+
+    /** TODO REMOVE DEBUG **/
+    auto f = fopen("response.txt", "w+");
+    ne_debug_init(f, NE_DBG_HTTP);
+
+    // Add headers to each request
+    ne_hook_pre_send(sess, hook_pre_send, (void*)base64_auth.c_str());
 }
 
 int WebClient::tryLogin() {
@@ -62,7 +75,7 @@ int WebClient::tryLogin() {
     string url_prop = "https://" + getUrl() + "/";
 
     ne_request *req = ne_request_create(sess, "PROPFIND", (url_prop).c_str());
-    ne_add_request_header(req, "Authorization", ("Basic "+base64_auth).c_str());
+    ne_add_request_header(req, "Depth", "0");
 
     ne_set_request_body_buffer(req, propfind_link_user.c_str(), propfind_link_user.size());
     ne_add_response_body_reader(req, ne_accept_always, httpResponseReader, &response);
@@ -112,7 +125,6 @@ void WebClient::propfindUri(){
     string url_prop = "https://" + getUrl() + "/";
 
     ne_request *req = ne_request_create(sess, "PROPFIND", (url_prop).c_str());
-    ne_add_request_header(req, "Authorization", ("Basic "+base64_auth).c_str());
 
     ne_set_request_body_buffer(req, propfind_link_user.c_str(), propfind_link_user.size());
     ne_add_response_body_reader(req, ne_accept_always, httpResponseReader, &response);
@@ -131,7 +143,6 @@ void WebClient::propfindUri(){
     url_prop = "https://" + getUrl() + link_user; //modifico l'url della richiesta verso l'utente specifico
 
     req = ne_request_create(sess, "PROPFIND", (url_prop).c_str());
-    ne_add_request_header(req, "Authorization", ("Basic "+base64_auth).c_str());
 
     string response1;
     ne_set_request_body_buffer(req, propfind_calendar_collection.c_str(), propfind_calendar_collection.size());
@@ -155,7 +166,6 @@ void WebClient::propfindUri(){
     url_prop = "https://" + getUrl() + calendar_collection; //modifico l'url della richiesta il calendario dell'utente
 
     req = ne_request_create(sess, "PROPFIND", (url_prop).c_str());
-    ne_add_request_header(req, "Authorization", ("Basic "+base64_auth).c_str());
     ne_add_request_header(req, "Depth", "1");
 
     string response2;
@@ -197,7 +207,6 @@ string WebClient::propfindCtag(string uri) {
                       "</d:propfind>";
 
     ne_request *req = ne_request_create(sess, "PROPFIND", (uri).c_str());
-    ne_add_request_header(req, "Authorization", ("Basic "+base64_auth).c_str());
 
     ne_set_request_body_buffer(req, propfind.c_str(), propfind.size());
     ne_add_response_body_reader(req, ne_accept_always, httpResponseReader, &response);
@@ -233,7 +242,6 @@ string WebClient::report_calendar(string uri) {
                     "</c:calendar-query>";
 
     ne_request *req = ne_request_create(sess, "REPORT", uri.c_str());
-    ne_add_request_header(req, "Authorization", ("Basic "+base64_auth).c_str());
     ne_add_request_header(req, "Depth", "1");
 
     ne_set_request_body_buffer(req, report.c_str(), report.size());
@@ -271,7 +279,6 @@ string WebClient::report_task(string uri) {
                     "</c:calendar-query>";
 
     ne_request *req = ne_request_create(sess, "REPORT", uri.c_str());
-    ne_add_request_header(req, "Authorization", ("Basic "+base64_auth).c_str());
     ne_add_request_header(req, "Depth", "1");
 
     ne_set_request_body_buffer(req, report.c_str(), report.size());
@@ -301,7 +308,6 @@ bool WebClient::put_event(string uri, string evento_xml) {
     cout << uri+".ics" << endl;
 
     ne_request *req = ne_request_create(sess, "PUT", (uri+".ics").c_str());
-    ne_add_request_header(req, "Authorization", ("Basic "+base64_auth).c_str());
 
     ne_set_request_body_buffer(req, evento_xml.c_str(), evento_xml.size());
     ne_add_response_body_reader(req, ne_accept_always, httpResponseReader, &response);
@@ -321,7 +327,6 @@ bool WebClient::deleteCalendar(const string uid) {
     string response;
 
     ne_request *req = ne_request_create(sess, "DELETE", (this->uri_calendar+uid+".ics").c_str());
-    ne_add_request_header(req, "Authorization", ("Basic "+base64_auth).c_str());
 
     ne_add_response_body_reader(req, ne_accept_always, httpResponseReader, &response);
 
@@ -347,7 +352,6 @@ bool WebClient::deleteTask(const string uid) {
     string response;
 
     ne_request *req = ne_request_create(sess, "DELETE", (this->uri_task +uid+".ics").c_str());
-    ne_add_request_header(req, "Authorization", ("Basic "+base64_auth).c_str());
 
     ne_add_response_body_reader(req, ne_accept_always, httpResponseReader, &response);
 
@@ -383,7 +387,6 @@ string WebClient::reportEtagCalendar() {
                       "</c:calendar-query>";
 
     ne_request *req = ne_request_create(sess, "REPORT", (this->uri_calendar).c_str());
-    ne_add_request_header(req, "Authorization", ("Basic "+base64_auth).c_str());
     ne_add_request_header(req, "Depth", "1");
 
     ne_set_request_body_buffer(req, propfind.c_str(), propfind.size());
@@ -421,7 +424,6 @@ string WebClient::reportEtagTask() {
                       "</c:calendar-query>";
 
     ne_request *req = ne_request_create(sess, "REPORT", (this->uri_task).c_str());
-    ne_add_request_header(req, "Authorization", ("Basic "+base64_auth).c_str());
     ne_add_request_header(req, "Depth", "1");
 
     ne_set_request_body_buffer(req, propfind.c_str(), propfind.size());
@@ -461,7 +463,6 @@ string WebClient::multiGetCalendar(list<string> l) {
     string report = payload_iniziale + event_to_get + payload_finale;
 
     ne_request *req = ne_request_create(sess, "REPORT", getUriCalendar().c_str());
-    ne_add_request_header(req, "Authorization", ("Basic "+base64_auth).c_str());
     ne_add_request_header(req, "Depth", "1");
 
     ne_set_request_body_buffer(req, report.c_str(), report.size());
@@ -500,7 +501,6 @@ string WebClient::multiGetTask(list<string> l) {
     string report = payload_iniziale + task_to_get + payload_finale;
 
     ne_request *req = ne_request_create(sess, "REPORT", getUriTask().c_str());
-    ne_add_request_header(req, "Authorization", ("Basic "+base64_auth).c_str());
     ne_add_request_header(req, "Depth", "1");
 
     ne_set_request_body_buffer(req, report.c_str(), report.size());
