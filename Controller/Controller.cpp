@@ -286,7 +286,17 @@ bool Controller::addEvent(Event ev) {
     creationT = streamCreationT.str();
 
     string payloadIntermedio = "DTSTART:"+startT+"\n"+"UID:"+ev.getUid()+"\n"+"CREATED:"+creationT+"\n"+"DTSTAMP:"+creationT+"\n"+
-                               "DTEND:"+endT+"\n"+"SUMMARY:"+ev.getName()+"\n";
+                               "DTEND:"+endT+"\n";
+
+    if(!ev.getLocation().empty()){
+        payloadIntermedio = payloadIntermedio + "LOCATION:" + ev.getLocation() +"\n";
+    }
+
+    payloadIntermedio = payloadIntermedio + "SUMMARY:" + ev.getName()+"\n";
+
+    if(!ev.getDescription().empty()){
+        payloadIntermedio = payloadIntermedio + "DESCRIPTION:" + ev.getDescription() +"\n";
+    }
 
     string payloadCompleto = payloadIniziale + payloadIntermedio + payloadFinale;
 
