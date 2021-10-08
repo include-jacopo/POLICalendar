@@ -52,6 +52,7 @@ private:
     int port;
     string ctag_calendar;
     string ctag_task;
+    string buf_userpw;
 };
 
 
