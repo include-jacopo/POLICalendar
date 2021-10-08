@@ -210,14 +210,14 @@ Task IcalHandler::task_creator(map<string,string> taskProp, string etag) {
 
     if (flagData == true) {
         /* chiamo il costruttore con data */
-        Task t(taskProp["UID"],taskProp["SUMMARY"],description,location, etag, priority,flagCompleted,tp_stamp,tp_due, tp_compl);
+        Task t(taskProp["UID"],taskProp["SUMMARY"],description,location, etag, priority,flagCompleted,tp_due,tp_stamp,tp_compl);
         //Task t{};
         return t;
     } else {
 
         /* chiamo il costruttore senza data */
         // TEMP Task t(taskProp["UID"], taskProp["SUMMARY"], "ciao", priority_int);
-        Task t(taskProp["UID"],taskProp["SUMMARY"],description,location, etag, priority,flagCompleted,tp_stamp, tp_compl);
+        Task t(taskProp["UID"],taskProp["SUMMARY"],description,location, etag, priority,flagCompleted,tp_stamp,tp_compl);
         //Task t{};
 
         return t;
@@ -246,35 +246,3 @@ Task IcalHandler::task_from_ical_component(icalcomponent* comp, string etag){
     
     return t;
 }
-
-//ESEMPIO DI EVENTO PIU' COMPLETO
-/* BEGIN:VCALENDAR
-VERSION:2.0
-PRODID:-//fruux//CalendarApp//EN
-CALSCALE:GREGORIAN
-X-WR-CALNAME:Calendar
-X-APPLE-CALENDAR-COLOR:#B90E28
-BEGIN:VEVENT
-DTSTART:20210921T150000Z
-UID:0d84aa00-bb6c-436b-af79-e1c79f0fb87f
-CREATED:20210918T145053Z
-DTSTAMP:20210918T145151Z
-DTEND:20210921T170000Z
-DESCRIPTION:Michele puzza :(
-LOCATION:casa di Riccardo a Bologna
-SUMMARY:Comprare iPhone 13
-URL:www.google.com
-BEGIN:VALARM
-UID:6d569dbf-879c-4a25-a6bd-1db1e1ed9f8f
-ACTION:DISPLAY
-DESCRIPTION:Event reminder
-TRIGGER:-PT5M
-END:VALARM
-BEGIN:VALARM
-UID:59f5b244-506a-4309-8a49-10a249b3bd8a
-ACTION:DISPLAY
-DESCRIPTION:Event reminder
-TRIGGER:-PT30M
-END:VALARM
-END:VEVENT
-END:VCALENDAR*/
