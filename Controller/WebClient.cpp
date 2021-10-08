@@ -5,7 +5,8 @@
 #include "WebClient.h"
 #include <neon/ne_session.h>
 #include <neon/ne_request.h>
-#include <neon/ne_uri.h>
+#include <neon/ne_auth.h>
+#include <cstring>
 #include <iostream>
 #include <string>
 #include <list>
@@ -38,10 +39,14 @@ int WebClient::getPort(){
     return this->port;
 };
 
+int my_auth(void *userdata, const char *realm, int attempts, char *username, char *password) {
+    string format = "%" + to_string(NE_ABUFSIZ) + "s%" + to_string(NE_ABUFSIZ) + "s";
+    sscanf((char*)userdata, format.c_str(), username, password);
+    return attempts;
+}
+
 void hook_pre_send(ne_request *req, void *userdata, ne_buffer *header) {
-    std::string headersToAdd[] = {"User-Agent: PoliCalendar/0.1\n",
-                                  "Content-Type: application/xml charset=utf-8\n",
-                                  std::string("Authorization: Basic ") + std::string((char*)userdata) + "\n"};
+    std::string headersToAdd[] = {"Content-Type: application/xml charset=utf-8\n"};
     for (const auto& h: headersToAdd) {
         ne_buffer_zappend(header, h.c_str());
     }
@@ -61,6 +66,11 @@ void WebClient::setClient(const string url, const string user, const string pass
 
     // Add headers to each request
     ne_hook_pre_send(sess, hook_pre_send, (void*)base64_auth.c_str());
+    // Set up authentication
+    buf_userpw = string(user+'\n'+pass);
+    ne_set_server_auth(sess, my_auth, (void*)buf_userpw.c_str());
+    // Add User-Agent
+    ne_set_useragent(sess, "PoliCalendar/0.1");
 }
 
 int WebClient::tryLogin() {
