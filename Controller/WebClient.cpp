@@ -49,8 +49,17 @@ void WebClient::setHttpAndUrl (string str){
     }
     else {
         this->type_of_connection = "no_protocol";
+        // TODO Handle url
     }
-    this->url = str.substr(type_of_connection.size()+3); //rimuovo http o https dall'url
+
+    string path = str.substr(type_of_connection.size()+3);  //rimuovo http o https dall'url
+    auto iSubpath = path.find_first_of('/');
+
+    if (iSubpath == -1) iSubpath = path.length();
+    this->url = path.substr(0, iSubpath);   // Host URL
+    this->subpath = path.substr(iSubpath);      // Subpath URL
+    if (this->subpath.ends_with('/'))
+        this->subpath = this->subpath.substr(0, this->subpath.size() - 1);
 }
 
 int my_auth(void *userdata, const char *realm, int attempts, char *username, char *password) {
@@ -86,7 +95,7 @@ void WebClient::setClient(const string url, const string user, const string pass
 
     /** TODO REMOVE DEBUG **/
     auto f = fopen("response.txt", "w+");
-    ne_debug_init(f, NE_DBG_HTTP);
+    ne_debug_init(f, NE_DBG_HTTP|NE_DBG_HTTPBODY);
 
     // Add headers to each request
     ne_hook_pre_send(sess, hook_pre_send, (void*)base64_auth.c_str());
@@ -106,7 +115,7 @@ int WebClient::tryLogin() {
                                 "  </d:prop>\n"
                                 "</d:propfind>";
 
-    string url_prop = "/";
+    string url_prop = subpath + "/";
 
     ne_request *req = ne_request_create(sess, "PROPFIND", (url_prop).c_str());
     ne_add_request_header(req, "Depth", "0");
@@ -156,7 +165,7 @@ void WebClient::propfindUri(){
                                 "  </d:prop>\n"
                                 "</d:propfind>";
 
-    string url_prop = "/";
+    string url_prop = subpath + "/";
 
     ne_request *req = ne_request_create(sess, "PROPFIND", (url_prop).c_str());
 
@@ -174,7 +183,7 @@ void WebClient::propfindUri(){
                                           "  </d:prop>\n"
                                           "</d:propfind>";
 
-    url_prop = "/" + link_user; //modifico l'url della richiesta verso l'utente specifico
+    url_prop = subpath + "/" + link_user; //modifico l'url della richiesta verso l'utente specifico
 
     req = ne_request_create(sess, "PROPFIND", (url_prop).c_str());
 
@@ -197,7 +206,7 @@ void WebClient::propfindUri(){
                                     "  </d:prop>\n"
                                     "</d:propfind>";
 
-    url_prop = "/" + calendar_collection; //modifico l'url della richiesta il calendario dell'utente
+    url_prop = subpath + "/" + calendar_collection; //modifico l'url della richiesta il calendario dell'utente
 
     req = ne_request_create(sess, "PROPFIND", (url_prop).c_str());
     ne_add_request_header(req, "Depth", "1");

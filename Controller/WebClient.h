@@ -49,6 +49,7 @@ private:
     string type_of_connection;
     string base64_auth;
     string url;
+    string subpath;
     string uri_calendar;
     string uri_task;
     int port;
