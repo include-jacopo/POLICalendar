@@ -39,6 +39,20 @@ int WebClient::getPort(){
     return this->port;
 };
 
+
+void WebClient::setHttpAndUrl (string str){
+    if(str.starts_with("https")){
+        this->type_of_connection = "https";
+    }
+    else if(str.starts_with("http")){
+        this->type_of_connection = "http";
+    }
+    else {
+        this->type_of_connection = "no_protocol";
+    }
+    this->url = str.substr(type_of_connection.size()+3); //rimuovo http o https dall'url
+}
+
 int my_auth(void *userdata, const char *realm, int attempts, char *username, char *password) {
     string format = "%" + to_string(NE_ABUFSIZ) + "s%" + to_string(NE_ABUFSIZ) + "s";
     sscanf((char*)userdata, format.c_str(), username, password);
@@ -54,11 +68,21 @@ void hook_pre_send(ne_request *req, void *userdata, ne_buffer *header) {
 
 void WebClient::setClient(const string url, const string user, const string pass, int port) {
     this->port = port;
-    this->url = url;
+
+    setHttpAndUrl(url); //Rimuove "http" o "https" dall'url, salva sia l'url che il protocollo usato
+
+    if(type_of_connection == "no_protocol"){ //se la setHttpAndUrl si accorge che manca il protocollo
+        //GESTIRE QUESTO CASO
+    }
+
     base64_auth = Base64::Encode(user + ":" + pass); //base 64 encoding di username e password
     ne_sock_init();
-    sess = ne_session_create("https", url.c_str(), port);
-    ne_ssl_trust_default_ca(sess);
+
+    sess = ne_session_create(type_of_connection.c_str(), this->url.c_str(), port);
+
+    if(type_of_connection == "https"){
+        ne_ssl_trust_default_ca(sess);
+    }
 
     /** TODO REMOVE DEBUG **/
     auto f = fopen("response.txt", "w+");
@@ -82,7 +106,7 @@ int WebClient::tryLogin() {
                                 "  </d:prop>\n"
                                 "</d:propfind>";
 
-    string url_prop = "https://" + getUrl() + "/";
+    string url_prop = "/";
 
     ne_request *req = ne_request_create(sess, "PROPFIND", (url_prop).c_str());
     ne_add_request_header(req, "Depth", "0");
@@ -132,7 +156,7 @@ void WebClient::propfindUri(){
                                 "  </d:prop>\n"
                                 "</d:propfind>";
 
-    string url_prop = "https://" + getUrl() + "/";
+    string url_prop = "/";
 
     ne_request *req = ne_request_create(sess, "PROPFIND", (url_prop).c_str());
 
@@ -150,7 +174,7 @@ void WebClient::propfindUri(){
                                           "  </d:prop>\n"
                                           "</d:propfind>";
 
-    url_prop = "https://" + getUrl() + link_user; //modifico l'url della richiesta verso l'utente specifico
+    url_prop = "/" + link_user; //modifico l'url della richiesta verso l'utente specifico
 
     req = ne_request_create(sess, "PROPFIND", (url_prop).c_str());
 
@@ -173,7 +197,7 @@ void WebClient::propfindUri(){
                                     "  </d:prop>\n"
                                     "</d:propfind>";
 
-    url_prop = "https://" + getUrl() + calendar_collection; //modifico l'url della richiesta il calendario dell'utente
+    url_prop = "/" + calendar_collection; //modifico l'url della richiesta il calendario dell'utente
 
     req = ne_request_create(sess, "PROPFIND", (url_prop).c_str());
     ne_add_request_header(req, "Depth", "1");

@@ -20,6 +20,7 @@ public:
     WebClient();
     ~WebClient();
     void setClient(const string url, const string user, const string pass, int port);
+    void setHttpAndUrl (string str);
     int tryLogin();
     string propfindCtag(string uri);
     void propfindUri();
@@ -45,6 +46,7 @@ public:
 
 private:
     ne_session *sess;
+    string type_of_connection;
     string base64_auth;
     string url;
     string uri_calendar;
