@@ -35,7 +35,6 @@ add_executable(POLICalendar main.cpp
         Model/Task.cpp Model/Task.h
         Controller/Controller.cpp Controller/Controller.h
         Controller/WebClient.cpp Controller/WebClient.h
-        Controller/Base64.h
         Controller/XMLReader.cpp Controller/XMLReader.h
         Controller/IcalHandler.cpp Controller/IcalHandler.h
         Controller/IController.h)

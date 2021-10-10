@@ -11,7 +11,6 @@
 #include <string>
 #include <list>
 #include <neon/ne_utils.h>
-#include "Base64.h"
 #include "XMLReader.h"
 
 using namespace std;
@@ -69,10 +68,18 @@ int my_auth(void *userdata, const char *realm, int attempts, char *username, cha
 }
 
 void hook_pre_send(ne_request *req, void *userdata, ne_buffer *header) {
+    /**
+     * Content-Type breaks sabre/dav localhost server.
+     * At the moment no further headers are necessary.
+     * User-agent and required auth headers are set by setClient.
+     */
+
+    /*
     std::string headersToAdd[] = {"Content-Type: application/xml charset=utf-8\n"};
     for (const auto& h: headersToAdd) {
         ne_buffer_zappend(header, h.c_str());
     }
+    */
 }
 
 void WebClient::setClient(const string url, const string user, const string pass, int port) {
@@ -84,9 +91,7 @@ void WebClient::setClient(const string url, const string user, const string pass
         //GESTIRE QUESTO CASO
     }
 
-    base64_auth = Base64::Encode(user + ":" + pass); //base 64 encoding di username e password
     ne_sock_init();
-
     sess = ne_session_create(type_of_connection.c_str(), this->url.c_str(), port);
 
     if(type_of_connection == "https"){
@@ -98,7 +103,7 @@ void WebClient::setClient(const string url, const string user, const string pass
     ne_debug_init(f, NE_DBG_HTTP|NE_DBG_HTTPBODY);
 
     // Add headers to each request
-    ne_hook_pre_send(sess, hook_pre_send, (void*)base64_auth.c_str());
+    ne_hook_pre_send(sess, hook_pre_send, nullptr);
     // Set up authentication
     buf_userpw = string(user+'\n'+pass);
     ne_set_server_auth(sess, my_auth, (void*)buf_userpw.c_str());
@@ -183,7 +188,7 @@ void WebClient::propfindUri(){
                                           "  </d:prop>\n"
                                           "</d:propfind>";
 
-    url_prop = subpath + "/" + link_user; //modifico l'url della richiesta verso l'utente specifico
+    url_prop = link_user; //modifico l'url della richiesta verso l'utente specifico
 
     req = ne_request_create(sess, "PROPFIND", (url_prop).c_str());
 
@@ -206,7 +211,7 @@ void WebClient::propfindUri(){
                                     "  </d:prop>\n"
                                     "</d:propfind>";
 
-    url_prop = subpath + "/" + calendar_collection; //modifico l'url della richiesta il calendario dell'utente
+    url_prop = calendar_collection; //modifico l'url della richiesta il calendario dell'utente
 
     req = ne_request_create(sess, "PROPFIND", (url_prop).c_str());
     ne_add_request_header(req, "Depth", "1");
