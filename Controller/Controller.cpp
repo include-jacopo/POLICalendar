@@ -99,7 +99,7 @@ bool Controller::downloadEvents(){
     if(old_ctag != wc.getCtagCalendar() || old_ctag == "PrimaLettura") {
         string xml_cal;
         try {
-            xml_cal = wc.report_calendar(wc.getUriCalendar()); //Lettura dell'XML del calendario dal server
+            xml_cal = wc.report_calendar(); //Lettura dell'XML del calendario dal server
         } catch(invalid_argument &ie) {
             cout << ie.what() << endl;
             return false;
@@ -137,7 +137,7 @@ bool Controller::downloadTask(){
     if(old_ctag != wc.getCtagTask() || old_ctag == "PrimaLettura") {
         string xml_task;
         try {
-            xml_task = wc.report_task(wc.getUriTask()); //Lettura dell'XML dei to-do dal server
+            xml_task = wc.report_task(); //Lettura dell'XML dei to-do dal server
         } catch(invalid_argument &ie) {
             cout << ie.what() << endl;
             return false;

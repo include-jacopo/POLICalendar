@@ -19,7 +19,7 @@ class WebClient {
 public:
     WebClient();
     ~WebClient();
-    void setClient(const string url, const string user, const string pass, int port);
+    bool setClient(const string url, const string user, const string pass, int port);
     void setHttpAndUrl (string str);
     int tryLogin();
     string propfindCtag(string uri);
@@ -27,8 +27,8 @@ public:
     void setUri(string strCalendar, string strTask);
     string getUriCalendar();
     string getUriTask();
-    string report_calendar(const string uri);
-    string report_task(const string uri);
+    string report_calendar();
+    string report_task();
     string reportEtagCalendar();
     string reportEtagTask();
     bool put_event(const string uri, const string evento_xml);
@@ -40,8 +40,8 @@ public:
     string getCtagTask();
     bool deleteCalendar(const string uid);
     bool deleteTask(const string uid);
-    string multiGetCalendar(list<string> l);
-    string multiGetTask(list<string> l);
+    string multiGetCalendar(list<string> new_event);
+    string multiGetTask(list<string> new_task);
 
 
 private:

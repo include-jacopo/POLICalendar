@@ -48,7 +48,6 @@ void WebClient::setHttpAndUrl (string str){
     }
     else {
         this->type_of_connection = "no_protocol";
-        // TODO Handle url
     }
 
     string path = str.substr(type_of_connection.size()+3);  //rimuovo http o https dall'url
@@ -57,6 +56,7 @@ void WebClient::setHttpAndUrl (string str){
     if (iSubpath == -1) iSubpath = path.length();
     this->url = path.substr(0, iSubpath);   // Host URL
     this->subpath = path.substr(iSubpath);      // Subpath URL
+
     if (this->subpath.ends_with('/'))
         this->subpath = this->subpath.substr(0, this->subpath.size() - 1);
 }
@@ -74,21 +74,19 @@ void hook_pre_send(ne_request *req, void *userdata, ne_buffer *header) {
      * User-agent and required auth headers are set by setClient.
      */
 
-    /*
     std::string headersToAdd[] = {"Content-Type: application/xml charset=utf-8\n"};
     for (const auto& h: headersToAdd) {
         ne_buffer_zappend(header, h.c_str());
     }
-    */
 }
 
-void WebClient::setClient(const string url, const string user, const string pass, int port) {
+bool WebClient::setClient(const string url, const string user, const string pass, int port) {
     this->port = port;
 
     setHttpAndUrl(url); //Rimuove "http" o "https" dall'url, salva sia l'url che il protocollo usato
 
     if(type_of_connection == "no_protocol"){ //se la setHttpAndUrl si accorge che manca il protocollo
-        //GESTIRE QUESTO CASO
+        return false;
     }
 
     ne_sock_init();
@@ -102,13 +100,12 @@ void WebClient::setClient(const string url, const string user, const string pass
     auto f = fopen("response.txt", "w+");
     ne_debug_init(f, NE_DBG_HTTP|NE_DBG_HTTPBODY);
 
-    // Add headers to each request
-    ne_hook_pre_send(sess, hook_pre_send, nullptr);
     // Set up authentication
     buf_userpw = string(user+'\n'+pass);
     ne_set_server_auth(sess, my_auth, (void*)buf_userpw.c_str());
     // Add User-Agent
     ne_set_useragent(sess, "PoliCalendar/0.1");
+    return true;
 }
 
 int WebClient::tryLogin() {
@@ -277,7 +274,7 @@ string WebClient::propfindCtag(string uri) {
     }
 }
 
-string WebClient::report_calendar(string uri) {
+string WebClient::report_calendar() {
     string response;
     string report = "<c:calendar-query xmlns:d=\"DAV:\" xmlns:c=\"urn:ietf:params:xml:ns:caldav\">\n"
                     "    <d:prop>\n"
@@ -289,7 +286,7 @@ string WebClient::report_calendar(string uri) {
                     "    </c:filter>\n"
                     "</c:calendar-query>";
 
-    ne_request *req = ne_request_create(sess, "REPORT", uri.c_str());
+    ne_request *req = ne_request_create(sess, "REPORT", getUriCalendar().c_str());
     ne_add_request_header(req, "Depth", "1");
 
     ne_set_request_body_buffer(req, report.c_str(), report.size());
@@ -312,7 +309,7 @@ string WebClient::report_calendar(string uri) {
     }
 }
 
-string WebClient::report_task(string uri) {
+string WebClient::report_task() {
     string response;
     string report = "<c:calendar-query xmlns:d=\"DAV:\" xmlns:c=\"urn:ietf:params:xml:ns:caldav\">\n"
                     "    <d:prop>\n"
@@ -326,7 +323,7 @@ string WebClient::report_task(string uri) {
                     "    </c:filter>\n"
                     "</c:calendar-query>";
 
-    ne_request *req = ne_request_create(sess, "REPORT", uri.c_str());
+    ne_request *req = ne_request_create(sess, "REPORT", getUriTask().c_str());
     ne_add_request_header(req, "Depth", "1");
 
     ne_set_request_body_buffer(req, report.c_str(), report.size());
@@ -374,7 +371,7 @@ bool WebClient::put_event(string uri, string evento_xml) {
 bool WebClient::deleteCalendar(const string uid) {
     string response;
 
-    ne_request *req = ne_request_create(sess, "DELETE", (this->uri_calendar+uid+".ics").c_str());
+    ne_request *req = ne_request_create(sess, "DELETE", (getUriCalendar()+uid+".ics").c_str());
 
     ne_add_response_body_reader(req, ne_accept_always, httpResponseReader, &response);
 
@@ -399,7 +396,7 @@ bool WebClient::deleteCalendar(const string uid) {
 bool WebClient::deleteTask(const string uid) {
     string response;
 
-    ne_request *req = ne_request_create(sess, "DELETE", (this->uri_task +uid+".ics").c_str());
+    ne_request *req = ne_request_create(sess, "DELETE", (getUriTask()+uid+".ics").c_str());
 
     ne_add_response_body_reader(req, ne_accept_always, httpResponseReader, &response);
 
@@ -434,7 +431,7 @@ string WebClient::reportEtagCalendar() {
                       "    </c:filter>\n"
                       "</c:calendar-query>";
 
-    ne_request *req = ne_request_create(sess, "REPORT", (this->uri_calendar).c_str());
+    ne_request *req = ne_request_create(sess, "REPORT", (getUriCalendar()).c_str());
     ne_add_request_header(req, "Depth", "1");
 
     ne_set_request_body_buffer(req, propfind.c_str(), propfind.size());
@@ -471,7 +468,7 @@ string WebClient::reportEtagTask() {
                       "    </c:filter>\n"
                       "</c:calendar-query>";
 
-    ne_request *req = ne_request_create(sess, "REPORT", (this->uri_task).c_str());
+    ne_request *req = ne_request_create(sess, "REPORT", (getUriTask()).c_str());
     ne_add_request_header(req, "Depth", "1");
 
     ne_set_request_body_buffer(req, propfind.c_str(), propfind.size());
@@ -495,7 +492,7 @@ string WebClient::reportEtagTask() {
     }
 }
 
-string WebClient::multiGetCalendar(list<string> l) {
+string WebClient::multiGetCalendar(list<string> new_event) {
     string response;
     string payload_iniziale = "<c:calendar-multiget xmlns:d=\"DAV:\" xmlns:c=\"urn:ietf:params:xml:ns:caldav\">\n"
                               "    <d:prop>\n"
@@ -505,7 +502,7 @@ string WebClient::multiGetCalendar(list<string> l) {
     string payload_finale =   "</c:calendar-multiget>";
 
     string event_to_get;
-    for(auto i: l){
+    for(auto i: new_event){
         event_to_get.append("<d:href>"+getUriCalendar()+i+".ics</d:href>\n");
     }
     string report = payload_iniziale + event_to_get + payload_finale;
@@ -533,7 +530,7 @@ string WebClient::multiGetCalendar(list<string> l) {
     }
 }
 
-string WebClient::multiGetTask(list<string> l) {
+string WebClient::multiGetTask(list<string> new_task) {
     string response;
     string payload_iniziale = "<c:calendar-multiget xmlns:d=\"DAV:\" xmlns:c=\"urn:ietf:params:xml:ns:caldav\">\n"
                               "    <d:prop>\n"
@@ -543,7 +540,7 @@ string WebClient::multiGetTask(list<string> l) {
     string payload_finale =   "</c:calendar-multiget>";
 
     string task_to_get;
-    for(auto i: l){
+    for(auto i: new_task){
         task_to_get.append("<d:href>"+getUriTask()+i+".ics</d:href>\n");
     }
     string report = payload_iniziale + task_to_get + payload_finale;
