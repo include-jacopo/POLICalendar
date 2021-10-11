@@ -30,7 +30,9 @@ Controller *Controller::getInstance() {
 Controller::Controller() : wc() {}
 
 int Controller::createSession (string url, string usr, string pw, int port){
-    wc.setClient(url, usr, pw, port); //Autenticazione con il server
+    if (!wc.setClient(url, usr, pw, port)) { //Autenticazione con il server
+        return 2;
+    }
 
     switch (wc.tryLogin()) { //Funzione che testa il login e la connessione verso il server
         case 1:

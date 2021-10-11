@@ -29,7 +29,19 @@ void Login::onLoginClicked() {
     std::string username = ui->lineEdit_username->text().toStdString();
     std::string password = ui->lineEdit_password->text().toStdString();
     std::string serverUrl = ui->lineEdit_url->text().toStdString();
-    int serverPort = ui->lineEdit_port->text().toInt();
+    int serverPort = ui->lineEdit_port->text().toInt(); // Returns 0 if conversion fails, ok for empty field
+
+    // Check URL protocol
+    if (!(serverUrl.starts_with("http://") || serverUrl.starts_with("https://"))) {
+        QMessageBox::warning(this, "Login", "Inserire protocollo nell'URL del server (http:// o https://)");
+        return;
+    }
+
+    // Check port
+    if (serverPort < 0 || serverPort > 65535) {
+        QMessageBox::warning(this, "Login", "Porta non valida");
+        return;
+    }
 
     auto controller = Controller::getInstance();
     int status = controller->createSession(serverUrl, username, password, serverPort);

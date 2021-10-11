@@ -40,17 +40,16 @@ int WebClient::getPort(){
 
 
 void WebClient::setHttpAndUrl (string str){
-    if(str.starts_with("https")){
+    if (str.starts_with("https")) {
         this->type_of_connection = "https";
-    }
-    else if(str.starts_with("http")){
+    } else if (str.starts_with("http")) {
         this->type_of_connection = "http";
-    }
-    else {
+    } else {
         this->type_of_connection = "no_protocol";
+        return;
     }
 
-    string path = str.substr(type_of_connection.size()+3);  //rimuovo http o https dall'url
+    string path = str.substr(type_of_connection.size() + 3);  //rimuovo http o https dall'url
     auto iSubpath = path.find_first_of('/');
 
     if (iSubpath == -1) iSubpath = path.length();
