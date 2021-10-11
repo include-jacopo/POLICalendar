@@ -12,14 +12,14 @@
 
 using namespace std;
 
-map<string,icalcomponent*> readXML(string str);
-string readCtag(string str);
-string readLinkUser (string str);
-string readCalendarCollection (string str);
-string readUriCalendar (string str);
-string readUriTask (string str);
-map<string,string> readEtagCalendar (string str, string uri_calendar);
-map<string,string> readEtagTask (string str, string uri_task);
+map<string,icalcomponent*> readXML(string str, string tag, string tag_caldav);
+string readCtag(string str, string tag, string tag_calserver);
+string readLinkUser (string str, string tag);
+string readCalendarCollection (string str, string tag, string tag_caldav);
+string readUriCalendar (string str, string tag, string tag_caldav);
+string readUriTask (string str, string tag, string tag_caldav);
+map<string,string> readEtagCalendar (string str, string uri_calendar, string tag);
+map<string,string> readEtagTask (string str, string uri_task, string tag);
 string removeQuote (string str);
 string removeURI (string str, const string& uid);
 

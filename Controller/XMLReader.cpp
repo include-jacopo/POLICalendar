@@ -12,7 +12,7 @@
 
 using namespace std;
 
-string readCtag(string str) {
+string readCtag(string str, string tag, string tag_calserver) {
     pugi::xml_document doc;
     stringstream ss;
 
@@ -23,13 +23,14 @@ string readCtag(string str) {
         std::cout << "Parse error: " << result.description() << ", character pos= " << result.offset;
     }
 
-    auto node = doc.child("d:multistatus").first_child();
-    auto node2 = node.child("d:propstat").child("d:prop").child("cs:getctag");
+    auto node = doc.child((tag+":multistatus").c_str()).first_child();
+    auto node2 = node.child((tag+":propstat").c_str()).child((tag+":prop").c_str()).child((tag_calserver+":getctag").c_str());
+    //SISTEMAMI IN MAIUSCOLO
 
     return node2.text().as_string();
 }
 
-map<string,icalcomponent*> readXML(string str) {
+map<string,icalcomponent*> readXML(string str, string tag, string tag_caldav) {
     pugi::xml_document doc;
     stringstream ss;
     list<icalcomponent*> lista_eventi;
@@ -44,11 +45,11 @@ map<string,icalcomponent*> readXML(string str) {
         std::cout << "Parse error: " << result.description() << ", character pos= " << result.offset;
     }
 
-    for (auto node: doc.child("d:multistatus").children()) {
+    for (auto node: doc.child((tag+":multistatus").c_str()).children()) {
 
-        auto nodeEtag = node.child("d:propstat").child("d:prop").child("d:getetag");
+        auto nodeEtag = node.child((tag+":propstat").c_str()).child((tag+":prop").c_str()).child((tag+":getetag").c_str());
 
-        for (auto node2: node.child("d:propstat").child("d:prop").child("cal:calendar-data")) {
+        for (auto node2: node.child((tag+":propstat").c_str()).child((tag+":prop").c_str()).child((tag_caldav+":calendar-data").c_str())) {
             //Inserisco in mappa con chiave etag e value il componente ical
             mappa_eventi.insert({nodeEtag.text().as_string(), icalparser_parse_string(node2.text().as_string())});
         }
@@ -57,7 +58,8 @@ map<string,icalcomponent*> readXML(string str) {
     return mappa_eventi;
 }
 
-string readLinkUser(string str) {
+string readLinkUser(string str, string tag) {
+    //Parsing dell'XML
     pugi::xml_document doc;
     stringstream ss;
 
@@ -68,13 +70,13 @@ string readLinkUser(string str) {
         std::cout << "Parse error: " << result.description() << ", character pos= " << result.offset;
     }
 
-    auto node = doc.child("d:multistatus").first_child();
-    auto node2 = node.child("d:propstat").child("d:prop").child("d:current-user-principal").child("d:href");
+    auto node = doc.child((tag+":multistatus").c_str()).first_child();
+    auto node2 = node.child((tag+":propstat").c_str()).child((tag+":prop").c_str()).child((tag+":current-user-principal").c_str()).child((tag+":href").c_str());
 
     return node2.text().as_string();
 }
 
-string readCalendarCollection(string str) {
+string readCalendarCollection(string str, string tag, string tag_caldav) {
     pugi::xml_document doc;
     stringstream ss;
 
@@ -85,13 +87,13 @@ string readCalendarCollection(string str) {
         std::cout << "Parse error: " << result.description() << ", character pos= " << result.offset;
     }
 
-    auto node = doc.child("d:multistatus").first_child();
-    auto node2 = node.child("d:propstat").child("d:prop").child("cal:calendar-home-set").child("d:href");
+    auto node = doc.child((tag+":multistatus").c_str()).first_child();
+    auto node2 = node.child((tag+":propstat").c_str()).child((tag+":prop").c_str()).child((tag_caldav+":calendar-home-set").c_str()).child((tag+":href").c_str());
 
     return node2.text().as_string();
 }
 
-string readUriCalendar(string str) {
+string readUriCalendar(string str, string tag, string tag_caldav) {
     pugi::xml_document doc;
     stringstream ss;
 
@@ -103,19 +105,19 @@ string readUriCalendar(string str) {
     }
 
     string uri;
-    for (auto node: doc.child("d:multistatus").children()) {
+    for (auto node: doc.child((tag+":multistatus").c_str()).children()) {
         auto temp = node;
-        auto node2 = node.child("d:propstat").child("d:prop").child("cal:supported-calendar-component-set");
-        for (auto node3: node2.children("cal:comp")) {
+        auto node2 = node.child((tag+":propstat").c_str()).child((tag+":prop").c_str()).child((tag_caldav+":supported-calendar-component-set").c_str());
+        for (auto node3: node2.children((tag_caldav+":comp").c_str())) {
             if(string(node3.attribute("name").as_string()) == "VEVENT" ){
-               uri = node.child("d:href").text().as_string();
+               uri = node.child((tag+":href").c_str()).text().as_string();
             }
         }
     }
     return uri;
 }
 
-string readUriTask(string str) {
+string readUriTask(string str, string tag, string tag_caldav) {
     pugi::xml_document doc;
     stringstream ss;
 
@@ -127,19 +129,19 @@ string readUriTask(string str) {
     }
 
     string uri;
-    for (auto node: doc.child("d:multistatus").children()) {
+    for (auto node: doc.child((tag+":multistatus").c_str()).children()) {
         auto temp = node;
-        auto node2 = node.child("d:propstat").child("d:prop").child("cal:supported-calendar-component-set");
-        for (auto node3: node2.children("cal:comp")) {
+        auto node2 = node.child((tag+":propstat").c_str()).child((tag+":prop").c_str()).child((tag_caldav+":supported-calendar-component-set").c_str());
+        for (auto node3: node2.children((tag_caldav+":comp").c_str())) {
             if(string(node3.attribute("name").as_string()) == "VTODO" ){
-                uri = node.child("d:href").text().as_string();
+                uri = node.child((tag+":href").c_str()).text().as_string();
             }
         }
     }
     return uri;
 }
 
-map<string,string> readEtagCalendar (string str, string uri_calendar){
+map<string,string> readEtagCalendar (string str, string uri_calendar, string tag){
     pugi::xml_document doc;
     stringstream ss;
 
@@ -152,16 +154,16 @@ map<string,string> readEtagCalendar (string str, string uri_calendar){
 
     string uid, etag;
     map <string, string> event_from_etag;
-    for (auto node: doc.child("d:multistatus").children()) {
+    for (auto node: doc.child((tag+":multistatus").c_str()).children()) {
 
         //Pesco l'UID dalla Propfind
-        auto node2 = node.child("d:href");
+        auto node2 = node.child((tag+":href").c_str());
         uid = node2.text().as_string();
         //Rimuovo dalla stringa dell'evento l'URI in modo da lasciare solo l'UID
         uid = removeURI(uid, uri_calendar);
 
         //Pesco l'etag dalla Propfind
-        auto node3 = node.child("d:propstat").child("d:prop").child("d:getetag");
+        auto node3 = node.child((tag+":propstat").c_str()).child((tag+":prop").c_str()).child((tag+":getetag").c_str());
         etag = node3.text().as_string();
         //Eseguo la funzione per togliere il '"' all'inizio ed alla fine
         etag = removeQuote(etag);
@@ -172,7 +174,7 @@ map<string,string> readEtagCalendar (string str, string uri_calendar){
     return event_from_etag;
 }
 
-map<string,string> readEtagTask (string str, string uri_task){
+map<string,string> readEtagTask (string str, string uri_task, string tag){
     pugi::xml_document doc;
     stringstream ss;
 
@@ -185,16 +187,16 @@ map<string,string> readEtagTask (string str, string uri_task){
 
     string uid, etag;
     map <string, string> task_from_etag;
-    for (auto node: doc.child("d:multistatus").children()) {
+    for (auto node: doc.child((tag+":multistatus").c_str()).children()) {
 
         //Pesco l'UID dalla Propfind
-        auto node2 = node.child("d:href");
+        auto node2 = node.child((tag+":href").c_str());
         uid = node2.text().as_string();
         //Rimuovo dalla stringa dell'evento l'URI in modo da lasciare solo l'UID
         uid = removeURI(uid, uri_task);
 
         //Pesco l'etag dalla Propfind
-        auto node3 = node.child("d:propstat").child("d:prop").child("d:getetag");
+        auto node3 = node.child((tag+":propstat").c_str()).child((tag+":prop").c_str()).child((tag+":getetag").c_str());
         etag = node3.text().as_string();
         //Eseguo la funzione per togliere il '"' all'inizio ed alla fine
         etag = removeQuote(etag);
