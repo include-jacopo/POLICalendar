@@ -38,6 +38,17 @@ int WebClient::getPort(){
     return this->port;
 };
 
+string WebClient::getTag(){
+    return this->tag;
+};
+
+string WebClient::getTagCaldav(){
+    return this->tag_caldav;
+};
+
+string WebClient::getTagCalserver(){
+    return this->tag_calserver;
+};
 
 void WebClient::setHttpAndUrl (string str){
     if (str.starts_with("https")) {
@@ -58,6 +69,14 @@ void WebClient::setHttpAndUrl (string str){
 
     if (this->subpath.ends_with('/'))
         this->subpath = this->subpath.substr(0, this->subpath.size() - 1);
+
+    if(this->port == 0){ //Se l'utente non specifica la porta applico quelle standard
+        if(this->type_of_connection == "https"){
+            this->port = 443;
+        } else {
+            this->port = 80;
+        }
+    }
 }
 
 int my_auth(void *userdata, const char *realm, int attempts, char *username, char *password) {
@@ -126,7 +145,16 @@ int WebClient::tryLogin() {
 
     int result = ne_request_dispatch(req);
     ne_request_destroy(req);
-    string link_user = readLinkUser(response); //ottenuto l'xml, pesco solo l'url che mi interessa, altrimenti è vuoto
+
+    //Lettura del tag ricevuto, che può essere maiuscolo o minuscolo
+    //per esempio <D:multistatus> oppure <d:multistatus>
+    if(!response.empty()){
+        size_t end = response.find("=\"DAV:\"");
+        size_t start = response.find("xmlns");
+        this->tag = response.substr(start+6, end-(start+6)); //salvo solo il tag
+    }
+
+    string link_user = readLinkUser(response, getTag()); //ottenuto l'xml, pesco solo l'url che mi interessa, altrimenti è vuoto
 
     if(link_user.empty()){
         return 1; //Non ho avuto la risposta che mi aspettavo, il login non è avvenuto
@@ -169,13 +197,15 @@ void WebClient::propfindUri(){
     string url_prop = subpath + "/";
 
     ne_request *req = ne_request_create(sess, "PROPFIND", (url_prop).c_str());
+    ne_add_request_header(req, "Depth", "0");
 
     ne_set_request_body_buffer(req, propfind_link_user.c_str(), propfind_link_user.size());
     ne_add_response_body_reader(req, ne_accept_always, httpResponseReader, &response);
 
     ne_request_dispatch(req);
     ne_request_destroy(req);
-    string link_user = readLinkUser(response); //ottenuto l'xml, pesco solo l'url che mi interessa
+
+    string link_user = readLinkUser(response, getTag()); //ottenuto l'xml, pesco solo l'url che mi interessa
 
     //Effettuo quindi una nuova propfind verso tale url per ricevere il link alla sua collezione di calendari
     string propfind_calendar_collection = "<d:propfind xmlns:d=\"DAV:\" xmlns:c=\"urn:ietf:params:xml:ns:caldav\">\n"
@@ -187,6 +217,7 @@ void WebClient::propfindUri(){
     url_prop = link_user; //modifico l'url della richiesta verso l'utente specifico
 
     req = ne_request_create(sess, "PROPFIND", (url_prop).c_str());
+    ne_add_request_header(req, "Depth", "0");
 
     string response1;
     ne_set_request_body_buffer(req, propfind_calendar_collection.c_str(), propfind_calendar_collection.size());
@@ -195,7 +226,21 @@ void WebClient::propfindUri(){
     ne_request_dispatch(req);
     ne_request_destroy(req);
 
-    string calendar_collection = readCalendarCollection(response1); //ottenuto l'xml, pesco solo l'url che mi interessa
+    //Lettura del tag caldav
+    //per esempio <cal:calendar-home-set> oppure <B:calendar-home-set>
+    if(!response1.empty()){
+        size_t end = response1.find("=\"urn:ietf:params:xml:ns:caldav\"");
+        int i = 0; bool find = 1;
+        while(find){
+            i++;
+            if(response1[end-i] == ':') {
+                find = 0;
+            }
+        }
+        this->tag_caldav = response1.substr(end-i+1, i-1); //salvo solo il tag
+    }
+
+    string calendar_collection = readCalendarCollection(response1, getTag(), getTagCaldav()); //ottenuto l'xml, pesco solo l'url che mi interessa
 
     //Effettuo l'ultima propfind verso la sua collezione di calendari per ricevere l'uri sia del calendario che del to-do
     string propfind_calendar_user = "<d:propfind xmlns:d=\"DAV:\" xmlns:cs=\"http://calendarserver.org/ns/\" xmlns:c=\"urn:ietf:params:xml:ns:caldav\">\n"
@@ -219,8 +264,8 @@ void WebClient::propfindUri(){
     ne_request_dispatch(req);
     ne_request_destroy(req);
 
-    string uri_calendar = readUriCalendar(response2); //ottenuto l'xml, pesco solo l'uri del calendario
-    string uri_task = readUriTask(response2); //pesco anche l'uri dei to-do
+    string uri_calendar = readUriCalendar(response2, getTag(), getTagCaldav()); //ottenuto l'xml, pesco solo l'uri del calendario
+    string uri_task = readUriTask(response2, getTag(), getTagCaldav()); //pesco anche l'uri dei to-do
 
     setUri(uri_calendar, uri_task); //salvo l'uri del calendario nella struttura dati
 }
@@ -251,6 +296,7 @@ string WebClient::propfindCtag(string uri) {
                       "</d:propfind>";
 
     ne_request *req = ne_request_create(sess, "PROPFIND", (uri).c_str());
+    ne_add_request_header(req, "Depth", "0");
 
     ne_set_request_body_buffer(req, propfind.c_str(), propfind.size());
     ne_add_response_body_reader(req, ne_accept_always, httpResponseReader, &response);
@@ -258,6 +304,20 @@ string WebClient::propfindCtag(string uri) {
     int result = ne_request_dispatch(req);
     int status = ne_get_status(req)->code;
     ne_request_destroy(req);
+
+    //Lettura del tag calendarserver
+    //per esempio <xmlns:C="http://calendarserver.org/ns/"> oppure <xmlns:cs="http://calendarserver.org/ns/">
+    if(!response.empty() && getTagCalserver().empty()){
+        size_t end = response.find("\"http://calendarserver.org/ns/\"");
+        int i = 0; bool find = 1;
+        while(find){
+            i++;
+            if(response[end-i] == ':') {
+                find = 0;
+            }
+        }
+        this->tag_calserver = response.substr(end-i+1, i-2); //salvo solo il tag
+    }
 
     switch (result) {
         case NE_OK:
@@ -290,6 +350,7 @@ string WebClient::report_calendar() {
 
     ne_set_request_body_buffer(req, report.c_str(), report.size());
     ne_add_response_body_reader(req, ne_accept_always, httpResponseReader, &response);
+
 
     int result = ne_request_dispatch(req);
     ne_request_destroy(req);
@@ -374,7 +435,6 @@ bool WebClient::deleteCalendar(const string uid) {
 
     ne_add_response_body_reader(req, ne_accept_always, httpResponseReader, &response);
 
-    cout << response << endl;
     int result = ne_request_dispatch(req);
     ne_request_destroy(req);
 
@@ -399,7 +459,6 @@ bool WebClient::deleteTask(const string uid) {
 
     ne_add_response_body_reader(req, ne_accept_always, httpResponseReader, &response);
 
-    cout << response << endl;
     int result = ne_request_dispatch(req);
     ne_request_destroy(req);
 

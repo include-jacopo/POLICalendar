@@ -34,6 +34,9 @@ public:
     bool put_event(const string uri, const string evento_xml);
     string getUrl();
     int getPort();
+    string getTag();
+    string getTagCaldav();
+    string getTagCalserver();
     void setCtagCalendar(string ctag);
     void setCtagTask(string ctag);
     string getCtagCalendar();
@@ -47,6 +50,9 @@ public:
 private:
     ne_session *sess;
     string type_of_connection;
+    string tag;
+    string tag_caldav;
+    string tag_calserver;
     string url;
     string subpath;
     string uri_calendar;
