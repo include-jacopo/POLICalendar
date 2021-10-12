@@ -1,9 +1,11 @@
 # POLICalendar
-Progetto di Programmazione di Sistema - Polito - 2021
+Programmazione di Sistema exam project - Politechnic of Turin - 2021
 
 CalDav desktop calendar application.
 
-GUI based on Qt6 (https://www.qt.io/)
+
+GUI based on Qt6 (https://www.qt.io/).
+
 Backend based on neon (https://github.com/notroj/neon) and pugixml (https://github.com/zeux/pugixml).
 
 ## License
