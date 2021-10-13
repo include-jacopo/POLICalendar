@@ -25,37 +25,33 @@ private:
     std::string createUid();
 
 public:
+    /* constructors */
     Task();
     Task(string uid, string name, string description, string location, string etag, int priority, bool completed, bool flagDate,
          chrono::time_point<std::chrono::system_clock> date, chrono::time_point<std::chrono::system_clock> dateS, chrono::time_point<std::chrono::system_clock> dateCompl);
 
+    /* getter & setter */
     [[nodiscard]] const string &getUid() const;
     void setUidS(const string &uidS);
-    const string &getName() const;
+    [[nodiscard]] const string &getName() const;
     void setName(const string &name);
-    const string &getDescription() const;
+    [[nodiscard]] const string &getDescription() const;
     void setDescription(const string &description);
-    const string &getLocation() const;
+    [[nodiscard]] const string &getLocation() const;
     void setLocation(const string &location);
-    int getPriority() const;
+    [[nodiscard]] int getPriority() const;
     void setPriority(int priority);
-    const string &getEtag() const;
+    [[nodiscard]] const string &getEtag() const;
     void setEtag(const string &etag);
-    /** Gets the Task due datetime
-     * @return Due datetime UTC time
-     */
-    const chrono::time_point<std::chrono::system_clock> &getDueDate() const;
-    /** Sets the Task due datetime
-     * @param dueDate Due datetime UTC time
-     */
+    [[nodiscard]] const chrono::time_point<std::chrono::system_clock> &getDueDate() const;
     void setDueDate(const chrono::time_point<std::chrono::system_clock> &date);
-    const chrono::time_point<std::chrono::system_clock> &getDateCompleted() const;
+    [[nodiscard]] const chrono::time_point<std::chrono::system_clock> &getDateCompleted() const;
     void setDateCompleted(const chrono::time_point<std::chrono::system_clock> &dateCompleted);
-    const std::chrono::time_point<std::chrono::system_clock> &getDateS() const;
+    [[nodiscard]] const std::chrono::time_point<std::chrono::system_clock> &getDateS() const;
     void setDateS(const chrono::time_point<std::chrono::system_clock> &date);
-    bool isFlagDate() const;
+    [[nodiscard]] bool isFlagDate() const;
     void setFlagDate(bool flagDate);
-    bool isCompleted() const;
+    [[nodiscard]] bool isCompleted() const;
     void setCompleted(bool completed);
     void printTask();
 };

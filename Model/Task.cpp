@@ -6,6 +6,9 @@
 #include <iostream>
 #include <iomanip>
 
+/**
+ * Constructor of Task without parameters.
+ */
 Task::Task() : priority(1), completed(false), flagDate(false) {
     uidS = createUid();
 };
@@ -15,8 +18,8 @@ Task::Task() : priority(1), completed(false), flagDate(false) {
  */
 Task::Task(string uid, string name, string description, string location, string etag, int priority, bool completed, bool flagDate,
            chrono::time_point<std::chrono::system_clock> date, chrono::time_point<std::chrono::system_clock> dateS, chrono::time_point<std::chrono::system_clock> dateCompl):
-        uidS(move(uid)), name(move(name)), description(move(description)), location(move(location)), etag(move(etag)), priority(priority), completed(completed),
-        dueDate(date), flagDate(flagDate), dateS(dateS){
+           uidS(move(uid)), name(move(name)), description(move(description)), location(move(location)), etag(move(etag)), priority(priority), completed(completed),
+           dueDate(date), flagDate(flagDate), dateS(dateS){
     if(completed)
         setDateCompleted(dateCompl);
     if(flagDate)
