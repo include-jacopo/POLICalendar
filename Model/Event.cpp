@@ -5,31 +5,39 @@
 #include <iostream>
 #include <iomanip>
 #include "Event.h"
-
+/**
+ * Creates a random uid.
+ * @return the uid string.
+ */
 const std::string Event::createUid() {
     std::string s1("aaaaaaaa");
     std::string s2("aaaa");
     std::string s3("aaaa");
     std::string s4("aaaa");
     std::string s5("aaaaaaaaaaaa");
-    /** UID: 5 campi alfanumerici separati da 4 */
+    /* UID: 5 campi alfanumerici separati da 4 */
 
-    //Calcolo 5 stringhe casuali
+    /* creo le 5 stringhe casuali */
     std::string ss1 = gen_random(s1, 8);
     std::string ss2 = gen_random(s2, 4);
     std::string ss3 = gen_random(s3, 4);
     std::string ss4 = gen_random(s4, 4);
     std::string ss5 = gen_random(s5, 12);
 
-    //Le unisco */
+    /* Le unisco */
     std::string s = ss1 + "-" + ss2 + "-" + ss3 + "-" + ss4 + "-" + ss5;
     return s;
 }
-
+/**
+ * Creates a new event object, filling only the uidS field.
+ * @return the event.
+ */
 Event::Event() {
     this->uidS = createUid();
 }
-
+/**
+ * Constructor of event.
+ */
 Event::Event(const std::string &uid, const std::string &name, const std::string &description,
              const std::string &location, const std::string &url, const std::string &etag,
              const std::chrono::time_point<std::chrono::system_clock> &creationTime,
@@ -110,7 +118,10 @@ const std::string &Event::getEtag() const {
 void Event::setEtag(const std::string &etag) {
     this->etag = etag;
 }
-
+/**
+ * Prints in the terminal the event.
+ * @return void.
+ */
 void Event::printEvent() const {
 
     std::cout << "Evento:\n";
@@ -126,7 +137,10 @@ void Event::printEvent() const {
     std::cout << "END TIME: " << std::put_time(lt, "%d/%m/%Y %H:%M:%S") << "\n\n";
 }
 
-
+/**
+ * Compute a random char from a dictionary and save it in a string.
+ * @return the random string.
+ */
 std::string Event::gen_random(std::string s, int len) {
     static const char alphanum[] =
             "0123456789"

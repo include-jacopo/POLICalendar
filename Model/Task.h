@@ -15,7 +15,7 @@ private:
     string uidS, name, description, location, etag;
     int priority;
     /** Datetimes are always UTC Time */
-    chrono::time_point<std::chrono::system_clock> dueDate, dateCompleted, dateS;
+    chrono::time_point<std::chrono::system_clock> dueDate, dateCompleted, dateS;  /*dateS è il campo dtstamp */
     bool completed;
     /** Flag che quando settato a true segnala la presenza della data opzionale */
     bool flagDate;
@@ -26,14 +26,10 @@ private:
 
 public:
     Task();
-    /*
-    Task(string uid, string name, string description, string location, string etag, int priority, bool completed,
-         chrono::time_point<std::chrono::system_clock> date, chrono::time_point<std::chrono::system_clock> dateCompl); // costruttore per i task senza data
-    */
     Task(string uid, string name, string description, string location, string etag, int priority, bool completed, bool flagDate,
          chrono::time_point<std::chrono::system_clock> date, chrono::time_point<std::chrono::system_clock> dateS, chrono::time_point<std::chrono::system_clock> dateCompl);
 
-    const string &getUid() const;
+    [[nodiscard]] const string &getUid() const;
     void setUidS(const string &uidS);
     const string &getName() const;
     void setName(const string &name);
@@ -61,7 +57,6 @@ public:
     void setFlagDate(bool flagDate);
     bool isCompleted() const;
     void setCompleted(bool completed);
-
     void printTask();
 };
 

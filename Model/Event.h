@@ -19,6 +19,8 @@ private:
 
 public:
     Event();
+
+
     Event(const std::string &uid, const std::string &name, const std::string &description, const std::string &location, const std::string &url,
           const std::string &etag,
           const std::chrono::time_point<std::chrono::system_clock> &creationTime,
