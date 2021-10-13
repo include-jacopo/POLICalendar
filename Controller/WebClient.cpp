@@ -70,7 +70,7 @@ void WebClient::setHttpAndUrl (string str){
     if (this->subpath.ends_with('/'))
         this->subpath = this->subpath.substr(0, this->subpath.size() - 1);
 
-    if(this->port == 0){ //Se l'utente non specifica la porta applico quelle standard
+    if(this->port == 0){ //Se l'utente non ha specificato la porta applico quelle standard
         if(this->type_of_connection == "https"){
             this->port = 443;
         } else {
@@ -108,7 +108,7 @@ bool WebClient::setClient(const string url, const string user, const string pass
     }
 
     ne_sock_init();
-    sess = ne_session_create(type_of_connection.c_str(), this->url.c_str(), port);
+    sess = ne_session_create(type_of_connection.c_str(), this->url.c_str(), this->port);
 
     if(type_of_connection == "https"){
         ne_ssl_trust_default_ca(sess);
