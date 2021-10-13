@@ -19,13 +19,12 @@ string readCtag(string str, string tag, string tag_calserver) {
     ss << str;
     pugi::xml_parse_result result = doc.load(ss, pugi::parse_default | pugi::parse_declaration);
 
-    if (!result) { // check of the correct loading of the xml
+    if (!result) { //controllo il corretto caricamento dell'XML
         std::cout << "Parse error: " << result.description() << ", character pos= " << result.offset;
     }
 
     auto node = doc.child((tag+":multistatus").c_str()).first_child();
     auto node2 = node.child((tag+":propstat").c_str()).child((tag+":prop").c_str()).child((tag_calserver+":getctag").c_str());
-    //SISTEMAMI IN MAIUSCOLO
 
     return node2.text().as_string();
 }
@@ -36,12 +35,10 @@ map<string,icalcomponent*> readXML(string str, string tag, string tag_caldav) {
     list<icalcomponent*> lista_eventi;
     map<string,icalcomponent* > mappa_eventi;
 
-    icalcomponent* ic;
-
     ss << str;
     pugi::xml_parse_result result = doc.load(ss, pugi::parse_default | pugi::parse_declaration);
 
-    if (!result) { // check of the correct loading of the xml
+    if (!result) { //controllo il corretto caricamento dell'XML
         std::cout << "Parse error: " << result.description() << ", character pos= " << result.offset;
     }
 
@@ -53,20 +50,18 @@ map<string,icalcomponent*> readXML(string str, string tag, string tag_caldav) {
             //Inserisco in mappa con chiave etag e value il componente ical
             mappa_eventi.insert({nodeEtag.text().as_string(), icalparser_parse_string(node2.text().as_string())});
         }
-
     }
     return mappa_eventi;
 }
 
 string readLinkUser(string str, string tag) {
-    //Parsing dell'XML
     pugi::xml_document doc;
     stringstream ss;
 
     ss << str;
     pugi::xml_parse_result result = doc.load(ss, pugi::parse_default | pugi::parse_declaration);
 
-    if (!result) { // check of the correct loading of the xml
+    if (!result) { //controllo il corretto caricamento dell'XML
         std::cout << "Parse error: " << result.description() << ", character pos= " << result.offset;
     }
 
@@ -83,7 +78,7 @@ string readCalendarCollection(string str, string tag, string tag_caldav) {
     ss << str;
     pugi::xml_parse_result result = doc.load(ss, pugi::parse_default | pugi::parse_declaration);
 
-    if (!result) { // check of the correct loading of the xml
+    if (!result) { //controllo il corretto caricamento dell'XML
         std::cout << "Parse error: " << result.description() << ", character pos= " << result.offset;
     }
 
@@ -100,13 +95,12 @@ string readUriCalendar(string str, string tag, string tag_caldav) {
     ss << str;
     pugi::xml_parse_result result = doc.load(ss, pugi::parse_default | pugi::parse_declaration);
 
-    if (!result) { // check of the correct loading of the xml
+    if (!result) { //controllo il corretto caricamento dell'XML
         std::cout << "Parse error: " << result.description() << ", character pos= " << result.offset;
     }
 
     string uri;
     for (auto node: doc.child((tag+":multistatus").c_str()).children()) {
-        auto temp = node;
         auto node2 = node.child((tag+":propstat").c_str()).child((tag+":prop").c_str()).child((tag_caldav+":supported-calendar-component-set").c_str());
         for (auto node3: node2.children((tag_caldav+":comp").c_str())) {
             if(string(node3.attribute("name").as_string()) == "VEVENT" ){
@@ -124,13 +118,12 @@ string readUriTask(string str, string tag, string tag_caldav) {
     ss << str;
     pugi::xml_parse_result result = doc.load(ss, pugi::parse_default | pugi::parse_declaration);
 
-    if (!result) { // check of the correct loading of the xml
+    if (!result) { //controllo il corretto caricamento dell'XML
         std::cout << "Parse error: " << result.description() << ", character pos= " << result.offset;
     }
 
     string uri;
     for (auto node: doc.child((tag+":multistatus").c_str()).children()) {
-        auto temp = node;
         auto node2 = node.child((tag+":propstat").c_str()).child((tag+":prop").c_str()).child((tag_caldav+":supported-calendar-component-set").c_str());
         for (auto node3: node2.children((tag_caldav+":comp").c_str())) {
             if(string(node3.attribute("name").as_string()) == "VTODO" ){
@@ -148,7 +141,7 @@ map<string,string> readEtagCalendar (string str, string uri_calendar, string tag
     ss << str;
     pugi::xml_parse_result result = doc.load(ss, pugi::parse_default | pugi::parse_declaration);
 
-    if (!result) { // check of the correct loading of the xml
+    if (!result) { //controllo il corretto caricamento dell'XML
         std::cout << "Parse error: " << result.description() << ", character pos= " << result.offset;
     }
 
@@ -181,7 +174,7 @@ map<string,string> readEtagTask (string str, string uri_task, string tag){
     ss << str;
     pugi::xml_parse_result result = doc.load(ss, pugi::parse_default | pugi::parse_declaration);
 
-    if (!result) { // check of the correct loading of the xml
+    if (!result) { //controllo il corretto caricamento dell'XML
         std::cout << "Parse error: " << result.description() << ", character pos= " << result.offset;
     }
 

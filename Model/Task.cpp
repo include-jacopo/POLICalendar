@@ -10,7 +10,7 @@ Task::Task() : priority(1), completed(false), flagDate(false) {
     uidS = createUid();
 };
 
-Task::Task(string uid, string name, string description, string location, string etag, int priority, bool completed,chrono::time_point<std::chrono::system_clock> dateS, chrono::time_point<std::chrono::system_clock> dateCompl):
+Task::Task(string uid, string name, string description, string location, string etag, int priority, bool completed, chrono::time_point<std::chrono::system_clock> dateS, chrono::time_point<std::chrono::system_clock> dateCompl):
             uidS(uid), name(name), description(description), location(location), etag(etag), priority(priority),
             completed(completed), flagDate(false), dateS(dateS) {
     if(completed)
