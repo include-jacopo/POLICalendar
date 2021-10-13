@@ -26,9 +26,11 @@ private:
 
 public:
     Task();
+    /*
     Task(string uid, string name, string description, string location, string etag, int priority, bool completed,
-         chrono::time_point<std::chrono::system_clock> date, chrono::time_point<std::chrono::system_clock> dateCompl); /* costruttore per i task senza data */
-    Task(string uid, string name, string description, string location, string etag, int priority, bool completed,
+         chrono::time_point<std::chrono::system_clock> date, chrono::time_point<std::chrono::system_clock> dateCompl); /* costruttore per i task senza data
+    */
+    Task(string uid, string name, string description, string location, string etag, int priority, bool completed, bool flagDate,
          chrono::time_point<std::chrono::system_clock> date, chrono::time_point<std::chrono::system_clock> dateS, chrono::time_point<std::chrono::system_clock> dateCompl);
 
     const string &getUid() const;

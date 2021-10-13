@@ -110,7 +110,10 @@
       <item row="10" column="0">
        <widget class="QLabel" name="label_5">
         <property name="text">
-         <string>Port</string>
+         <string>Port&lt;br&gt;&lt;i&gt;(optional)&lt;/i&gt;</string>
+        </property>
+        <property name="textFormat">
+         <enum>Qt::RichText</enum>
         </property>
        </widget>
       </item>
@@ -140,7 +143,7 @@
       <item row="10" column="1">
        <widget class="QLineEdit" name="lineEdit_port">
         <property name="inputMask">
-         <string>90000</string>
+         <string>d0000</string>
         </property>
         <property name="text">
          <string>443</string>
@@ -192,7 +195,7 @@
       <item row="9" column="1">
        <widget class="QLineEdit" name="lineEdit_url">
         <property name="text">
-         <string>dav.fruux.com</string>
+         <string>https://dav.fruux.com</string>
         </property>
        </widget>
       </item>

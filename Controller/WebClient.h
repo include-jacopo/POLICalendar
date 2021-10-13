@@ -19,34 +19,42 @@ class WebClient {
 public:
     WebClient();
     ~WebClient();
-    void setClient(const string url, const string user, const string pass, int port);
+    bool setClient(const string url, const string user, const string pass, int port);
+    void setHttpAndUrl (string str);
     int tryLogin();
     string propfindCtag(string uri);
     void propfindUri();
     void setUri(string strCalendar, string strTask);
     string getUriCalendar();
     string getUriTask();
-    string report_calendar(const string uri);
-    string report_task(const string uri);
+    string report_calendar();
+    string report_task();
     string reportEtagCalendar();
     string reportEtagTask();
     bool put_event(const string uri, const string evento_xml);
     string getUrl();
     int getPort();
+    string getTag();
+    string getTagCaldav();
+    string getTagCalserver();
     void setCtagCalendar(string ctag);
     void setCtagTask(string ctag);
     string getCtagCalendar();
     string getCtagTask();
     bool deleteCalendar(const string uid);
     bool deleteTask(const string uid);
-    string multiGetCalendar(list<string> l);
-    string multiGetTask(list<string> l);
+    string multiGetCalendar(list<string> new_event);
+    string multiGetTask(list<string> new_task);
 
 
 private:
     ne_session *sess;
-    string base64_auth;
+    string type_of_connection;
+    string tag;
+    string tag_caldav;
+    string tag_calserver;
     string url;
+    string subpath;
     string uri_calendar;
     string uri_task;
     int port;

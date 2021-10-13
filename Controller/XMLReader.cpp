@@ -12,156 +12,211 @@
 
 using namespace std;
 
-string readCtag(string str) {
+string readCtag(string str, string tag, string tag_calserver) {
     pugi::xml_document doc;
     stringstream ss;
 
     ss << str;
     pugi::xml_parse_result result = doc.load(ss, pugi::parse_default | pugi::parse_declaration);
 
-    if (!result) { // check of the correct loading of the xml
+    if (!result) { //controllo il corretto caricamento dell'XML
         std::cout << "Parse error: " << result.description() << ", character pos= " << result.offset;
     }
 
-    auto node = doc.child("d:multistatus").first_child();
-    auto node2 = node.child("d:propstat").child("d:prop").child("cs:getctag");
+    //definizione dei campi da leggere
+    auto multistatus = tag+":multistatus";
+    auto propstat = tag+":propstat";
+    auto prop = tag+":prop";
+    auto ctag = tag_calserver+":getctag";
+
+    //lettura del file xml
+    auto node = doc.child(multistatus.c_str()).first_child();
+    auto node2 = node.child(propstat.c_str()).child(prop.c_str()).child(ctag.c_str());
 
     return node2.text().as_string();
 }
 
-map<string,icalcomponent*> readXML(string str) {
+map<string,icalcomponent*> readXML(string str, string tag, string tag_caldav) {
     pugi::xml_document doc;
     stringstream ss;
     list<icalcomponent*> lista_eventi;
     map<string,icalcomponent* > mappa_eventi;
 
-    icalcomponent* ic;
-
     ss << str;
     pugi::xml_parse_result result = doc.load(ss, pugi::parse_default | pugi::parse_declaration);
 
-    if (!result) { // check of the correct loading of the xml
+    if (!result) { //controllo il corretto caricamento dell'XML
         std::cout << "Parse error: " << result.description() << ", character pos= " << result.offset;
     }
 
-    for (auto node: doc.child("d:multistatus").children()) {
+    //definizione dei campi da leggere
+    auto multistatus = tag+":multistatus";
+    auto propstat = tag+":propstat";
+    auto prop = tag+":prop";
+    auto calendardata = tag_caldav+":calendar-data";
+    auto etag = tag+":getetag";
 
-        auto nodeEtag = node.child("d:propstat").child("d:prop").child("d:getetag");
-
-        for (auto node2: node.child("d:propstat").child("d:prop").child("cal:calendar-data")) {
+    //lettura del file xml
+    for (auto node: doc.child(multistatus.c_str()).children()) {
+        auto nodeEtag = node.child(propstat.c_str()).child(prop.c_str()).child(etag.c_str());
+        for (auto node2: node.child(propstat.c_str()).child(prop.c_str()).child(calendardata.c_str())) {
             //Inserisco in mappa con chiave etag e value il componente ical
             mappa_eventi.insert({nodeEtag.text().as_string(), icalparser_parse_string(node2.text().as_string())});
         }
-
     }
     return mappa_eventi;
 }
 
-string readLinkUser(string str) {
+string readLinkUser(string str, string tag) {
     pugi::xml_document doc;
     stringstream ss;
 
     ss << str;
     pugi::xml_parse_result result = doc.load(ss, pugi::parse_default | pugi::parse_declaration);
 
-    if (!result) { // check of the correct loading of the xml
+    if (!result) { //controllo il corretto caricamento dell'XML
         std::cout << "Parse error: " << result.description() << ", character pos= " << result.offset;
     }
 
-    auto node = doc.child("d:multistatus").first_child();
-    auto node2 = node.child("d:propstat").child("d:prop").child("d:current-user-principal").child("d:href");
+    //definizione dei campi da leggere
+    auto multistatus = tag+":multistatus";
+    auto propstat = tag+":propstat";
+    auto prop = tag+":prop";
+    auto currentuserprincipal = tag+":current-user-principal";
+    auto href = tag+":href";
+
+    //lettura del file xml
+    auto node = doc.child(multistatus.c_str()).first_child();
+    auto node2 = node.child(propstat.c_str()).child(prop.c_str()).child(currentuserprincipal.c_str()).child(href.c_str());
 
     return node2.text().as_string();
 }
 
-string readCalendarCollection(string str) {
+string readCalendarCollection(string str, string tag, string tag_caldav) {
     pugi::xml_document doc;
     stringstream ss;
 
     ss << str;
     pugi::xml_parse_result result = doc.load(ss, pugi::parse_default | pugi::parse_declaration);
 
-    if (!result) { // check of the correct loading of the xml
+    if (!result) { //controllo il corretto caricamento dell'XML
         std::cout << "Parse error: " << result.description() << ", character pos= " << result.offset;
     }
 
-    auto node = doc.child("d:multistatus").first_child();
-    auto node2 = node.child("d:propstat").child("d:prop").child("cal:calendar-home-set").child("d:href");
+    //definizione dei campi da leggere
+    auto multistatus = tag+":multistatus";
+    auto propstat = tag+":propstat";
+    auto prop = tag+":prop";
+    auto calendarhomeset = tag_caldav+":calendar-home-set";
+    auto href = tag+":href";
+
+    //lettura del file xml
+    auto node = doc.child(multistatus.c_str()).first_child();
+    auto node2 = node.child(propstat.c_str()).child(prop.c_str()).child(calendarhomeset.c_str()).child(href.c_str());
 
     return node2.text().as_string();
 }
 
-string readUriCalendar(string str) {
+string readUriCalendar(string str, string tag, string tag_caldav) {
     pugi::xml_document doc;
     stringstream ss;
 
     ss << str;
     pugi::xml_parse_result result = doc.load(ss, pugi::parse_default | pugi::parse_declaration);
 
-    if (!result) { // check of the correct loading of the xml
+    if (!result) { //controllo il corretto caricamento dell'XML
         std::cout << "Parse error: " << result.description() << ", character pos= " << result.offset;
     }
 
+
+    //definizione dei campi da leggere
+    auto multistatus = tag+":multistatus";
+    auto propstat = tag+":propstat";
+    auto prop = tag+":prop";
+    auto supportedcalendar = tag_caldav+":supported-calendar-component-set";
+    auto href = tag+":href";
+    auto comp = tag_caldav+":comp";
     string uri;
-    for (auto node: doc.child("d:multistatus").children()) {
-        auto temp = node;
-        auto node2 = node.child("d:propstat").child("d:prop").child("cal:supported-calendar-component-set");
-        for (auto node3: node2.children("cal:comp")) {
+
+    //lettura del file xml
+    for (auto node: doc.child(multistatus.c_str()).children()) {
+        auto node2 = node.child(propstat.c_str()).child(prop.c_str()).child(supportedcalendar.c_str());
+        for (auto node3: node2.children(comp.c_str())) {
             if(string(node3.attribute("name").as_string()) == "VEVENT" ){
-               uri = node.child("d:href").text().as_string();
+                uri = node.child(href.c_str()).text().as_string();
             }
         }
     }
+    cout<<"uri event:"<<uri<<endl;
     return uri;
 }
 
-string readUriTask(string str) {
+string readUriTask(string str, string tag, string tag_caldav) {
     pugi::xml_document doc;
     stringstream ss;
+
+    cout << str << endl;
 
     ss << str;
     pugi::xml_parse_result result = doc.load(ss, pugi::parse_default | pugi::parse_declaration);
 
-    if (!result) { // check of the correct loading of the xml
+    if (!result) { //controllo il corretto caricamento dell'XML
         std::cout << "Parse error: " << result.description() << ", character pos= " << result.offset;
     }
 
+    //definizione dei campi da leggere
+    auto multistatus = tag+":multistatus";
+    auto propstat = tag+":propstat";
+    auto prop = tag+":prop";
+    auto supportedcalendar = tag_caldav+":supported-calendar-component-set";
+    auto href = tag+":href";
+    auto comp = tag_caldav+":comp";
     string uri;
-    for (auto node: doc.child("d:multistatus").children()) {
-        auto temp = node;
-        auto node2 = node.child("d:propstat").child("d:prop").child("cal:supported-calendar-component-set");
-        for (auto node3: node2.children("cal:comp")) {
+
+    //lettura del file xml
+    for (auto node: doc.child(multistatus.c_str()).children()) {
+        auto node2 = node.child(propstat.c_str()).child(prop.c_str()).child(supportedcalendar.c_str());
+        for (auto node3: node2.children(comp.c_str())) {
             if(string(node3.attribute("name").as_string()) == "VTODO" ){
-                uri = node.child("d:href").text().as_string();
+                uri = node.child(href.c_str()).text().as_string();
             }
         }
     }
+    cout<<"uri task:"<<uri<<endl;
     return uri;
 }
 
-map<string,string> readEtagCalendar (string str, string uri_calendar){
+map<string,string> readEtagCalendar (string str, string uri_calendar, string tag){
     pugi::xml_document doc;
     stringstream ss;
 
     ss << str;
     pugi::xml_parse_result result = doc.load(ss, pugi::parse_default | pugi::parse_declaration);
 
-    if (!result) { // check of the correct loading of the xml
+    if (!result) { //controllo il corretto caricamento dell'XML
         std::cout << "Parse error: " << result.description() << ", character pos= " << result.offset;
     }
 
+    //definizione dei campi da leggere
+    auto multistatus = tag+":multistatus";
+    auto propstat = tag+":propstat";
+    auto prop = tag+":prop";
+    auto getetag = tag+":getetag";
+    auto href = tag+":href";
     string uid, etag;
     map <string, string> event_from_etag;
-    for (auto node: doc.child("d:multistatus").children()) {
+
+    //lettura del file xml
+    for (auto node: doc.child(multistatus.c_str()).children()) {
 
         //Pesco l'UID dalla Propfind
-        auto node2 = node.child("d:href");
+        auto node2 = node.child(href.c_str());
         uid = node2.text().as_string();
         //Rimuovo dalla stringa dell'evento l'URI in modo da lasciare solo l'UID
         uid = removeURI(uid, uri_calendar);
 
         //Pesco l'etag dalla Propfind
-        auto node3 = node.child("d:propstat").child("d:prop").child("d:getetag");
+        auto node3 = node.child(propstat.c_str()).child(prop.c_str()).child(getetag.c_str());
         etag = node3.text().as_string();
         //Eseguo la funzione per togliere il '"' all'inizio ed alla fine
         etag = removeQuote(etag);
@@ -172,29 +227,35 @@ map<string,string> readEtagCalendar (string str, string uri_calendar){
     return event_from_etag;
 }
 
-map<string,string> readEtagTask (string str, string uri_task){
+map<string,string> readEtagTask (string str, string uri_task, string tag){
     pugi::xml_document doc;
     stringstream ss;
 
     ss << str;
     pugi::xml_parse_result result = doc.load(ss, pugi::parse_default | pugi::parse_declaration);
 
-    if (!result) { // check of the correct loading of the xml
+    if (!result) { //controllo il corretto caricamento dell'XML
         std::cout << "Parse error: " << result.description() << ", character pos= " << result.offset;
     }
 
+    //definizione dei campi da leggere
+    auto multistatus = tag+":multistatus";
+    auto propstat = tag+":propstat";
+    auto prop = tag+":prop";
+    auto getetag = tag+":getetag";
+    auto href = tag+":href";
     string uid, etag;
     map <string, string> task_from_etag;
-    for (auto node: doc.child("d:multistatus").children()) {
 
+    //lettura del file xml
+    for (auto node: doc.child(multistatus.c_str()).children()) {
         //Pesco l'UID dalla Propfind
-        auto node2 = node.child("d:href");
+        auto node2 = node.child(href.c_str());
         uid = node2.text().as_string();
         //Rimuovo dalla stringa dell'evento l'URI in modo da lasciare solo l'UID
         uid = removeURI(uid, uri_task);
-
         //Pesco l'etag dalla Propfind
-        auto node3 = node.child("d:propstat").child("d:prop").child("d:getetag");
+        auto node3 = node.child(propstat.c_str()).child(prop.c_str()).child(getetag.c_str());
         etag = node3.text().as_string();
         //Eseguo la funzione per togliere il '"' all'inizio ed alla fine
         etag = removeQuote(etag);

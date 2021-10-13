@@ -46,7 +46,13 @@ CalendarEvent::CalendarEvent(const Event &event, ICalendarGUIEventsHandler *hand
     layout2->setAlignment(Qt::AlignTop | Qt::AlignLeft);
     layout2->addWidget(new QLabel(QString::fromStdString(event.getName())));
     layout2->addWidget(new QLabel(startTime + " - " + endTime));
-    layout2->addWidget(new QLabel(QString::fromStdString(event.getLocation())));
+
+    if (!event.getLocation().empty()) {
+        auto label = new QLabel(QString::fromStdString(event.getLocation()));
+        label->setStyleSheet("QLabel {font-size: 13px;}");
+        layout2->addSpacing(4);
+        layout2->addWidget(label);
+    }
 }
 
 QDateTime CalendarEvent::getDateTimeStart() {

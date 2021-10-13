@@ -30,7 +30,9 @@ Controller *Controller::getInstance() {
 Controller::Controller() : wc() {}
 
 int Controller::createSession (string url, string usr, string pw, int port){
-    wc.setClient(url, usr, pw, port); //Autenticazione con il server
+    if (!wc.setClient(url, usr, pw, port)) { //Autenticazione con il server
+        return 2;
+    }
 
     switch (wc.tryLogin()) { //Funzione che testa il login e la connessione verso il server
         case 1:
@@ -66,7 +68,7 @@ bool Controller::updateCtagCalendar() {
         cout << ie.what() << endl;
         return false;
     }
-    wc.setCtagCalendar(readCtag(ctagXML));
+    wc.setCtagCalendar(readCtag(ctagXML, wc.getTag(), wc.getTagCalserver()));
     return true; //l'aggiornamento del ctag è avvenuto correttamente
 }
 
@@ -78,7 +80,7 @@ bool Controller::updateCtagTask() {
         cout << ie.what() << endl;
         return false;
     }
-    wc.setCtagTask(readCtag(ctagXML));
+    wc.setCtagTask(readCtag(ctagXML, wc.getTag(), wc.getTagCalserver()));
     return true; //l'aggiornamento del ctag è avvenuto correttamente
 }
 
@@ -99,13 +101,13 @@ bool Controller::downloadEvents(){
     if(old_ctag != wc.getCtagCalendar() || old_ctag == "PrimaLettura") {
         string xml_cal;
         try {
-            xml_cal = wc.report_calendar(wc.getUriCalendar()); //Lettura dell'XML del calendario dal server
+            xml_cal = wc.report_calendar(); //Lettura dell'XML del calendario dal server
         } catch(invalid_argument &ie) {
             cout << ie.what() << endl;
             return false;
         }
 
-        map<string,icalcomponent*> eventi_calendario = readXML(xml_cal);
+        map<string,icalcomponent*> eventi_calendario = readXML(xml_cal, wc.getTag(), wc.getTagCaldav());
 
         //Scorro ogni evento e i suoi sottoeventi per riempire Event.cpp
         for (auto evento: eventi_calendario) {
@@ -137,13 +139,13 @@ bool Controller::downloadTask(){
     if(old_ctag != wc.getCtagTask() || old_ctag == "PrimaLettura") {
         string xml_task;
         try {
-            xml_task = wc.report_task(wc.getUriTask()); //Lettura dell'XML dei to-do dal server
+            xml_task = wc.report_task(); //Lettura dell'XML dei to-do dal server
         } catch(invalid_argument &ie) {
             cout << ie.what() << endl;
             return false;
         }
 
-        map<string, icalcomponent*> task_calendario = readXML(xml_task);
+        map<string, icalcomponent*> task_calendario = readXML(xml_task, wc.getTag(), wc.getTagCaldav());
 
         //Scorro la lista di componenti per creare gli oggetti task */
         for (auto task: task_calendario) {
@@ -187,7 +189,7 @@ bool Controller::updateEvents() {
         //Leggo dalla richiesta l'elenco di tutti gli UID e ETAG per il calendario
         string etag_XML = wc.reportEtagCalendar();
         //Creo una mappa con in chiave l'UID e con valore l'ETAG per confrontarla con quelli che già ho
-        map<string,string> eventi_con_etag = readEtagCalendar(etag_XML, wc.getUriCalendar());
+        map<string,string> eventi_con_etag = readEtagCalendar(etag_XML, wc.getUriCalendar(), wc.getTag());
 
         //Cerco se online sono presenti nuovi eventi oppure nuovi eventi modificati
         list<string> uid_nuovi_eventi; //Ospiterà i nuovi eventi trovati
@@ -196,13 +198,10 @@ bool Controller::updateEvents() {
             if(pos_event != Events.end()){ //Trovato l'evento nella mappa locale
                 //L'evento scaricato dal server già esiste in locale
                 if(pos_event->second.getEtag() != e.second){ //controllo che l'etag sia differente
-                    //cout << "UID ELEMENTO IN LISTA " << e.first << endl;
-                    //cout << "ETAG ELEMENTO IN NOSTRA MAPPA " << pos_event->second.getEtag() << endl;
                     uid_nuovi_eventi.push_back(e.first); //lo aggiungo nella lista dei nuovi eventi da scaricare
                     Events.erase(pos_event); //Elimino la vecchia versione dalla lista locale
                 }
             } else {
-                //cout << "UID ELEMENTO NUOVO " << e.first << endl;
                 uid_nuovi_eventi.push_back(e.first); //L'evento è nuovo per noi
             }
         }
@@ -225,7 +224,7 @@ bool Controller::updateEvents() {
                 return false;
             }
 
-            map<string,icalcomponent*> eventi_calendario = readXML(xml_cal);
+            map<string,icalcomponent*> eventi_calendario = readXML(xml_cal, wc.getTag(), wc.getTagCaldav());
 
             //Scorro ogni evento e i suoi sottoeventi per riempire Event.cpp
             for (auto evento: eventi_calendario) {
@@ -285,8 +284,7 @@ bool Controller::addEvent(Event ev) {
     endT = streamEndT.str();
     creationT = streamCreationT.str();
 
-    string payloadIntermedio = "DTSTART:"+startT+"\n"+"UID:"+ev.getUid()+"\n"+"CREATED:"+creationT+"\n"+"DTSTAMP:"+creationT+"\n"+
-                               "DTEND:"+endT+"\n";
+    string payloadIntermedio = "DTSTART:"+startT+"\n"+"UID:"+ev.getUid()+"\n"+"CREATED:"+creationT+"\n"+"DTSTAMP:"+creationT+"\n"+"DTEND:"+endT+"\n";
 
     if(!ev.getLocation().empty()){
         payloadIntermedio = payloadIntermedio + "LOCATION:" + ev.getLocation() +"\n";
@@ -351,7 +349,7 @@ void Controller::displayEvents() {
 }
 
 void Controller::displayTasks() {
-    cout << "**EVENTI ATTUALMENTE PRESENTI NEL CONTENITORE**" << endl;
+    cout << "**TASK ATTUALMENTE PRESENTI NEL CONTENITORE**" << endl;
     for (auto i: Tasks) {
         i.second.printTask();
     }
@@ -365,7 +363,6 @@ const map<std::string, Task> &Controller::getTasks() {
 bool Controller::addTask(Task task) {
     // Add event prima inserisce in remoto e poi successivamente in caso di inserzione con successo inserisce in locale
     // creo la stringa da passare alla funzione che manda la richiesta HTTP
-
     string payloadIniziale = "BEGIN:VCALENDAR\n"
                              "VERSION:2.0\n"
                              "CALSCALE:GREGORIAN\n"
@@ -421,7 +418,6 @@ bool Controller::addTask(Task task) {
         tt3 = chrono::system_clock::to_time_t (task.getDateCompleted());      /* data task */
         streamComplT << std::put_time(std::gmtime(&tt3), "%Y%m%dT%H%M%SZ" );
         complT = streamComplT.str();
-        cout << "L'ho completato il: " + complT << endl;
         payloadIntermedio = payloadIntermedio+"\n"+"COMPLETED:"+complT;
 
     }
@@ -432,8 +428,6 @@ bool Controller::addTask(Task task) {
     }
 
     string payloadCompleto = payloadIniziale + payloadIntermedio + "\n" + payloadFinale;
-
-    cout << payloadCompleto << endl;
 
     try {
         if(wc.put_event(wc.getUriTask()+task.getUid(),payloadCompleto)){
@@ -463,7 +457,6 @@ bool Controller::deleteTask(string uid) {
             auto it = Tasks.find(uid);
             if (it != Tasks.end()) {
                 Tasks.erase(it); //rimuovo l'evento anche in locale
-                cout<<"ho rimosso con successo il task"<<endl;
                 return true;
             }
         }
@@ -485,7 +478,7 @@ bool Controller::updateTasks() {
         //Leggo dalla richiesta l'elenco di tutti gli UID e ETAG per il calendario
         string etag_XML = wc.reportEtagTask();
         //Creo una mappa con in chiave l'UID e con valore l'ETAG per confrontarla con quelli che già ho
-        map<string,string> task_con_etag = readEtagTask(etag_XML, wc.getUriTask());
+        map<string,string> task_con_etag = readEtagTask(etag_XML, wc.getUriTask(), wc.getTag());
 
         list<string> uid_nuovi_task; //Ospiterà i nuovi task trovati
         for(const auto& t: task_con_etag){
@@ -493,13 +486,10 @@ bool Controller::updateTasks() {
             if(pos_task != Tasks.end()){ //Trovato il task nella mappa locale
                 //Il task scaricato dal server già esiste in locale
                 if(pos_task->second.getEtag() != t.second){ //controllo che l'etag sia differente
-                    //cout << "UID ELEMENTO IN LISTA " << t.first << endl;
-                    //cout << "ETAG ELEMENTO IN NOSTRA MAPPA " << pos_event->second.getEtag() << endl;
                     uid_nuovi_task.push_back(t.first); //lo aggiungo nella lista dei nuovi eventi da scaricare
                     Tasks.erase(pos_task); //Elimino la vecchia versione dalla lista locale
                 }
             } else {
-                //cout << "UID ELEMENTO NUOVO " << e.first << endl;
                 uid_nuovi_task.push_back(t.first); //L'evento è nuovo per noi
             }
         }
@@ -522,7 +512,7 @@ bool Controller::updateTasks() {
                 return false;
             }
 
-            map<string,icalcomponent*> task_calendario = readXML(xml_task);
+            map<string,icalcomponent*> task_calendario = readXML(xml_task, wc.getTag(), wc.getTagCaldav());
 
             //Scorro ogni evento e i suoi sottoeventi per riempire Event.cpp
             for (auto task: task_calendario) {

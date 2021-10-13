@@ -206,23 +206,27 @@ Task IcalHandler::task_creator(map<string,string> taskProp, string etag) {
     } else {
         location = taskProp["LOCATION"];
     }
-
+    /*
 
     if (flagData == true) {
-        /* chiamo il costruttore con data */
+        /* chiamo il costruttore con data
         Task t(taskProp["UID"],taskProp["SUMMARY"],description,location, etag, priority,flagCompleted,tp_due,tp_stamp,tp_compl);
         //Task t{};
         return t;
     } else {
 
-        /* chiamo il costruttore senza data */
+        /* chiamo il costruttore senza data
         // TEMP Task t(taskProp["UID"], taskProp["SUMMARY"], "ciao", priority_int);
         Task t(taskProp["UID"],taskProp["SUMMARY"],description,location, etag, priority,flagCompleted,tp_stamp,tp_compl);
         //Task t{};
+        */
+    Task t(taskProp["UID"],taskProp["SUMMARY"],description,location, etag, priority,flagCompleted, flagData, tp_due,tp_stamp,tp_compl);
+
+
 
         return t;
 
-    }
+
 }
 
 Task IcalHandler::task_from_ical_component(icalcomponent* comp, string etag){
