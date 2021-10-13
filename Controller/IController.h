@@ -33,8 +33,6 @@ public:
      */
     virtual bool sync() = 0;
 
-
-
     /* **** EVENTS **** */
 
     /**
@@ -60,8 +58,6 @@ public:
      * @return true if event deleted, false if fail
      */
     virtual bool deleteEvent(string uid) = 0;
-
-
 
     /* **** TASKS **** */
 

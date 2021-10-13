@@ -146,7 +146,7 @@ Task IcalHandler::task_creator(map<string,string> taskProp, string etag) {
     string description, location;
     bool flagData, flagCompleted;                                                   /* flag che segnala la presenza della data  e della data di completamento */
     int priority;
-    std::chrono::time_point<std::chrono::system_clock> tp_due, tp_stamp, tp_compl;       /* variabili che salva la data del task e la data di creazione del task *(
+    std::chrono::time_point<std::chrono::system_clock> tp_due, tp_stamp, tp_compl;       /* variabili che salva la data del task e la data di creazione del task */
 
     /* converto la priorità da string a int */
     if (taskProp.find("PRIORITY") == taskProp.end()) {
@@ -209,13 +209,13 @@ Task IcalHandler::task_creator(map<string,string> taskProp, string etag) {
     /*
 
     if (flagData == true) {
-        /* chiamo il costruttore con data
+        // chiamo il costruttore con data
         Task t(taskProp["UID"],taskProp["SUMMARY"],description,location, etag, priority,flagCompleted,tp_due,tp_stamp,tp_compl);
         //Task t{};
         return t;
     } else {
 
-        /* chiamo il costruttore senza data
+        // chiamo il costruttore senza data
         // TEMP Task t(taskProp["UID"], taskProp["SUMMARY"], "ciao", priority_int);
         Task t(taskProp["UID"],taskProp["SUMMARY"],description,location, etag, priority,flagCompleted,tp_stamp,tp_compl);
         //Task t{};

@@ -1,7 +1,3 @@
-//
-// Created by michele on 9/22/21.
-//
-
 #ifndef POLICALENDAR_CONTROLLER_H
 #define POLICALENDAR_CONTROLLER_H
 
@@ -21,40 +17,45 @@ public:
     Controller(const Controller&) = delete;
     void operator=(const Controller&) = delete;
 
-    /* General methods */
+    /**
+    * General methods.
+    */
     int createSession (string url, string usr, string pw, int port) override;
     bool sync() override;
 
-    /* Events methods */
+    /**
+    * Events methods.
+    */
     bool downloadEvents();
     const map<string, Event>& getEvents() override;
     bool updateEvents();
-    optional<Event> findEvent(string uid);
     bool addEvent(Event ev) override;
     bool editEvent(Event ev) override;
     bool deleteEvent(string uid) override;
-    void displayEvents();
     bool updateCtagCalendar();
+    void displayEvents();
+    optional<Event> findEvent(const string& uid);
 
-    /* Tasks methods */
+    /**
+    * Tasks methods.
+    */
     bool downloadTask();
     const map<std::string, Task> &getTasks() override;
     bool addTask(Task task) override;
     bool editTask(Task task) override;
     bool deleteTask(string uid) override;
-    void displayTasks();
     bool updateCtagTask();
     bool updateTasks();
+    void displayTasks();
 
 private:
     map<string, Event> Events;
     map<string, Task> Tasks;
     WebClient wc;
-
     static Controller *instance;
     Controller(); // Private constructor for singleton pattern
-    int insertLocalEvent(Event ev);
-    int insertLocalTask(Task t);
+    void insertLocalEvent(const Event& ev);
+    void insertLocalTask(const Task& t);
 };
 
 #endif //POLICALENDAR_CONTROLLER_H
