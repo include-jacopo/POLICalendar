@@ -284,8 +284,7 @@ bool Controller::addEvent(Event ev) {
     endT = streamEndT.str();
     creationT = streamCreationT.str();
 
-    string payloadIntermedio = "DTSTART:"+startT+"\n"+"UID:"+ev.getUid()+"\n"+"CREATED:"+creationT+"\n"+"DTSTAMP:"+creationT+"\n"+
-                               "DTEND:"+endT+"\n";
+    string payloadIntermedio = "DTSTART:"+startT+"\n"+"UID:"+ev.getUid()+"\n"+"CREATED:"+creationT+"\n"+"DTSTAMP:"+creationT+"\n"+"DTEND:"+endT+"\n";
 
     if(!ev.getLocation().empty()){
         payloadIntermedio = payloadIntermedio + "LOCATION:" + ev.getLocation() +"\n";
@@ -364,7 +363,6 @@ const map<std::string, Task> &Controller::getTasks() {
 bool Controller::addTask(Task task) {
     // Add event prima inserisce in remoto e poi successivamente in caso di inserzione con successo inserisce in locale
     // creo la stringa da passare alla funzione che manda la richiesta HTTP
-
     string payloadIniziale = "BEGIN:VCALENDAR\n"
                              "VERSION:2.0\n"
                              "CALSCALE:GREGORIAN\n"

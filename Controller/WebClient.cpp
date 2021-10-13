@@ -6,7 +6,6 @@
 #include <neon/ne_session.h>
 #include <neon/ne_request.h>
 #include <neon/ne_auth.h>
-#include <cstring>
 #include <iostream>
 #include <string>
 #include <list>
@@ -118,10 +117,10 @@ bool WebClient::setClient(const string url, const string user, const string pass
     auto f = fopen("response.txt", "w+");
     ne_debug_init(f, NE_DBG_HTTP|NE_DBG_HTTPBODY);
 
-    // Set up authentication
+    //Set up autenticazione
     buf_userpw = string(user+'\n'+pass);
     ne_set_server_auth(sess, my_auth, (void*)buf_userpw.c_str());
-    // Add User-Agent
+    //Aggiunta dell' User-Agent
     ne_set_useragent(sess, "PoliCalendar/0.1");
     return true;
 }
@@ -422,7 +421,7 @@ bool WebClient::put_event(string uri, string evento_xml) {
     ne_request_destroy(req);
 
     if(status != 201) {
-        cout << "\nERROR IN THE PUT METHOD" << response << endl; //da cancellare
+        cout << "\n Errore nel metodo PUT" << response << endl;
         return false;
     }
     return true;
