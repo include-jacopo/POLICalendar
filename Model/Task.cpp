@@ -11,7 +11,7 @@
  */
 Task::Task() : priority(1), completed(false), flagDate(false) {
     uidS = createUid();
-};
+}
 
 /**
  * Constructor of Task.
@@ -24,7 +24,7 @@ Task::Task(string uid, string name, string description, string location, string 
         setDateCompleted(dateCompl);
     if(flagDate)
         setDueDate(date);
-};
+}
 
 /**
  * Creates a random uid.
@@ -190,7 +190,7 @@ bool Task::isCompleted() const {
      */
 void Task::setCompleted(bool completed) {
     Task::completed = completed;
-};
+}
 
 /**
      * Gets the Task dateCompleted
@@ -215,7 +215,7 @@ void Task::setDateCompleted(const chrono::time_point<std::chrono::system_clock> 
 const std::chrono::time_point<std::chrono::system_clock> &Task::getDateS() const{
     return dateS;
 
-};
+}
 
 /**
      * Sets the Task dateS
@@ -230,12 +230,9 @@ void Task::setDateS(const chrono::time_point<std::chrono::system_clock> &date){
  * @return void.
  */
 void Task::printTask() {
-    auto tt = std::chrono::system_clock::to_time_t(Task::getDueDate());
-    auto ttS = std::chrono::system_clock::to_time_t( Task::getDateS());
     std::cout << "TASK:"<<endl;
-
     std::cout << "UID: " << uidS <<endl<< "NAME: " << name<< endl<< "DESCRIPTION: " << description <<endl << "LOCATION: " << location<<endl<<"ETAG: "<<etag<<endl;
-
+    /* prints some fields only if they are present */
     if(Task::isFlagDate()) {
         auto ttS2 = std::chrono::system_clock::to_time_t(Task::getDueDate());
         auto ttS2D = std::chrono::system_clock::to_time_t( Task::getDateS());
