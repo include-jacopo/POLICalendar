@@ -147,6 +147,7 @@ string readUriCalendar(string str, string tag, string tag_caldav) {
             }
         }
     }
+    cout<<"uri event:"<<uri<<endl;
     return uri;
 }
 
@@ -181,6 +182,7 @@ string readUriTask(string str, string tag, string tag_caldav) {
             }
         }
     }
+    cout<<"uri task:"<<uri<<endl;
     return uri;
 }
 
