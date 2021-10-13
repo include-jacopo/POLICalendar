@@ -1,7 +1,3 @@
-//
-// Created by michele on 9/18/21.
-//
-
 #include "XMLReader.h"
 #include <pugixml.hpp>
 #include <sstream>
@@ -12,7 +8,10 @@
 
 using namespace std;
 
-string readCtag(string str, string tag, string tag_calserver) {
+/**
+ * @return a string containing the ctag given the xml file.
+ */
+string readCtag(const string& str, const string& tag, const string& tag_calserver) {
     pugi::xml_document doc;
     stringstream ss;
 
@@ -36,7 +35,11 @@ string readCtag(string str, string tag, string tag_calserver) {
     return node2.text().as_string();
 }
 
-map<string,icalcomponent*> readXML(string str, string tag, string tag_caldav) {
+/**
+ * Read the events or tasks from the XML file received from the server.
+ * @return a map with the etag as key and as a value the ical component.
+ */
+map<string,icalcomponent*> readXML(const string& str, const string& tag, const string& tag_caldav) {
     pugi::xml_document doc;
     stringstream ss;
     list<icalcomponent*> lista_eventi;
@@ -67,7 +70,11 @@ map<string,icalcomponent*> readXML(string str, string tag, string tag_caldav) {
     return mappa_eventi;
 }
 
-string readLinkUser(string str, string tag) {
+/**
+ * Read the link of the user from the calendar xml file given from the server.
+ * @return the link of the user as a string.
+ */
+string readLinkUser(const string& str, const string& tag) {
     pugi::xml_document doc;
     stringstream ss;
 
@@ -92,7 +99,11 @@ string readLinkUser(string str, string tag) {
     return node2.text().as_string();
 }
 
-string readCalendarCollection(string str, string tag, string tag_caldav) {
+/**
+ * Read the calendar collection of the user.
+ * @return the link of the calendar of a user as a string.
+ */
+string readCalendarCollection(const string& str, const string& tag, const string& tag_caldav) {
     pugi::xml_document doc;
     stringstream ss;
 
@@ -117,7 +128,11 @@ string readCalendarCollection(string str, string tag, string tag_caldav) {
     return node2.text().as_string();
 }
 
-string readUriCalendar(string str, string tag, string tag_caldav) {
+/**
+ * Read the uri of events from the calendar of the user.
+ * @return string containing the uri.
+ */
+string readUriCalendar(const string& str, const string& tag, const string& tag_caldav) {
     pugi::xml_document doc;
     stringstream ss;
 
@@ -127,7 +142,6 @@ string readUriCalendar(string str, string tag, string tag_caldav) {
     if (!result) { //controllo il corretto caricamento dell'XML
         std::cout << "Parse error: " << result.description() << ", character pos= " << result.offset;
     }
-
 
     //definizione dei campi da leggere
     auto multistatus = tag+":multistatus";
@@ -147,15 +161,16 @@ string readUriCalendar(string str, string tag, string tag_caldav) {
             }
         }
     }
-    cout<<"uri event:"<<uri<<endl;
     return uri;
 }
 
-string readUriTask(string str, string tag, string tag_caldav) {
+/**
+ * Read the uri of tasks from the calendar of the user.
+ * @return string containing the uri.
+ */
+string readUriTask(const string& str, const string& tag, const string& tag_caldav) {
     pugi::xml_document doc;
     stringstream ss;
-
-    cout << str << endl;
 
     ss << str;
     pugi::xml_parse_result result = doc.load(ss, pugi::parse_default | pugi::parse_declaration);
@@ -182,11 +197,14 @@ string readUriTask(string str, string tag, string tag_caldav) {
             }
         }
     }
-    cout<<"uri task:"<<uri<<endl;
     return uri;
 }
 
-map<string,string> readEtagCalendar (string str, string uri_calendar, string tag){
+/**
+ * Read the etag for the events from the server response.
+ * @return a map with the uid of the event as key and the etag as the value.
+ */
+map<string,string> readEtagCalendar (const string& str, const string& uri_calendar, const string& tag){
     pugi::xml_document doc;
     stringstream ss;
 
@@ -227,7 +245,11 @@ map<string,string> readEtagCalendar (string str, string uri_calendar, string tag
     return event_from_etag;
 }
 
-map<string,string> readEtagTask (string str, string uri_task, string tag){
+/**
+ * Read the etag for the tasks from the server response.
+ * @return a map with the uid of the task as key and the etag as the value.
+ */
+map<string,string> readEtagTask (const string& str, const string& uri_task, const string& tag){
     pugi::xml_document doc;
     stringstream ss;
 
@@ -266,6 +288,10 @@ map<string,string> readEtagTask (string str, string uri_task, string tag){
     return task_from_etag;
 }
 
+/**
+ * Given a string with quote or "&quot;".
+ * @return a string without them.
+ */
 string removeQuote (string str){
     //Funzione per rimuovere le virgolette o il "&quot;" dal campo dell'etag
     string remove_quote1 = "&quot;";
@@ -281,6 +307,10 @@ string removeQuote (string str){
     return str;
 }
 
+/**
+ * Given a string with the uri.
+ * @return a string without it and the ics extension.
+ */
 string removeURI (string str, const string& uid){
     size_t pos;
     string ics = ".ics";

@@ -1,7 +1,3 @@
-//
-// Created by Riccardo Mengoli on 22/09/2021 18:28.
-//
-
 #ifndef POLICALENDAR_ICONTROLLER_H
 #define POLICALENDAR_ICONTROLLER_H
 
