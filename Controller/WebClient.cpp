@@ -1,7 +1,3 @@
-//
-// Created by Jacopo on 15/09/21.
-//
-
 #include "WebClient.h"
 #include <neon/ne_session.h>
 #include <neon/ne_request.h>
@@ -9,11 +5,15 @@
 #include <iostream>
 #include <string>
 #include <list>
+#include <utility>
 #include <neon/ne_utils.h>
 #include "XMLReader.h"
 
 using namespace std;
 
+/**
+ * Buffer for the response from the server.
+ */
 int httpResponseReader(void *userdata, const char *buf, size_t len)
 {
     string *str = (string *)userdata;
@@ -24,32 +24,59 @@ int httpResponseReader(void *userdata, const char *buf, size_t len)
 WebClient::WebClient() {
 }
 
+/**
+ * Destroyer for the WebClient
+ */
 WebClient::~WebClient(){
     ne_session_destroy(sess);
     ne_sock_exit();
 }
 
+/**
+ * Get the port used for the session.
+ * @return the port as a string.
+ */
 string WebClient::getUrl(){
     return this->url;
 };
 
+/**
+ * Get the url for the session.
+ * @return the url as a string.
+ */
 int WebClient::getPort(){
     return this->port;
 };
 
+/**
+ * Get the tag used for the parsing.
+ * @return the tag as a string.
+ */
 string WebClient::getTag(){
     return this->tag;
-};
+}
 
+/**
+ * Get the tag of the caldav part used for the parsing.
+ * @return the tag as a string.
+ */
 string WebClient::getTagCaldav(){
     return this->tag_caldav;
 };
 
+/**
+ * Get the tag of the calserver part used for the parsing.
+ * @return the tag as a string.
+ */
 string WebClient::getTagCalserver(){
     return this->tag_calserver;
-};
+}
 
-void WebClient::setHttpAndUrl (string str){
+/**
+ * Set the protocol as http or https from the server url inserted in the login form.
+ * Set also the port if not given from the user.
+ */
+void WebClient::setHttpAndUrl (const string& str){
     if (str.starts_with("https")) {
         this->type_of_connection = "https";
     } else if (str.starts_with("http")) {
@@ -63,8 +90,8 @@ void WebClient::setHttpAndUrl (string str){
     auto iSubpath = path.find_first_of('/');
 
     if (iSubpath == -1) iSubpath = path.length();
-    this->url = path.substr(0, iSubpath);   // Host URL
-    this->subpath = path.substr(iSubpath);      // Subpath URL
+    this->url = path.substr(0, iSubpath); // Host URL
+    this->subpath = path.substr(iSubpath); // Subpath URL
 
     if (this->subpath.ends_with('/'))
         this->subpath = this->subpath.substr(0, this->subpath.size() - 1);
@@ -78,26 +105,32 @@ void WebClient::setHttpAndUrl (string str){
     }
 }
 
+/**
+ * Buffer used for the authentication part.
+ */
 int my_auth(void *userdata, const char *realm, int attempts, char *username, char *password) {
     string format = "%" + to_string(NE_ABUFSIZ) + "s%" + to_string(NE_ABUFSIZ) + "s";
     sscanf((char*)userdata, format.c_str(), username, password);
     return attempts;
 }
 
+/**
+ * Content-Type breaks sabre/dav localhost server.
+ * At the moment no further headers are necessary.
+ * User-agent and required auth headers are set by setClient.
+ */
 void hook_pre_send(ne_request *req, void *userdata, ne_buffer *header) {
-    /**
-     * Content-Type breaks sabre/dav localhost server.
-     * At the moment no further headers are necessary.
-     * User-agent and required auth headers are set by setClient.
-     */
-
     std::string headersToAdd[] = {"Content-Type: application/xml charset=utf-8\n"};
     for (const auto& h: headersToAdd) {
         ne_buffer_zappend(header, h.c_str());
     }
 }
 
-bool WebClient::setClient(const string url, const string user, const string pass, int port) {
+/**
+ * Initial setup of the client after the login form.
+ * @return true if the handshake with the server is successful.
+ */
+bool WebClient::setClient(const string& url, const string user, const string pass, int port) {
     this->port = port;
 
     setHttpAndUrl(url); //Rimuove "http" o "https" dall'url, salva sia l'url che il protocollo usato
@@ -113,18 +146,20 @@ bool WebClient::setClient(const string url, const string user, const string pass
         ne_ssl_trust_default_ca(sess);
     }
 
-    /** TODO REMOVE DEBUG **/
-    auto f = fopen("response.txt", "w+");
-    ne_debug_init(f, NE_DBG_HTTP|NE_DBG_HTTPBODY);
-
     //Set up autenticazione
     buf_userpw = string(user+'\n'+pass);
     ne_set_server_auth(sess, my_auth, (void*)buf_userpw.c_str());
     //Aggiunta dell' User-Agent
     ne_set_useragent(sess, "PoliCalendar/0.1");
+
     return true;
 }
 
+/**
+ * Request to try if the login was successful.
+ * @return an int: 0 if ok, 1 if the answer was not correct, 2 if server connection error,
+ *                 3 if connection timeout, 4 if generic error.
+ */
 int WebClient::tryLogin() {
     //Provo ad ottenere il link del calendario dell' utente per testare il login
     string response;
@@ -171,19 +206,33 @@ int WebClient::tryLogin() {
     }
 }
 
+/**
+ * Set the uri of events and tasks.
+ */
 void WebClient::setUri(string strCalendar, string strTask) {
-    this->uri_calendar = strCalendar;
-    this->uri_task = strTask;
+    this->uri_calendar = std::move(strCalendar);
+    this->uri_task = std::move(strTask);
 }
 
+/**
+ * Get the uri of the events.
+ * @return the events uri as a string.
+ */
 string WebClient::getUriCalendar(){
     return this->uri_calendar;
 }
 
+/**
+ * Get the uri of the tasks.
+ * @return the tasks uri as a string.
+ */
 string WebClient::getUriTask(){
     return this->uri_task;
 }
 
+/**
+ * Get the information like the user link, his calendar collection and his calendar link from the server.
+ */
 void WebClient::propfindUri(){
     //Per prima cosa necessito dell'url specifico del nostro utente
     string response;
@@ -229,11 +278,11 @@ void WebClient::propfindUri(){
     //per esempio <cal:calendar-home-set> oppure <B:calendar-home-set>
     if(!response1.empty()){
         size_t end = response1.find("=\"urn:ietf:params:xml:ns:caldav\"");
-        int i = 0; bool find = 1;
+        int i = 0; bool find = true;
         while(find){
             i++;
             if(response1[end-i] == ':') {
-                find = 0;
+                find = false;
             }
         }
         this->tag_caldav = response1.substr(end-i+1, i-1); //salvo solo il tag
@@ -269,23 +318,39 @@ void WebClient::propfindUri(){
     setUri(uri_calendar, uri_task); //salvo l'uri del calendario nella struttura dati
 }
 
+/**
+ * Set the ctag of the events
+ */
 void WebClient::setCtagCalendar(string ctag){
     this->ctag_calendar= ctag;
 }
 
+/**
+ * Set the ctag of the tasks
+ */
 void WebClient::setCtagTask(string ctag){
     this->ctag_task= ctag;
 }
 
+/**
+ * @return the ctag of the events as a string
+ */
 string WebClient::getCtagCalendar() {
     return this->ctag_calendar;
 }
 
+/**
+ * @return the ctag of the tasks as a string
+ */
 string WebClient::getCtagTask() {
     return this->ctag_task;
 }
 
-string WebClient::propfindCtag(string uri) {
+/**
+ * Get the ctag of the events or the tasks from the server.
+ * @return it as a string.
+ */
+string WebClient::propfindCtag(const string& uri) {
     string response;
     string propfind = "<d:propfind xmlns:d=\"DAV:\" xmlns:cs=\"http://calendarserver.org/ns/\">"
                       "  <d:prop>\n"
@@ -332,6 +397,10 @@ string WebClient::propfindCtag(string uri) {
     }
 }
 
+/**
+ * Get the list of events from the server as an XML.
+ * @return it as a string.
+ */
 string WebClient::report_calendar() {
     string response;
     string report = "<c:calendar-query xmlns:d=\"DAV:\" xmlns:c=\"urn:ietf:params:xml:ns:caldav\">\n"
@@ -350,7 +419,6 @@ string WebClient::report_calendar() {
     ne_set_request_body_buffer(req, report.c_str(), report.size());
     ne_add_response_body_reader(req, ne_accept_always, httpResponseReader, &response);
 
-
     int result = ne_request_dispatch(req);
     ne_request_destroy(req);
 
@@ -368,6 +436,10 @@ string WebClient::report_calendar() {
     }
 }
 
+/**
+ * Get the list of tasks from the server as an XML.
+ * @return it as a string.
+ */
 string WebClient::report_task() {
     string response;
     string report = "<c:calendar-query xmlns:d=\"DAV:\" xmlns:c=\"urn:ietf:params:xml:ns:caldav\">\n"
@@ -406,10 +478,12 @@ string WebClient::report_task() {
     }
 }
 
-bool WebClient::put_event(string uri, string evento_xml) {
+/**
+ * Add an event in the server.
+ * @return true if the operation was successful.
+ */
+bool WebClient::put_event(const string& uri, string evento_xml) {
     string response;
-
-    cout << uri+".ics" << endl;
 
     ne_request *req = ne_request_create(sess, "PUT", (uri+".ics").c_str());
 
@@ -427,7 +501,11 @@ bool WebClient::put_event(string uri, string evento_xml) {
     return true;
 }
 
-bool WebClient::deleteCalendar(const string uid) {
+/**
+ * Delete an event from the server.
+ * @return true if the operation was successful.
+ */
+bool WebClient::deleteCalendar(const string& uid) {
     string response;
 
     ne_request *req = ne_request_create(sess, "DELETE", (getUriCalendar()+uid+".ics").c_str());
@@ -451,7 +529,11 @@ bool WebClient::deleteCalendar(const string uid) {
     }
 }
 
-bool WebClient::deleteTask(const string uid) {
+/**
+ * Delete a task from the server.
+ * @return true if the operation was successful.
+ */
+bool WebClient::deleteTask(const string& uid) {
     string response;
 
     ne_request *req = ne_request_create(sess, "DELETE", (getUriTask()+uid+".ics").c_str());
@@ -475,6 +557,10 @@ bool WebClient::deleteTask(const string uid) {
     }
 }
 
+/**
+ * Get the etag of the events from the server.
+ * @return a string containing the XML answer.
+ */
 string WebClient::reportEtagCalendar() {
     string response;
     string propfind = "<c:calendar-query xmlns:d=\"DAV:\" xmlns:c=\"urn:ietf:params:xml:ns:caldav\">\n"
@@ -512,6 +598,10 @@ string WebClient::reportEtagCalendar() {
     }
 }
 
+/**
+ * Get the etag of the tasks from the server.
+ * @return a string containing the XML answer.
+ */
 string WebClient::reportEtagTask() {
     string response;
     string propfind = "<c:calendar-query xmlns:d=\"DAV:\" xmlns:c=\"urn:ietf:params:xml:ns:caldav\">\n"
@@ -549,7 +639,11 @@ string WebClient::reportEtagTask() {
     }
 }
 
-string WebClient::multiGetCalendar(list<string> new_event) {
+/**
+ * Get all the new events inserted in the calendar server and not in the local map.
+ * @return a string containing the XML answer.
+ */
+string WebClient::multiGetCalendar(const list<string>& new_event) {
     string response;
     string payload_iniziale = "<c:calendar-multiget xmlns:d=\"DAV:\" xmlns:c=\"urn:ietf:params:xml:ns:caldav\">\n"
                               "    <d:prop>\n"
@@ -559,7 +653,7 @@ string WebClient::multiGetCalendar(list<string> new_event) {
     string payload_finale =   "</c:calendar-multiget>";
 
     string event_to_get;
-    for(auto i: new_event){
+    for(const auto& i: new_event){
         event_to_get.append("<d:href>"+getUriCalendar()+i+".ics</d:href>\n");
     }
     string report = payload_iniziale + event_to_get + payload_finale;
@@ -587,7 +681,11 @@ string WebClient::multiGetCalendar(list<string> new_event) {
     }
 }
 
-string WebClient::multiGetTask(list<string> new_task) {
+/**
+ * Get all the new tasks inserted in the calendar server and not in the local map.
+ * @return a string containing the XML answer.
+ */
+string WebClient::multiGetTask(const list<string>& new_task) {
     string response;
     string payload_iniziale = "<c:calendar-multiget xmlns:d=\"DAV:\" xmlns:c=\"urn:ietf:params:xml:ns:caldav\">\n"
                               "    <d:prop>\n"
@@ -597,7 +695,7 @@ string WebClient::multiGetTask(list<string> new_task) {
     string payload_finale =   "</c:calendar-multiget>";
 
     string task_to_get;
-    for(auto i: new_task){
+    for(const auto& i: new_task){
         task_to_get.append("<d:href>"+getUriTask()+i+".ics</d:href>\n");
     }
     string report = payload_iniziale + task_to_get + payload_finale;

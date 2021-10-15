@@ -1,7 +1,3 @@
-//
-// Created by Riccardo Mengoli on 18/09/2021 17:22.
-//
-
 #ifndef POLICALENDAR_EVENT_H
 #define POLICALENDAR_EVENT_H
 

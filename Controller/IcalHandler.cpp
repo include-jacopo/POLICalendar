@@ -1,14 +1,9 @@
-//
-// Created by Jacopo on 20/09/21.
-//
-
 #include "IcalHandler.h"
 #include <libical/ical.h>
 #include <iostream>
 #include <vector>
 #include <map>
 #include <string>
-
 #include <sstream>
 #include <chrono>
 #include <ctime>
@@ -17,9 +12,9 @@
 using namespace std;
 
 /**
-     * receives a components and extracts it's properties
-     * @return map<string,string> containing the properties and their values
-     */
+ * receives a components and extracts it's properties
+ * @return map<string,string> containing the properties and their values
+ */
 map<string,string> IcalHandler::find_properties(icalcomponent* comp){
     icalproperty* p;
 
@@ -35,11 +30,10 @@ map<string,string> IcalHandler::find_properties(icalcomponent* comp){
 }
 
 /**
-     * receives a map with properties and their values and a string the etag of that event and creates an Event
-     * @return a Event object
-     */
+ * receives a map with properties and their values and a string the etag of that event and creates an Event
+ * @return a Event object
+ */
 Event IcalHandler::event_creator(map<string,string> eventProp, string etag){
-
     tm tm_start = {};
     tm tm_end = {};
     tm tm_creation = {};
@@ -91,9 +85,9 @@ Event IcalHandler::event_creator(map<string,string> eventProp, string etag){
 }
 
 /**
-     * wrapper function that receives a component* and the corrisponding etag, cleans the etag and calls a function to create a Event
-     * @return a Event object
-     */
+ * wrapper function that receives a component* and the corrisponding etag, cleans the etag and calls a function to create a Event
+ * @return a Event object
+ */
 Event IcalHandler::event_from_ical_component(icalcomponent* comp, string etag){
     map<string,string> eventProps;           /* mappa con il nome della proprietà come key e il valore della proprietà come value */
     eventProps = find_properties(comp);      /* estraggo le proprietà dal componente */
@@ -116,9 +110,9 @@ Event IcalHandler::event_from_ical_component(icalcomponent* comp, string etag){
 }
 
 /**
-     * receives a map with properties and their values and a string with the etag of the Task and creates a Task.
-     * @return a Task object
-     */
+ * receives a map with properties and their values and a string with the etag of the Task and creates a Task.
+ * @return a Task object
+ */
 Task IcalHandler::task_creator(map<string,string> taskProp, string etag) {
     string description, location;
     bool flagData, flagCompleted;                                                        /* flag che segnala la presenza della data  e della data di completamento */
@@ -188,9 +182,9 @@ Task IcalHandler::task_creator(map<string,string> taskProp, string etag) {
 }
 
 /**
-     * wrapper function that receives a component* and the corrisponding etag, cleans the etag and calls a function to create a Task
-     * @return a Task object
-     */
+ * wrapper function that receives a component* and the corrisponding etag, cleans the etag and calls a function to create a Task
+ * @return a Task object
+ */
 Task IcalHandler::task_from_ical_component(icalcomponent* comp, string etag){
     map<string, string> taskProps;          /* mappa con il nome della proprietà come key e il valore della proprietà come value */
     taskProps = find_properties(comp);      /* estraggo le proprietà dal componente */

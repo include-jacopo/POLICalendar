@@ -1,7 +1,3 @@
-//
-// Created by Riccardo Mengoli on 18/09/2021 17:49.
-//
-
 #include <iostream>
 #include <iomanip>
 #include "Event.h"
@@ -28,6 +24,7 @@ const std::string Event::createUid() {
     std::string s = ss1 + "-" + ss2 + "-" + ss3 + "-" + ss4 + "-" + ss5;
     return s;
 }
+
 /**
  * Creates a new event object, filling only the uidS field.
  * @return the event.
@@ -35,6 +32,7 @@ const std::string Event::createUid() {
 Event::Event() {
     this->uidS = createUid();
 }
+
 /**
  * Constructor of event.
  */
@@ -72,130 +70,128 @@ const std::string &Event::getName() const {
 }
 
 /**
-     * Sets the Event name
-     * @return void
-     */
+ * Sets the Event name
+ * @return void
+ */
 void Event::setName(const std::string &name) {
     this->nameS = name;
 }
 
 /**
-     * Gets the event description
-     * @return the string with description
-     */
+ * Gets the event description
+ * @return the string with description
+ */
 const std::string &Event::getDescription() const {
     return this->descr;
 }
 
 /**
-     * Sets the Event description
-     * @return void
-     */
+ * Sets the Event description
+ */
 void Event::setDescription(const std::string &description) {
     this->descr = description;
 }
 
 /**
-     * Gets the event location
-     * @return the string with location
-     */
+ * Gets the event location
+ * @return the string with location
+ */
 const std::string &Event::getLocation() const {
     return this->loc;
 }
 
 /**
-     * Sets the Event location.
-     * @return void.
-     */
+ * Sets the Event location.
+ */
 void Event::setLocation(const std::string &location) {
     this->loc = location;
 }
 
 /**
-     * Gets the event url.
-     * @return the string with url.
-     */
+ * Gets the event url.
+ * @return the string with url.
+ */
 const std::string &Event::getUrl() const {
     return this->url;
 }
 
 /**
-     * Sets the Event url
-     * @return void
-     */
+ * Sets the Event url
+ * @return void
+ */
 void Event::setUrl(const std::string &url) {
     this->url = url;
 }
 
 /**
-     * Gets the event CreationTime
-     * @return the  CreationTime datetime UTC time
-     */
+ * Gets the event CreationTime
+ * @return the  CreationTime datetime UTC time
+ */
 const std::chrono::time_point<std::chrono::system_clock> &Event::getCreationTime() const {
     return this->creationT;
 }
 
 /**
-     * Sets the Event creationTime
-     * @return void
-     */
+ * Sets the Event creationTime
+ * @return void
+ */
 void Event::setCreationTime(const std::chrono::time_point<std::chrono::system_clock> &creationTime) {
     this->creationT = creationTime;
 }
 
 /**
-     * Gets the event StartTime
-     * @return the  StartTime datetime UTC time
-     */
+ * Gets the event StartTime
+ * @return the  StartTime datetime UTC time
+ */
 const std::chrono::time_point<std::chrono::system_clock> &Event::getStartTime() const {
     return this->startT;
 }
 
 /**
-     * Sets the Event startTime.
-     * @return void
-     */
+ * Sets the Event startTime.
+ * @return void
+ */
 void Event::setStartTime(const std::chrono::time_point<std::chrono::system_clock> &startTime) {
     this->startT = startTime;
 }
 
 /**
-     * Gets the event EndTime
-     * @return the  EndTime datetime UTC time
-     */
+ * Gets the event EndTime
+ * @return the  EndTime datetime UTC time
+ */
 const std::chrono::time_point<std::chrono::system_clock> &Event::getEndTime() const {
     return this->endT;
 }
 
 /**
-     * Sets the Event endTime
-     * @return void
-     */
+ * Sets the Event endTime
+ * @return void
+ */
 void Event::setEndTime(const std::chrono::time_point<std::chrono::system_clock> &endTime) {
     this->endT = endTime;
 }
 
 /**
-     * Gets the event ETag
-     * @return the string with ETag
-     */
+ * Gets the event ETag
+ * @return the string with ETag
+ */
 const std::string &Event::getEtag() const {
     return this->etag;
 }
 
 /**
-     * Sets the Event ETag
-     * @return void
-     */
+ * Sets the Event ETag
+ * @return void
+ */
 void Event::setEtag(const std::string &etag) {
     this->etag = etag;
 }
+
 /**
  * Prints in the terminal the event.
  * @return void.
  */
 void Event::printEvent() const {
-
     std::cout << "Evento:\n";
     std::cout << "UID: " << uidS << "\nNAME: " << nameS << "\nDESCRIPTION: " << descr << "\nLOCATION: " << loc << "\nURL: "
               << url << "\n";

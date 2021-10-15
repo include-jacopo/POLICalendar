@@ -1,7 +1,3 @@
-//
-// Created by michele on 9/25/21.
-//
-
 #include "Task.h"
 #include <iostream>
 #include <iomanip>
@@ -69,158 +65,158 @@ std::string Task::gen_random(std::string s, int len) {
 }
 
 /**
-     * Gets the Task uidS
-     * @return the string with uidS
-     */
+ * Gets the Task uidS
+ * @return the string with uidS
+ */
 const string &Task::getUid() const {
     return uidS;
 }
 
 /**
-     * Sets the Task uidS
-     * @return void
-     */
+ * Sets the Task uidS
+ * @return void
+ */
 void Task::setUidS(const string &uidS) {
     Task::uidS = uidS;
 }
 
 /**
-     * Gets the Task name
-     * @return the string with name
-     */
+ * Gets the Task name
+ * @return the string with name
+ */
 const string &Task::getName() const {
     return name;
 }
 
 /**
-     * Sets the Task name
-     * @return void
-     */
+ * Sets the Task name
+ * @return void
+ */
 void Task::setName(const string &name) {
     Task::name = name;
 }
 
 /**
-     * Gets the Task description
-     * @return the string with description
-     */
+ * Gets the Task description
+ * @return the string with description
+ */
 const string &Task::getDescription() const {
     return description;
 }
 
 /**
-     * Sets the Task description
-     * @return void
-     */
+ * Sets the Task description
+ * @return void
+ */
 void Task::setDescription(const string &description) {
     Task::description = description;
 }
 
 /**
-     * Gets the Task priority
-     * @return the int with priority value
-     */
+ * Gets the Task priority
+ * @return the int with priority value
+ */
 int Task::getPriority() const {
     return priority;
 }
 
 /**
-     * Sets the Task priority
-     * @return void
-     */
+ * Sets the Task priority
+ * @return void
+ */
 void Task::setPriority(int priority) {
     Task::priority = priority;
 }
 
 /**
-     * Gets the Task location
-     * @return the string with location
-     */
+ * Gets the Task location
+ * @return the string with location
+ */
 const string &Task::getLocation() const {
     return location;
 }
 
 /**
-     *Sets the Task location
-     * @return void
-     */
+ *Sets the Task location
+ * @return void
+ */
 void Task::setLocation(const string &location) {
     Task::location = location;
 }
 
 /** Gets the Task dueDate
-     * @return the  dueDate datetime UTC time
-     */
+ * @return the  dueDate datetime UTC time
+ */
 const chrono::time_point<std::chrono::system_clock> &Task::getDueDate() const {
     return dueDate;
 }
 /** Sets the Task dueDate
-     * @return void
-     */
+ * @return void
+ */
 void Task::setDueDate(const chrono::time_point<std::chrono::system_clock> &date) {
     Task::dueDate = date;
 }
 
 /** Gets the Task flagDate
-     * @return the bool value of flagDate
-     */
+ * @return the bool value of flagDate
+ */
 bool Task::isFlagDate() const {
     return flagDate;
 }
 
 /**
-     * Sets the Task field flagDate
-     * @return void
-     */
+ * Sets the Task field flagDate
+ * @return void
+ */
 void Task::setFlagDate(bool flagDate) {
     Task::flagDate = flagDate;
 }
 
 /**
-     * Gets the Task completed
-     * @return the bool value of cinoketed
-     */
+ * Gets the Task completed
+ * @return the bool value of cinoketed
+ */
 bool Task::isCompleted() const {
     return completed;
 }
 
 /**
-     *Sets the Task field completed
-     * @return void
-     */
+ *Sets the Task field completed
+ * @return void
+ */
 void Task::setCompleted(bool completed) {
     Task::completed = completed;
 }
 
 /**
-     * Gets the Task dateCompleted
-     * @return the  datesCompleted datetime UTC time
-     */
+ * Gets the Task dateCompleted
+ * @return the  datesCompleted datetime UTC time
+ */
 const chrono::time_point<std::chrono::system_clock> &Task::getDateCompleted() const {
     return dateCompleted;
 }
 
 /**
-     * Sets the Task dateCompleted
-     * @return void
-     */
+ * Sets the Task dateCompleted
+ * @return void
+ */
 void Task::setDateCompleted(const chrono::time_point<std::chrono::system_clock> &dateCompleted) {
     Task::dateCompleted = dateCompleted;
 }
 
 /**
-     * Gets the Task date
-     * @return the  datesS datetime UTC time
-     */
+ * Gets the Task date
+ * @return the  datesS datetime UTC time
+ */
 const std::chrono::time_point<std::chrono::system_clock> &Task::getDateS() const{
     return dateS;
 
 }
 
 /**
-     * Sets the Task dateS
-     * @return void
-     */
+ * Sets the Task dateS
+ * @return void
+ */
 void Task::setDateS(const chrono::time_point<std::chrono::system_clock> &date){
     Task::dateS = date;
 }
@@ -252,17 +248,17 @@ void Task::printTask() {
 }
 
 /**
-     * Gets the Task ETag
-     * @return the ETag string
-     */
+ * Gets the Task ETag
+ * @return the ETag string
+ */
 const string &Task::getEtag() const {
     return etag;
 }
 
 /**
-     * Sets the Task description
-     * @return void
-     */
+ * Sets the Task description
+ * @return void
+ */
 void Task::setEtag(const string &etag) {
     Task::etag = etag;
 }

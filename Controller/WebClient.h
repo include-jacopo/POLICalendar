@@ -1,7 +1,3 @@
-//
-// Created by Jacopo on 15/09/21.
-//
-
 #ifndef POLICALENDAR_WEBCLIENT_H
 #define POLICALENDAR_WEBCLIENT_H
 
@@ -17,35 +13,46 @@ using namespace std;
 
 class WebClient {
 public:
+
+    /**
+    * General methods.
+    */
     WebClient();
     ~WebClient();
-    bool setClient(const string url, const string user, const string pass, int port);
-    void setHttpAndUrl (string str);
+    bool setClient(const string& url, const string user, const string pass, int port);
+    void setHttpAndUrl (const string& str);
     int tryLogin();
-    string propfindCtag(string uri);
+    string propfindCtag(const string& uri);
     void propfindUri();
     void setUri(string strCalendar, string strTask);
-    string getUriCalendar();
-    string getUriTask();
-    string report_calendar();
-    string report_task();
-    string reportEtagCalendar();
-    string reportEtagTask();
-    bool put_event(const string uri, const string evento_xml);
     string getUrl();
     int getPort();
     string getTag();
     string getTagCaldav();
     string getTagCalserver();
-    void setCtagCalendar(string ctag);
-    void setCtagTask(string ctag);
-    string getCtagCalendar();
-    string getCtagTask();
-    bool deleteCalendar(const string uid);
-    bool deleteTask(const string uid);
-    string multiGetCalendar(list<string> new_event);
-    string multiGetTask(list<string> new_task);
 
+    /**
+    * Events methods.
+    */
+    string getUriCalendar();
+    string report_calendar();
+    string reportEtagCalendar();
+    bool put_event(const string& uri, const string evento_xml);
+    void setCtagCalendar(string ctag);
+    string getCtagCalendar();
+    bool deleteCalendar(const string& uid);
+    string multiGetCalendar(const list<string>& new_event);
+
+    /**
+    * Tasks methods.
+    */
+    string getUriTask();
+    string report_task();
+    string reportEtagTask();
+    void setCtagTask(string ctag);
+    string getCtagTask();
+    bool deleteTask(const string& uid);
+    string multiGetTask(const list<string>& new_task);
 
 private:
     ne_session *sess;
@@ -62,6 +69,5 @@ private:
     string ctag_task;
     string buf_userpw;
 };
-
 
 #endif //POLICALENDAR_WEBCLIENT_H

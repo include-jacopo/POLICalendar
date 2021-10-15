@@ -1,7 +1,3 @@
-//
-// Created by michele on 9/25/21.
-//
-
 #ifndef POLICALENDAR_TASK_H
 #define POLICALENDAR_TASK_H
 
@@ -18,18 +14,21 @@ private:
     bool completed;
     /* Flag che quando settato a true segnala la presenza della data opzionale */
     bool flagDate;
-
-
     std::string gen_random(std::string s, int len);
     std::string createUid();
 
 public:
-    /* constructors */
+
+    /**
+     * Constructors
+     */
     Task();
     Task(string uid, string name, string description, string location, string etag, int priority, bool completed, bool flagDate,
          chrono::time_point<std::chrono::system_clock> date, chrono::time_point<std::chrono::system_clock> dateS, chrono::time_point<std::chrono::system_clock> dateCompl);
 
-    /* getter & setter */
+    /**
+     * Getters and setters
+     */
     [[nodiscard]] const string &getUid() const;
     void setUidS(const string &uidS);
     [[nodiscard]] const string &getName() const;
