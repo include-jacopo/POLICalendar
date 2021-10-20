@@ -365,7 +365,9 @@ string WebClient::propfindCtag(const string& uri) {
     ne_set_request_body_buffer(req, propfind.c_str(), propfind.size());
     ne_add_response_body_reader(req, ne_accept_always, httpResponseReader, &response);
 
+    http_lock.lock();
     int result = ne_request_dispatch(req);
+    http_lock.unlock();
     int status = ne_get_status(req)->code;
     ne_request_destroy(req);
 
@@ -419,7 +421,9 @@ string WebClient::report_calendar() {
     ne_set_request_body_buffer(req, report.c_str(), report.size());
     ne_add_response_body_reader(req, ne_accept_always, httpResponseReader, &response);
 
+    http_lock.lock();
     int result = ne_request_dispatch(req);
+    http_lock.unlock();
     ne_request_destroy(req);
 
     switch (result) {
@@ -460,7 +464,9 @@ string WebClient::report_task() {
     ne_set_request_body_buffer(req, report.c_str(), report.size());
     ne_add_response_body_reader(req, ne_accept_always, httpResponseReader, &response);
 
+    http_lock.lock();
     int result = ne_request_dispatch(req);
+    http_lock.unlock();
     int status = ne_get_status(req)->code;
     ne_request_destroy(req);
 
@@ -580,7 +586,9 @@ string WebClient::reportEtagCalendar() {
     ne_set_request_body_buffer(req, propfind.c_str(), propfind.size());
     ne_add_response_body_reader(req, ne_accept_always, httpResponseReader, &response);
 
+    http_lock.lock();
     int result = ne_request_dispatch(req);
+    http_lock.unlock();
     int status = ne_get_status(req)->code;
     ne_request_destroy(req);
 
@@ -621,7 +629,9 @@ string WebClient::reportEtagTask() {
     ne_set_request_body_buffer(req, propfind.c_str(), propfind.size());
     ne_add_response_body_reader(req, ne_accept_always, httpResponseReader, &response);
 
+    http_lock.lock();
     int result = ne_request_dispatch(req);
+    http_lock.unlock();
     int status = ne_get_status(req)->code;
     ne_request_destroy(req);
 

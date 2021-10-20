@@ -8,6 +8,7 @@
 #include <vector>
 #include <list>
 #include <string>
+#include <mutex>
 
 using namespace std;
 
@@ -68,6 +69,7 @@ private:
     string ctag_calendar;
     string ctag_task;
     string buf_userpw;
+    mutex http_lock;
 };
 
 #endif //POLICALENDAR_WEBCLIENT_H

@@ -9,6 +9,8 @@
 #include "XMLReader.h"
 #include "IcalHandler.h"
 #include "Controller.h"
+#include <future>
+
 using namespace std;
 
 Controller *Controller::instance = nullptr;
@@ -47,11 +49,15 @@ int Controller::createSession (string url, string usr, string pw, int port){
     wc.setCtagCalendar("PrimaLettura"); //Setto un ctag fittizio per la prima lettura
     wc.setCtagTask("PrimaLettura");
 
-    if(!downloadEvents()){ //Riempio il calendario con gli eventi che già possiede
-        return 5; //in caso di errore
-    }
+    //Creazione di un thread asincrono per scaricamento di eventi e task in parallelo
+    future<bool> f_events = async(&Controller::downloadEvents, this);
+
     if(!downloadTask()) { //Riempio il calendario con i task che già possiede
-        return 6; //in caso di errore
+        return 6; //errore nell'ottenere i task
+    }
+
+    if(!f_events.get()){
+        return 5; //errore nell'ottenere gli eventi
     }
 
     return 0; //la creazione della sessione è andata a buon fine
@@ -94,8 +100,17 @@ bool Controller::updateCtagTask() {
  * @return true if the operation was successful, false if not
  */
 bool Controller::sync() {
-    if(!updateEvents() || !updateTasks()){
-        return false; // C'è stato un errore con il server
+
+    //Parallelizzaione del download di task ed eventi
+    future<bool> f_events = async(&Controller::updateEvents, this); //scarico la lista degli eventi sul server
+    //Ed eventualmente aggiorno solo quelli modificati o aggiunti
+
+    if(!updateTasks()) { //Scarico la lista dei tag presenti sul server ed aggiorno solo quelli modificati o aggiunti
+        return false; //errore nell'ottenere i task
+    }
+
+    if(!f_events.get()){
+        return false; //errore nell'ottenere gli eventi
     }
     return true;
 }
