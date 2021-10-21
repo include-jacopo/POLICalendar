@@ -10,6 +10,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     QFile file(":/AppStyle.qss");
     file.open(QFile::ReadOnly);
     setStyleSheet(file.readAll());
+    file.close();
 
     // Login component
     login = new Login(this);

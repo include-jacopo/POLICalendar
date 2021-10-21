@@ -6,6 +6,7 @@
 #include <QDateTime>
 #include <QLabel>
 #include <chrono>
+#include <QFile>
 #include "TaskGUI.h"
 
 TaskGUI::TaskGUI(const Task &task, ICalendarGUITaskHandler *handler, QWidget *parent) : QFrame(parent) {
@@ -38,12 +39,6 @@ Task TaskGUI::getTask() {
 
 void TaskGUI::updateTask(const Task &task) {
     this->task = task;
-
-    if (task.isCompleted() xor property("isCompleted").toBool()) {
-        setProperty("isCompleted", task.isCompleted());
-        setStyleSheet("TaskGUI[isCompleted=false] {background-color: #FFC49B};\n"
-                      "TaskGUI[isCompleted=true] {background-color: #FFEFD3};");
-    }
     updateFields();
 }
 
@@ -58,13 +53,24 @@ void TaskGUI::updateFields() {
 
     // Due date label
     auto labelDueDate = this->findChild<QLabel *>("labelDueDate");
+    QDateTime dueDateTime;
     if (task.isFlagDate()) {
-        auto dueDateTime = QDateTime::fromSecsSinceEpoch(
+        dueDateTime = QDateTime::fromSecsSinceEpoch(
                 std::chrono::duration_cast<std::chrono::seconds>(task.getDueDate().time_since_epoch()).count());
         labelDueDate->setText(dueDateTime.toString("dd/MM/yyyy hh:mm"));
     } else {
         labelDueDate->setText("");
     }
+
+    // Is expired background color
+    setProperty("isCompleted", task.isCompleted());
+    setProperty("isExpired", (!task.isCompleted()) && task.isFlagDate() && (dueDateTime < QDateTime::currentDateTime()));
+
+    // Reapply stylesheet
+    QFile file(":/Calendar/TaskGUI.qss");
+    file.open(QFile::ReadOnly);
+    setStyleSheet(file.readAll());
+    file.close();
 }
 
 void TaskGUI::mousePressEvent(QMouseEvent *event) {

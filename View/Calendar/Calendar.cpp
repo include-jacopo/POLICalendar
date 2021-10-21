@@ -14,6 +14,7 @@ Calendar::Calendar(QWidget *parent) : QFrame(parent) {
     QFile file(":/Calendar/Calendar.qss");
     file.open(QFile::ReadOnly);
     setStyleSheet(file.readAll());
+    file.close();
 
     // Main grid layout
     layout = new QGridLayout(this);

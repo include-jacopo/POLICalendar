@@ -60,6 +60,10 @@ TaskGUI[isCompleted="true"] {
     background-color: #FFEFD3;
 }
 
+TaskGUI[isExpired="true"] {
+    background-color: red;
+}
+
 TaskGUI[isLast="true"] {
     border-bottom: 1px solid #086375;
 }

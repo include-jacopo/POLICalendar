@@ -138,6 +138,7 @@ void CalendarEvents::setGeometryEvent(CalendarEvent *e, GeometryEventType type) 
             fileS.setFileName(":/Calendar/EventColors.qss");
             fileS.open(QFile::ReadOnly);
             setStyleSheet(fileS.readAll());
+            fileS.close();
 
             e->setGeometry(geometry);
             break;
@@ -162,6 +163,7 @@ void CalendarEvents::setGeometryEvent(CalendarEvent *e, GeometryEventType type) 
             fileS.setFileName(":/Calendar/EventColors.qss");
             fileS.open(QFile::ReadOnly);
             setStyleSheet(fileS.readAll());
+            fileS.close();
             break;
     }
 }

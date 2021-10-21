@@ -674,7 +674,9 @@ string WebClient::multiGetCalendar(const list<string>& new_event) {
     ne_set_request_body_buffer(req, report.c_str(), report.size());
     ne_add_response_body_reader(req, ne_accept_always, httpResponseReader, &response);
 
+    http_lock.lock();
     int result = ne_request_dispatch(req);
+    http_lock.unlock();
     ne_request_destroy(req);
 
     switch (result) {
@@ -716,7 +718,9 @@ string WebClient::multiGetTask(const list<string>& new_task) {
     ne_set_request_body_buffer(req, report.c_str(), report.size());
     ne_add_response_body_reader(req, ne_accept_always, httpResponseReader, &response);
 
+    http_lock.lock();
     int result = ne_request_dispatch(req);
+    http_lock.unlock();
     ne_request_destroy(req);
 
     switch (result) {
