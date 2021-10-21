@@ -163,17 +163,36 @@ void Tasklist::updateGUI() {
         toBeFilteredTasks.clear();
     }
 
-    // Move completed task to the end of the list
+    // Remove spacer
     QLayoutItem * child;
     while ((child = tasksLayout->takeAt(0)) != nullptr) {
         tasksLayout->removeItem(child);
     }
+
+    // Move completed task to the end of the list
     std::sort(filteredTasks.begin(), filteredTasks.end(), [](TaskGUI *t1, TaskGUI *t2) {
         auto taskt1 = t1->getTask();
         auto taskt2 = t2->getTask();
         if (taskt1.isCompleted() && !taskt2.isCompleted()) return false;
         return true;
     });
+
+    // Find start index completed tasks
+    int iCompleted = 0;
+    for (auto t: filteredTasks) {
+        if (!t->getTask().isCompleted()) iCompleted++;
+    }
+    // Order not completed task by date
+    std::sort(filteredTasks.begin(), filteredTasks.begin()+iCompleted, [](TaskGUI *t1, TaskGUI *t2) {
+        auto taskt1 = t1->getTask();
+        auto taskt2 = t2->getTask();
+        if (!taskt1.isFlagDate() && taskt2.isFlagDate()) return false;
+        if (taskt1.isFlagDate() && taskt2.isFlagDate() &&
+            (taskt1.getDueDate() > taskt2.getDueDate())) return false;
+        return true;
+    });
+
+    // Display taskGUIs
     for (const auto& taskGui: filteredTasks) {
         tasksLayout->addWidget(taskGui);
     }
