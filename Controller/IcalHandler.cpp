@@ -1,37 +1,39 @@
-//
-// Created by Jacopo on 20/09/21.
-//
-
 #include "IcalHandler.h"
 #include <libical/ical.h>
 #include <iostream>
 #include <vector>
 #include <map>
 #include <string>
-
 #include <sstream>
 #include <chrono>
 #include <ctime>
-#include <iomanip>
+
 
 using namespace std;
 
+/**
+ * receives a components and extracts it's properties
+ * @return map<string,string> containing the properties and their values
+ */
 map<string,string> IcalHandler::find_properties(icalcomponent* comp){
     icalproperty* p;
 
     vector<string> eventProperties; // vector che ospita le varie proprietà dell'evento
     map<string,string> eventProp;
 
+    /* ciclo per ogni proprietà del componente */
     for(p = icalcomponent_get_first_property(comp, ICAL_ANY_PROPERTY); p != 0 ; p = icalcomponent_get_next_property(comp, ICAL_ANY_PROPERTY)){
+        /* inserisco nella mappa la coppia proprietà  e corrispondente valore */
         eventProp.insert({icalproperty_get_property_name(p),icalproperty_get_value_as_string(p)});
     }
     return eventProp;
 }
 
-
+/**
+ * receives a map with properties and their values and a string the etag of that event and creates an Event
+ * @return a Event object
+ */
 Event IcalHandler::event_creator(map<string,string> eventProp, string etag){
-    Event ev1;
-
     tm tm_start = {};
     tm tm_end = {};
     tm tm_creation = {};
@@ -43,47 +45,13 @@ Event IcalHandler::event_creator(map<string,string> eventProp, string etag){
     strptime(   eventProp["DTEND"].c_str(), "%Y%m%dT%H%M%SZ", &tm_end);
     strptime(   eventProp["CREATED"].c_str(), "%Y%m%dT%H%M%SZ", &tm_creation);
 
-    /**
-     * Sostituito std::mktime con timegm.
-     * std::mktime rileva la timezone e la data non risulta UTC come dovrebbe.
-     *
-     * timegm è non standard, per Windows è necessario utilizzare _mkgmtime.
-     *
-     * Alternativamente è possibile impostare temporaneamente la variabile TZ (timezone) dell'environment
-     * a "UTC", ma anche questa istruzione potrebbe avere problemi di interoperabilità.
-     *
-     * See:
-     * https://stackoverflow.com/questions/283166/easy-way-to-convert-a-struct-tm-expressed-in-utc-to-time-t-type/
-     * https://stackoverflow.com/questions/530519/stdmktime-and-timezone-info
-     * https://stackoverflow.com/questions/6467844/is-c-mktime-different-on-windows-and-gnu-linux
-     * https://stackoverflow.com/questions/16647819/timegm-cross-platform
-     *
-     * Altre soluzioni riguardano l'uso di boost o C++20.
-     * La std::chrono di C++20 tuttavia non è ancora completamente supportata da tutti i compilatori,
-     * tra cui mingw su Windows (al 27/09/2021).
-     */
     /* creo gli oggetti di tipo system_clock */
     auto tp_start = std::chrono::system_clock::from_time_t(timegm(&tm_start));
     auto tp_end = std::chrono::system_clock::from_time_t(timegm(&tm_end));
     auto tp_creation = std::chrono::system_clock::from_time_t(timegm(&tm_creation));
 
 
-    tm tm_start1, tm_end1, tm_creation1;
     stringstream ss_start(eventProp["DTSTART"].c_str());
-
-
-    /* print per capire se ho diviso bene le date */
-
-    /*
-   std::time_t tt1, tt2, tt3;
-   tt1 = chrono::system_clock::to_time_t ( tp_start );
-   tt2 = chrono::system_clock::to_time_t ( tp_end );
-   tt3 = chrono::system_clock::to_time_t ( tp_creation );
-   std::cout << "STart Time: "<< std::put_time(std::gmtime(&tt1), "%b %d %Y %H:%M:%S" ) <<endl<<
-               "End Time: "<< std::put_time(std::gmtime(&tt2), "%b %d %Y %H:%M:%S" ) <<endl<<
-             "Creation Time: "<< std::put_time(std::gmtime(&tt3), "%b %d %Y %H:%M:%S" ) <<endl;
-
-     */
 
     /*creo l'evento */
     string location, description, url;
@@ -101,7 +69,7 @@ Event IcalHandler::event_creator(map<string,string> eventProp, string etag){
     else{
         description = eventProp["DESCRIPTION"];
     }
-    /* non ho la proprietà description, quindi passo una stringa vuota al costruttore */
+    /* non ho la proprietà url, quindi passo una stringa vuota al costruttore */
     if(eventProp.find("URL")==eventProp.end()){
         url= "";
     }
@@ -109,28 +77,27 @@ Event IcalHandler::event_creator(map<string,string> eventProp, string etag){
         url = eventProp["URL"];
     }
     /* non ho la proprietà description, quindi passo una stringa vuota al costruttore */
-    //if(eventProp.find("ETAG")==eventProp.end()){
-     //   etag= "";
-    //}
-    //else{
-   //     etag = eventProp["ETAG"];
-    //}
 
     Event ev = Event(eventProp["UID"], eventProp["SUMMARY"],description,location,url,etag,tp_creation, tp_start,tp_end);
 
     return ev;
 
-};
+}
 
+/**
+ * wrapper function that receives a component* and the corrisponding etag, cleans the etag and calls a function to create a Event
+ * @return a Event object
+ */
 Event IcalHandler::event_from_ical_component(icalcomponent* comp, string etag){
     map<string,string> eventProps;           /* mappa con il nome della proprietà come key e il valore della proprietà come value */
     eventProps = find_properties(comp);      /* estraggo le proprietà dal componente */
 
-    //Rimuovo le vigolette o quote dall'etag ottenuto
+    /* Rimuovo le vigolette o quote dall'etag ottenuto */
     string remove_quote1 = "&quot;";
     string remove_quote2 = "\"";
     size_t pos;
 
+    /* cerco i simboli da rimuovere dalla stringa etag */
     while ((pos  = etag.find(remove_quote1) )!= std::string::npos) {
         etag.erase(pos, remove_quote1.length());
     }
@@ -142,11 +109,15 @@ Event IcalHandler::event_from_ical_component(icalcomponent* comp, string etag){
     return ev;
 }
 
+/**
+ * receives a map with properties and their values and a string with the etag of the Task and creates a Task.
+ * @return a Task object
+ */
 Task IcalHandler::task_creator(map<string,string> taskProp, string etag) {
     string description, location;
-    bool flagData, flagCompleted;                                                   /* flag che segnala la presenza della data  e della data di completamento */
+    bool flagData, flagCompleted;                                                        /* flag che segnala la presenza della data  e della data di completamento */
     int priority;
-    std::chrono::time_point<std::chrono::system_clock> tp_due, tp_stamp, tp_compl;       /* variabili che salva la data del task e la data di creazione del task *(
+    std::chrono::time_point<std::chrono::system_clock> tp_due, tp_stamp, tp_compl;       /* variabili che salva la data del task e la data di creazione del task */
 
     /* converto la priorità da string a int */
     if (taskProp.find("PRIORITY") == taskProp.end()) {
@@ -155,7 +126,6 @@ Task IcalHandler::task_creator(map<string,string> taskProp, string etag) {
         /* leggo la priorità dalla mappa e la converto in int */
         priority = stoi(taskProp["PRIORITY"]);
     }
-    //int priority_int = stoi(taskProp["PRIORITY"]);
 
     /* se non ho la proprietà due date => il task non avrà una data, altrimenti salvo la data e segnalo col flag la presenza della data */
     if (taskProp.find("DUE") != taskProp.end()) {
@@ -166,9 +136,8 @@ Task IcalHandler::task_creator(map<string,string> taskProp, string etag) {
         tp_due = std::chrono::system_clock::from_time_t(timegm(&tm_due));
         flagData = true;
 
-
     } else {
-
+        /* non esiste la proprietà DUE quindi setto il flagData a false */
         flagData = false;
     }
 
@@ -200,41 +169,27 @@ Task IcalHandler::task_creator(map<string,string> taskProp, string etag) {
     } else {
         description = taskProp["DESCRIPTION"];
     }
-
+    /* non ho la proprietà location, quindi passo una stringa vuota al costruttore */
     if (taskProp.find("LOCATION") == taskProp.end()) {
         location = "";
     } else {
         location = taskProp["LOCATION"];
     }
-    /*
+    /* creo il task */
+    Task t(taskProp["UID"],taskProp["SUMMARY"],description,location, move(etag), priority,flagCompleted, flagData, tp_due,tp_stamp,tp_compl);
 
-    if (flagData == true) {
-        /* chiamo il costruttore con data
-        Task t(taskProp["UID"],taskProp["SUMMARY"],description,location, etag, priority,flagCompleted,tp_due,tp_stamp,tp_compl);
-        //Task t{};
-        return t;
-    } else {
-
-        /* chiamo il costruttore senza data
-        // TEMP Task t(taskProp["UID"], taskProp["SUMMARY"], "ciao", priority_int);
-        Task t(taskProp["UID"],taskProp["SUMMARY"],description,location, etag, priority,flagCompleted,tp_stamp,tp_compl);
-        //Task t{};
-        */
-    Task t(taskProp["UID"],taskProp["SUMMARY"],description,location, etag, priority,flagCompleted, flagData, tp_due,tp_stamp,tp_compl);
-
-
-
-        return t;
-
-
+    return t;
 }
 
+/**
+ * wrapper function that receives a component* and the corrisponding etag, cleans the etag and calls a function to create a Task
+ * @return a Task object
+ */
 Task IcalHandler::task_from_ical_component(icalcomponent* comp, string etag){
-    map<string, string> taskProps;           /* mappa con il nome della proprietà come key e il valore della proprietà come value */
-
+    map<string, string> taskProps;          /* mappa con il nome della proprietà come key e il valore della proprietà come value */
     taskProps = find_properties(comp);      /* estraggo le proprietà dal componente */
 
-    //Rimuovo le vigolette o quote dall'etag ottenuto
+    /*Rimuovo le vigolette o quote dall'etag ottenuto */
     string remove_quote1 = "&quot;";
     string remove_quote2 = "\"";
     size_t pos;

@@ -1,7 +1,3 @@
-//
-// Created by Riccardo Mengoli on 18/09/2021 17:22.
-//
-
 #ifndef POLICALENDAR_EVENT_H
 #define POLICALENDAR_EVENT_H
 
@@ -19,6 +15,8 @@ private:
 
 public:
     Event();
+
+
     Event(const std::string &uid, const std::string &name, const std::string &description, const std::string &location, const std::string &url,
           const std::string &etag,
           const std::chrono::time_point<std::chrono::system_clock> &creationTime,

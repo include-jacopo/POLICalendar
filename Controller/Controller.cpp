@@ -1,7 +1,3 @@
-//
-// Created by michele on 9/22/21.
-//
-
 #include <map>
 #include <string>
 #include <iostream>
@@ -9,12 +5,11 @@
 #include <ctime>
 #include <iomanip>
 #include <sstream>
-#include <type_traits>
 #include <libical/ical.h>
-#include "WebClient.h"
 #include "XMLReader.h"
 #include "IcalHandler.h"
 #include "Controller.h"
+#include <future>
 
 using namespace std;
 
@@ -29,6 +24,10 @@ Controller *Controller::getInstance() {
 
 Controller::Controller() : wc() {}
 
+/**
+ * Creating a new session.
+ * @return 1 if login was unsuccessful, 2 for connection error with server, 3 for connection timeout, 4 for generic error
+ */
 int Controller::createSession (string url, string usr, string pw, int port){
     if (!wc.setClient(url, usr, pw, port)) { //Autenticazione con il server
         return 2;
@@ -50,16 +49,24 @@ int Controller::createSession (string url, string usr, string pw, int port){
     wc.setCtagCalendar("PrimaLettura"); //Setto un ctag fittizio per la prima lettura
     wc.setCtagTask("PrimaLettura");
 
-    if(!downloadEvents()){ //Riempio il calendario con gli eventi che già possiede
-        return 5; //in caso di errore
-    }
+    //Creazione di un thread asincrono per scaricamento di eventi e task in parallelo
+    future<bool> f_events = async(&Controller::downloadEvents, this);
+
     if(!downloadTask()) { //Riempio il calendario con i task che già possiede
-        return 6; //in caso di errore
+        return 6; //errore nell'ottenere i task
+    }
+
+    if(!f_events.get()){
+        return 5; //errore nell'ottenere gli eventi
     }
 
     return 0; //la creazione della sessione è andata a buon fine
 }
 
+/**
+ * Retrieve the ctag of the events from the server.
+ * @return true if the operation was successful, false if not
+ */
 bool Controller::updateCtagCalendar() {
     string ctagXML;
     try {
@@ -72,6 +79,10 @@ bool Controller::updateCtagCalendar() {
     return true; //l'aggiornamento del ctag è avvenuto correttamente
 }
 
+/**
+ * Retrieve the ctag of the tasks from the server.
+ * @return true if the operation was successful, false if not
+ */
 bool Controller::updateCtagTask() {
     string ctagXML;
     try {
@@ -84,13 +95,30 @@ bool Controller::updateCtagTask() {
     return true; //l'aggiornamento del ctag è avvenuto correttamente
 }
 
+/**
+ * Get the last update for tasks and events for the server.
+ * @return true if the operation was successful, false if not
+ */
 bool Controller::sync() {
-    if(!updateEvents() || !updateTasks()){
-        return false; // C'è stato un errore con il server
+
+    //Parallelizzaione del download di task ed eventi
+    future<bool> f_events = async(&Controller::updateEvents, this); //scarico la lista degli eventi sul server
+    //Ed eventualmente aggiorno solo quelli modificati o aggiunti
+
+    if(!updateTasks()) { //Scarico la lista dei tag presenti sul server ed aggiorno solo quelli modificati o aggiunti
+        return false; //errore nell'ottenere i task
+    }
+
+    if(!f_events.get()){
+        return false; //errore nell'ottenere gli eventi
     }
     return true;
 }
 
+/**
+ * Download the events from the server. Checks the ctag before doing it.
+ * @return true if the operation was successful, false if events are already updated
+ */
 bool Controller::downloadEvents(){
     string old_ctag = wc.getCtagCalendar();
 
@@ -110,7 +138,7 @@ bool Controller::downloadEvents(){
         map<string,icalcomponent*> eventi_calendario = readXML(xml_cal, wc.getTag(), wc.getTagCaldav());
 
         //Scorro ogni evento e i suoi sottoeventi per riempire Event.cpp
-        for (auto evento: eventi_calendario) {
+        for (const auto& evento: eventi_calendario) {
             icalcomponent *c;
 
             for (c = icalcomponent_get_first_component(evento.second, ICAL_VEVENT_COMPONENT); c != 0; c = icalcomponent_get_next_component(evento.second, ICAL_VEVENT_COMPONENT)) {
@@ -119,9 +147,6 @@ bool Controller::downloadEvents(){
                         insertLocalEvent(ev);
             }
         }
-
-        displayEvents();
-
         return true;
 
     } else {
@@ -129,6 +154,10 @@ bool Controller::downloadEvents(){
     }
 }
 
+/**
+ * Download the tasks from the server. Checks the ctag before doing it.
+ * @return true if the operation was successful, false if tasks are already updated
+ */
 bool Controller::downloadTask(){
     string old_ctag = wc.getCtagTask();
 
@@ -148,15 +177,13 @@ bool Controller::downloadTask(){
         map<string, icalcomponent*> task_calendario = readXML(xml_task, wc.getTag(), wc.getTagCaldav());
 
         //Scorro la lista di componenti per creare gli oggetti task */
-        for (auto task: task_calendario) {
+        for (const auto& task: task_calendario) {
             icalcomponent *c;
             for (c = icalcomponent_get_first_component(task.second, ICAL_VTODO_COMPONENT); c != 0; c = icalcomponent_get_next_component(task.second, ICAL_VTODO_COMPONENT)) {
                 Task t = IcalHandler::task_from_ical_component(c, task.first);
                 insertLocalTask(t);
             }
         }
-
-        displayTasks();
         return true;
 
     } else {
@@ -164,20 +191,31 @@ bool Controller::downloadTask(){
     }
 }
 
+/**
+ * @return the map containing the events
+ */
 const map<string, Event>& Controller::getEvents() {
     return Events;
 }
 
-int Controller::insertLocalEvent(Event ev){
+/**
+ * Insert the event in the local map
+ */
+ void Controller::insertLocalEvent(const Event& ev){
     Events.insert({ev.getUid(), ev});
-    return 1;
 }
 
-int Controller::insertLocalTask(Task t){
+/**
+ * Insert the task in the local map
+ */
+void Controller::insertLocalTask(const Task& t){
     Tasks.insert({t.getUid(), t});
-    return 1;
 }
 
+/**
+ * Get the last events from the server (if any).
+ * @return true if the operation was successful, false if there are server issues.
+ */
 bool Controller::updateEvents() {
     string old_ctag = wc.getCtagCalendar();
 
@@ -214,7 +252,7 @@ bool Controller::updateEvents() {
             }
         }
 
-        if(uid_nuovi_eventi.size()>0){
+        if(!uid_nuovi_eventi.empty()){
             //Se ho qualche evento che è stato aggiunto o modificato
             string xml_cal;
             try {
@@ -227,7 +265,7 @@ bool Controller::updateEvents() {
             map<string,icalcomponent*> eventi_calendario = readXML(xml_cal, wc.getTag(), wc.getTagCaldav());
 
             //Scorro ogni evento e i suoi sottoeventi per riempire Event.cpp
-            for (auto evento: eventi_calendario) {
+            for (const auto& evento: eventi_calendario) {
                 icalcomponent *c;
                 for (c = icalcomponent_get_first_component(evento.second, ICAL_VEVENT_COMPONENT); c != 0; c = icalcomponent_get_next_component(evento.second, ICAL_VEVENT_COMPONENT)) {
                     //Inserisco il componente nella nostra lista locale insieme al suo etag
@@ -237,12 +275,13 @@ bool Controller::updateEvents() {
             }
         }
     }
-
-    displayEvents();
-
     return true;
 }
 
+/**
+ * Delete the old event and add a new event with the updated fields
+ * @return true if the operation was successful, false if not.
+ */
 bool Controller::editEvent(Event ev) {
     if(deleteEvent(ev.getUid())){ //elimino prima l'evento vecchio
         if(addEvent(ev)){ //poi aggiungo l'evento modificato
@@ -252,10 +291,13 @@ bool Controller::editEvent(Event ev) {
     return false;
 }
 
+/**
+ * Add a new event in the server and locally.
+ * @return true if the operation was successful, false if there are server issues.
+ */
 bool Controller::addEvent(Event ev) {
     // Add event prima inserisce in remoto e poi successivamente in caso di inserzione con successo inserisce in locale
     // creo la stringa da passare alla funzione che manda la richiesta HTTP
-
     string payloadIniziale = "BEGIN:VCALENDAR\n"
                              "VERSION:2.0\n"
                              "PRODID:-//PoliCalendar//CalendarApp//EN\n"
@@ -266,7 +308,7 @@ bool Controller::addEvent(Event ev) {
                              "END:VCALENDAR";
 
     std::time_t tt1, tt2, tt3;
-    /* ottengo degli oggetti time_t partendo dai campi chrono::system::clock dell'evento */
+    //ottengo degli oggetti time_t partendo dai campi chrono::system::clock dell'evento
     tt1 = chrono::system_clock::to_time_t ( ev.getStartTime() );
     tt2 = chrono::system_clock::to_time_t ( ev.getEndTime() );
     tt3 = chrono::system_clock::to_time_t ( ev.getCreationTime() );
@@ -274,12 +316,12 @@ bool Controller::addEvent(Event ev) {
     string startT, endT, creationT;
     stringstream streamStartT, streamEndT, streamCreationT;
 
-    /*inserisco l'output in uno stream di stringhe */
+    //inserisco l'output in uno stream di stringhe */
     streamStartT << std::put_time(std::gmtime(&tt1), "%Y%m%dT%H%M%SZ" );
     streamEndT << std::put_time(std::gmtime(&tt2), "%Y%m%dT%H%M%SZ" );
     streamCreationT << std::put_time(std::gmtime(&tt3), "%Y%m%dT%H%M%SZ" );
 
-    /* salvo lo stream di stringhe all'interno di una singola stringa */
+    //salvo lo stream di stringhe all'interno di una singola stringa
     startT = streamStartT.str();
     endT = streamEndT.str();
     creationT = streamCreationT.str();
@@ -311,6 +353,10 @@ bool Controller::addEvent(Event ev) {
     return false;
 }
 
+/**
+ * Delete an event from the server and locally.
+ * @return true if the operation was successful, false if there are server issues.
+ */
 bool Controller::deleteEvent(string uid) {
     try {
         if (wc.deleteCalendar(uid)) { //se l'eliminazione online dell'evento è andata a buon fine
@@ -327,12 +373,13 @@ bool Controller::deleteEvent(string uid) {
     return false;
 }
 
-optional<Event> Controller::findEvent(string uid) {
-
+/**
+ * Search an event in the map.
+ * @return the event if is found.
+ */
+optional<Event> Controller::findEvent(const string& uid) {
     auto it = Events.find(uid);
-
     if (it != Events.end()) {
-        //Ho trovato l'evento e lo ritorno
         return it->second;
     }
 
@@ -340,14 +387,20 @@ optional<Event> Controller::findEvent(string uid) {
 
 }
 
+/**
+ * Debug function. Prints all the events.
+ */
 void Controller::displayEvents() {
     cout << "**EVENTI ATTUALMENTE PRESENTI NEL CONTENITORE**" << endl;
-    for (auto i: Events) {
+    for (const auto& i: Events) {
         i.second.printEvent();
     }
     cout << "***********************************************" << endl;
 }
 
+/**
+ * Debug function. Prints all the tasks.
+ */
 void Controller::displayTasks() {
     cout << "**TASK ATTUALMENTE PRESENTI NEL CONTENITORE**" << endl;
     for (auto i: Tasks) {
@@ -356,10 +409,17 @@ void Controller::displayTasks() {
     cout << "***********************************************" << endl;
 }
 
+/**
+ * @return the map containing the tasks.
+ */
 const map<std::string, Task> &Controller::getTasks() {
     return Tasks;
 }
 
+/**
+ * Add a new task in the server and locally.
+ * @return true if the operation was successful, false if there are server issues.
+ */
 bool Controller::addTask(Task task) {
     // Add event prima inserisce in remoto e poi successivamente in caso di inserzione con successo inserisce in locale
     // creo la stringa da passare alla funzione che manda la richiesta HTTP
@@ -383,7 +443,6 @@ bool Controller::addTask(Task task) {
 
     // Aggiungo i campi obbligatori
     string payloadIntermedio = "UID:"+task.getUid()+"\n"+"CREATED:"+dateT+"\n"+"DTSTAMP:"+dateT;
-            //+"\n"+"DTSTAMP:"+dateT+"\n"+"\n"+"SUMMARY:"+task.getName()+"\n";
 
     //Aggiungo se il task è completato o deve esserlo
     if(task.isCompleted()){
@@ -442,6 +501,10 @@ bool Controller::addTask(Task task) {
     return false;
 }
 
+/**
+ * Delete the old task and add a new task with the updated fields
+ * @return true if the operation was successful, false if not.
+ */
 bool Controller::editTask(Task task) {
     if(deleteTask(task.getUid())){ //elimino prima l'evento vecchio
         if(addTask(task)){ //poi aggiungo l'evento modificato
@@ -451,6 +514,10 @@ bool Controller::editTask(Task task) {
     return false;
 }
 
+/**
+ * Delete a task from the server and locally.
+ * @return true if the operation was successful, false if not.
+ */
 bool Controller::deleteTask(string uid) {
     try {
         if (wc.deleteTask(uid)) { //se l'eliminazione online dell'evento è andata a buon fine
@@ -467,6 +534,10 @@ bool Controller::deleteTask(string uid) {
     return false;
 }
 
+/**
+ * Get the last tasks from the server (if any).
+ * @return true if the operation was successful, false if there are server issues.
+ */
 bool Controller::updateTasks() {
     string old_ctag = wc.getCtagTask();
 
@@ -502,7 +573,7 @@ bool Controller::updateTasks() {
             }
         }
 
-        if(uid_nuovi_task.size() > 0){
+        if(!uid_nuovi_task.empty()){
             //Se ho qualche evento che è stato aggiunto o modificato
             string xml_task;
             try {
@@ -515,7 +586,7 @@ bool Controller::updateTasks() {
             map<string,icalcomponent*> task_calendario = readXML(xml_task, wc.getTag(), wc.getTagCaldav());
 
             //Scorro ogni evento e i suoi sottoeventi per riempire Event.cpp
-            for (auto task: task_calendario) {
+            for (const auto& task: task_calendario) {
                 icalcomponent *c;
                 for (c = icalcomponent_get_first_component(task.second, ICAL_VTODO_COMPONENT); c != 0; c = icalcomponent_get_next_component(task.second, ICAL_VTODO_COMPONENT)) {
                     Task t = IcalHandler::task_from_ical_component(c, task.first);
@@ -524,8 +595,5 @@ bool Controller::updateTasks() {
             }
         }
     }
-
-    displayTasks();
-
     return true;
 }
