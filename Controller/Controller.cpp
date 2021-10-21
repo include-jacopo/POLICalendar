@@ -26,7 +26,7 @@ Controller::Controller() : wc() {}
 
 /**
  * Creating a new session.
- * @return 1 if login was unsuccessful, 2 for connection error with server, 3 for connection timeout, 4 for generic error
+ * @return 0 if ok, 1 if login was unsuccessful, 2 for connection error with server, 3 for connection timeout, 4 for generic error
  */
 int Controller::createSession (string url, string usr, string pw, int port){
     if (!wc.setClient(url, usr, pw, port)) { //Autenticazione con il server

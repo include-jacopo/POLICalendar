@@ -190,13 +190,12 @@ int WebClient::tryLogin() {
 
     string link_user = readLinkUser(response, getTag()); //ottenuto l'xml, pesco solo l'url che mi interessa, altrimenti è vuoto
 
-    if(link_user.empty()){
-        return 1; //Non ho avuto la risposta che mi aspettavo, il login non è avvenuto
-    }
-
     switch (result) {
         case NE_OK:
             return 0; //Il login è andato a buon fine
+        case NE_AUTH:
+            return 1; //Autenticazione fallita
+        case NE_LOOKUP:
         case NE_CONNECT:
             return 2; //Errore di connessione con il server
         case NE_TIMEOUT:
