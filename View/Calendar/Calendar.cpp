@@ -1,7 +1,3 @@
-//
-// Created by Riccardo Mengoli on 08/09/2021 17:44.
-//
-
 #include <QDir>
 #include <QPushButton>
 #include <QMessageBox>

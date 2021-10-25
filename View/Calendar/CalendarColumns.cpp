@@ -1,6 +1,3 @@
-//
-// Created by Riccardo Mengoli on 15/09/2021 16:34.
-//
 
 #include "HourVBar.h"
 #include "../../Controller/Controller.h"

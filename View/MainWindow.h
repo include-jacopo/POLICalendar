@@ -1,7 +1,3 @@
-//
-// Created by Riccardo Mengoli on 09/09/2021 18:06.
-//
-
 #ifndef POLICALENDAR_MAINWINDOW_H
 #define POLICALENDAR_MAINWINDOW_H
 
