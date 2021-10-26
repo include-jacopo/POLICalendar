@@ -195,7 +195,6 @@ int WebClient::tryLogin() {
             return 0; //Il login è andato a buon fine
         case NE_AUTH:
             return 1; //Autenticazione fallita
-        case NE_LOOKUP:
         case NE_CONNECT:
             return 2; //Errore di connessione con il server
         case NE_TIMEOUT:
