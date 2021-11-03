@@ -1,7 +1,7 @@
 # PoliCalendar: a CalDAV client 
 
 <p align="center">
-  <img src="screenshots/logo.png"/><br/>
+  <img src="screenshots/logo.png" height="300"/><br/>
 </p>
 
 ## Application goals
@@ -29,7 +29,7 @@ Both http and https connections are supported.
 Once logged in, the calendar related to the user will be downloaded and therefore its events and tasks. 
 
 <p align="center">
-  <img src="screenshots/new_event.png height="400""/><br/>
+  <img src="screenshots/new_event.png" height="400"/><br/>
   <em>Pop-up to add a new event. </em>
 </p>
 
