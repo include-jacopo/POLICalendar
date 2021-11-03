@@ -38,7 +38,7 @@ The user can add new events or tasks, delete them, modify them and synchronize, 
 Through the monthly calendar you can quickly choose a date to show the related events. 
 
 <p align="center">
-  <img src="screenshots/one_culumn.png"/><br/>
+  <img src="screenshots/one_column.png"/><br/>
   <em>One-column view of the app. </em>
 </p>
 
