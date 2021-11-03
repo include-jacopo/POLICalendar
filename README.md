@@ -10,7 +10,7 @@ The primary aim of the project is to develop a C++ application capable of displa
 ## Features’ description 
 
 <p align="center">
-  <img src="screenshots/login.png"/><br/>
+  <img src="screenshots/login.png"/> height="400"<br/>
   <em>Login form to authenticate with the server. </em>
 </p>
 
