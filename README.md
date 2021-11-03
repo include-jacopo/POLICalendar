@@ -1,7 +1,7 @@
 # PoliCalendar: a CalDAV client 
 
 <p align="center">
-  <img src="screenshots/logo_policalendar.png" height="180"/><br/>
+  <img src="screenshots/logo_policalendar.png" height="150"/><br/>
 </p>
 
 ## Application goals
