@@ -22,14 +22,14 @@ When the application is launched, it’s possible to enter the necessary data fo
 Both http and https connections are supported.
 
 <p align="center">
-  <img src="screenshots/main.png"/><br/>
+  <img src="screenshots/main.png" height="600"/><br/>
   <em>Main screen showing the events on the calendar and the task list. </em>
 </p>
 
 Once logged in, the calendar related to the user will be downloaded and therefore its events and tasks. 
 
 <p align="center">
-  <img src="screenshots/new_event.png"/><br/>
+  <img src="screenshots/new_event.png height="400""/><br/>
   <em>Pop-up to add a new event. </em>
 </p>
 
@@ -38,7 +38,7 @@ The user can add new events or tasks, delete them, modify them and synchronize, 
 Through the monthly calendar you can quickly choose a date to show the related events. 
 
 <p align="center">
-  <img src="screenshots/one_column.png"/><br/>
+  <img src="screenshots/one_column.png" height="600"/><br/>
   <em>One-column view of the app. </em>
 </p>
 
